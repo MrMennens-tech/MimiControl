@@ -1,6 +1,6 @@
 """
-MimiExplorer - CustomTkinter versie
-Start de grafische interface met iOS/macOS-stijl.
+MimiControl Studio - CustomTkinter versie
+Start de grafische interface met Mennens.Tech branding.
 """
 
 from gui_explorer_ctk import start_gui_explorer_ctk

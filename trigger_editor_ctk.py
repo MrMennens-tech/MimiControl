@@ -1,5 +1,5 @@
 """
-MimiExplorer - Trigger Editor (CustomTkinter / iOS-stijl)
+MimiControl Studio - Trigger Editor (CustomTkinter / Mennens.Tech branding)
 Dialoog voor het samenstellen van blendshape-triggers
 met checkboxes, sliders en toetsinvoer.
 """
@@ -16,18 +16,18 @@ from config_explorer import (
 )
 
 # ---------------------------------------------------------------------------
-# iOS + Mennens.Tech kleuren
+# Mennens.Tech kleurenpalet
 # ---------------------------------------------------------------------------
 BG          = "#F2F2F7"
 KAART       = "#FFFFFF"
 TEKST       = "#1C1C1E"
-TEKST_LICHT = "#8E8E93"
-BLAUW       = "#007AFF"
-BLAUW_HOVER = "#0056CC"
-GROEN       = "#34C759"
-GROEN_HOVER = "#2CA048"
-ROOD        = "#FF3B30"
+TEKST_LICHT = "#5A5A5E"
 DONKER      = "#062D36"
+TEAL_BTN    = "#4DB8BE"
+TEAL_HOVER  = "#3A9DA3"
+TEAL_BRAND  = "#68CCD1"
+OPSLAAN     = "#4DB8BE"
+OPSLAAN_HOVER = "#3A9DA3"
 RAND        = "#E5E5EA"
 
 FONT = "Segoe UI" if sys.platform == "win32" else "Helvetica"
@@ -155,7 +155,7 @@ class TriggerEditorDialog:
 
         ctk.CTkButton(
             btn_frame, text="Opslaan", font=(FONT, 13, "bold"),
-            fg_color=GROEN, hover_color=GROEN_HOVER, text_color=KAART,
+            fg_color=OPSLAAN, hover_color=OPSLAAN_HOVER, text_color=KAART,
             corner_radius=20, height=44, width=130, cursor="hand2",
             command=self._opslaan
         ).pack(side="right")
@@ -170,7 +170,7 @@ class TriggerEditorDialog:
         var_aan = tk.BooleanVar(value=standaard_aan)
         cb = ctk.CTkCheckBox(
             rij, text="", variable=var_aan, width=28,
-            corner_radius=6, fg_color=BLAUW, hover_color=BLAUW_HOVER,
+            corner_radius=6, fg_color=TEAL_BTN, hover_color=TEAL_HOVER,
             border_color=RAND, border_width=2
         )
         cb.pack(side="left", padx=(12, 6))
@@ -197,8 +197,8 @@ class TriggerEditorDialog:
         # Slider
         slider = ctk.CTkSlider(
             rij, from_=0.05, to=1.0, width=180,
-            button_color=BLAUW, button_hover_color=BLAUW_HOVER,
-            progress_color=BLAUW,
+            button_color=TEAL_BTN, button_hover_color=TEAL_HOVER,
+            progress_color=TEAL_BTN,
             command=lambda val, lbl=drempel_lbl: lbl.configure(
                 text=f"{val:.2f}")
         )

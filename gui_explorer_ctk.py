@@ -1,7 +1,7 @@
 """
-MimiExplorer - CustomTkinter GUI (iOS/macOS-stijl)
+MimiControl Studio - CustomTkinter GUI (Mennens.Tech branding)
 Hoofdvenster met triggerlijst, Explorer-knop, Live-knop en
-timing-instellingen. Mennens.Tech branding.
+timing-instellingen.
 """
 
 import sys
@@ -27,49 +27,52 @@ ctk.set_appearance_mode("light")
 ctk.set_default_color_theme("blue")
 
 # ---------------------------------------------------------------------------
-# iOS + Mennens.Tech kleuren
+# Mennens.Tech kleurenpalet
 # ---------------------------------------------------------------------------
 BG          = "#F2F2F7"
 KAART       = "#FFFFFF"
 TEKST       = "#1C1C1E"
-TEKST_LICHT = "#8E8E93"
-BLAUW       = "#007AFF"
-BLAUW_HOVER = "#0056CC"
-GROEN       = "#34C759"
-GROEN_HOVER = "#2CA048"
-ROOD        = "#FF3B30"
-ROOD_HOVER  = "#D32F2F"
-TEAL        = "#5AC8FA"
+TEKST_LICHT = "#5A5A5E"
 DONKER      = "#062D36"
+DONKER_HOVER = "#0A4050"
 TEAL_BRAND  = "#68CCD1"
+TEAL_BTN    = "#4DB8BE"
+TEAL_HOVER  = "#3A9DA3"
+ROOD        = "#E05A50"
+ROOD_HOVER  = "#C44840"
 RAND        = "#E5E5EA"
-ORANJE      = "#FF9500"
 
 FONT = "Segoe UI" if sys.platform == "win32" else "Helvetica"
 
 LOGO_PAD = os.path.join(
     os.path.dirname(os.path.abspath(__file__)), "assets", "logo_mennens.png"
 )
+ICON_PAD = os.path.join(
+    os.path.dirname(os.path.abspath(__file__)), "assets", "mimicontrol.ico"
+)
 
-TRIGGER_ACCENTEN = [BLAUW, ORANJE, GROEN, ROOD, TEAL]
+TRIGGER_ACCENTEN = ["#4DB8BE", "#3D8FA5", "#68CCD1", "#2E7A8A", "#89D4D8"]
 
 
 # ---------------------------------------------------------------------------
 # Hoofdvenster
 # ---------------------------------------------------------------------------
-class MimiExplorerApp:
+class MimiControlStudioApp:
 
     def __init__(self):
         self.app = ctk.CTk()
-        self.app.title("MimiExplorer — Mennens.Tech")
+        self.app.title("MimiControl Studio — Mennens.Tech")
         self.app.configure(fg_color=BG)
-        self.app.resizable(False, False)
+        if os.path.exists(ICON_PAD):
+            self.app.iconbitmap(ICON_PAD)
+        self.app.resizable(True, True)
+        self.app.minsize(680, 600)
 
-        breedte, hoogte = 680, 900
-        self.app.geometry(f"{breedte}x{hoogte}")
+        breedte = 680
+        scherm_h = self.app.winfo_screenheight()
+        hoogte = min(920, scherm_h - 80)
         sx = (self.app.winfo_screenwidth() - breedte) // 2
-        sy = max(20, (self.app.winfo_screenheight() - hoogte) // 2)
-        self.app.geometry(f"+{sx}+{sy}")
+        self.app.geometry(f"{breedte}x{hoogte}+{sx}+20")
 
         self._bouw_interface()
         self._ververs_triggers()
@@ -105,46 +108,57 @@ class MimiExplorerApp:
 
         tekst_frame = ctk.CTkFrame(header_inner, fg_color="transparent")
         tekst_frame.pack(side="left")
-        ctk.CTkLabel(tekst_frame, text="MimiExplorer",
+        ctk.CTkLabel(tekst_frame, text="MimiControl Studio",
                      font=(FONT, 26, "bold"), text_color=KAART
                      ).pack(anchor="center")
-        ctk.CTkLabel(tekst_frame, text="Blendshape Trigger Builder  —  Mennens.Tech",
-                     font=(FONT, 12), text_color=TEAL_BRAND
+        ctk.CTkLabel(tekst_frame, text="Jouw gezicht, jouw besturing  —  Mennens.Tech",
+                     font=(FONT, 13), text_color=TEAL_BRAND
                      ).pack(anchor="center", pady=(2, 0))
 
-        # --- Actieknoppen ---
+        # --- Actieknoppen (compact, naast beschrijving) ---
         knoppen = ctk.CTkFrame(self.app, fg_color="transparent")
-        knoppen.pack(fill="x", padx=32, pady=(24, 0))
+        knoppen.pack(fill="x", padx=32, pady=(18, 0))
 
-        # Explorer knop
+        rij1 = ctk.CTkFrame(knoppen, fg_color=KAART, corner_radius=12,
+                             border_width=1, border_color=RAND)
+        rij1.pack(fill="x", pady=(0, 8))
         ctk.CTkButton(
-            knoppen, text="Explorer openen",
-            font=(FONT, 16, "bold"), height=54,
-            fg_color=BLAUW, hover_color=BLAUW_HOVER,
-            corner_radius=20, cursor="hand2",
+            rij1, text="Mimiek verkennen",
+            font=(FONT, 13, "bold"), height=40, width=200,
+            fg_color=TEAL_BTN, hover_color=TEAL_HOVER,
+            corner_radius=12, cursor="hand2",
             command=self._lanceer_explorer
-        ).pack(fill="x", pady=(0, 4))
-        ctk.CTkLabel(knoppen,
-                     text="Ontdek welke blendshapes uitslaan bij een gebaar",
-                     font=(FONT, 11), text_color=TEKST_LICHT
-                     ).pack(anchor="w", padx=8, pady=(0, 10))
+        ).pack(side="left", padx=6, pady=6)
+        ctk.CTkLabel(rij1,
+                     text="Herken gezichtsuitdrukkingen en stel triggers in",
+                     font=(FONT, 12), text_color=TEKST_LICHT
+                     ).pack(side="left", padx=(8, 14))
 
-        # Live knop
+        rij2 = ctk.CTkFrame(knoppen, fg_color=KAART, corner_radius=12,
+                             border_width=1, border_color=RAND)
+        rij2.pack(fill="x", pady=(0, 4))
         ctk.CTkButton(
-            knoppen, text="Live besturing starten",
-            font=(FONT, 16, "bold"), height=54,
-            fg_color=GROEN, hover_color=GROEN_HOVER,
-            corner_radius=20, cursor="hand2",
+            rij2, text="Live modus starten",
+            font=(FONT, 13, "bold"), height=40, width=200,
+            fg_color=DONKER, hover_color=DONKER_HOVER,
+            corner_radius=12, cursor="hand2",
             command=self._lanceer_live
-        ).pack(fill="x", pady=(0, 4))
-        ctk.CTkLabel(knoppen,
+        ).pack(side="left", padx=6, pady=6)
+        ctk.CTkLabel(rij2,
                      text="Start de webcam en voer toetsacties uit",
-                     font=(FONT, 11), text_color=TEKST_LICHT
-                     ).pack(anchor="w", padx=8)
+                     font=(FONT, 12), text_color=TEKST_LICHT
+                     ).pack(side="left", padx=(8, 14))
 
         # --- Separator ---
         ctk.CTkFrame(self.app, fg_color=RAND, height=1, corner_radius=0
-                     ).pack(fill="x", padx=32, pady=(20, 12))
+                     ).pack(fill="x", padx=32, pady=(14, 10))
+
+        # --- Timing (boven triggers zodat het altijd zichtbaar is) ---
+        self._bouw_timing()
+
+        # --- Separator ---
+        ctk.CTkFrame(self.app, fg_color=RAND, height=1, corner_radius=0
+                     ).pack(fill="x", padx=32, pady=(6, 10))
 
         # --- Trigger header ---
         ctk.CTkLabel(self.app, text="Geconfigureerde triggers",
@@ -155,20 +169,13 @@ class MimiExplorerApp:
         self.trigger_scroll = ctk.CTkScrollableFrame(
             self.app, fg_color="transparent", corner_radius=0
         )
-        self.trigger_scroll.pack(fill="both", expand=True, padx=28, pady=(8, 8))
-
-        # --- Separator ---
-        ctk.CTkFrame(self.app, fg_color=RAND, height=1, corner_radius=0
-                     ).pack(fill="x", padx=32, pady=(4, 8))
-
-        # --- Timing ---
-        self._bouw_timing()
+        self.trigger_scroll.pack(fill="both", expand=True, padx=28, pady=(8, 12))
 
     def _bouw_timing(self):
         timing = ctk.CTkFrame(self.app, fg_color=KAART,
                                corner_radius=14, border_width=1,
                                border_color=RAND)
-        timing.pack(fill="x", padx=32, pady=(0, 24))
+        timing.pack(fill="x", padx=32, pady=(0, 4))
 
         ctk.CTkLabel(timing, text="Timing-instellingen",
                      font=(FONT, 13, "bold"), text_color=TEKST
@@ -188,8 +195,8 @@ class MimiExplorerApp:
 
         self.cd_slider = ctk.CTkSlider(
             rij1, from_=0.5, to=10.0,
-            button_color=BLAUW, button_hover_color=BLAUW_HOVER,
-            progress_color=BLAUW,
+            button_color=TEAL_BTN, button_hover_color=TEAL_HOVER,
+            progress_color=TEAL_BTN,
             command=self._on_cd_change
         )
         self.cd_slider.pack(side="left", fill="x", expand=True, padx=(8, 8))
@@ -208,8 +215,8 @@ class MimiExplorerApp:
 
         self.vh_slider = ctk.CTkSlider(
             rij2, from_=0.1, to=3.0,
-            button_color=BLAUW, button_hover_color=BLAUW_HOVER,
-            progress_color=BLAUW,
+            button_color=TEAL_BTN, button_hover_color=TEAL_HOVER,
+            progress_color=TEAL_BTN,
             command=self._on_vh_change
         )
         self.vh_slider.pack(side="left", fill="x", expand=True, padx=(8, 8))
@@ -286,7 +293,7 @@ class MimiExplorerApp:
 
         ctk.CTkButton(
             btn_rij, text="Bewerken", font=(FONT, 11),
-            fg_color=DONKER, hover_color="#0A4050",
+            fg_color=TEAL_BTN, hover_color=TEAL_HOVER,
             corner_radius=16, height=32, width=100, cursor="hand2",
             command=lambda idx=index: self._bewerk_trigger(idx)
         ).pack(side="left", padx=(0, 8))
@@ -372,7 +379,7 @@ class MimiExplorerApp:
 # Entrypoint
 # ---------------------------------------------------------------------------
 def start_gui_explorer_ctk():
-    app = MimiExplorerApp()
+    app = MimiControlStudioApp()
     app.start()
 
 
