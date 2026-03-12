@@ -79,6 +79,8 @@ Het script installeert automatisch alle dependencies en start de app.
 
 Download `MimiControl Studio.exe` vanuit de [Releases](../../releases) pagina en dubbelklik om te starten.
 
+> **Windows SmartScreen melding:** Bij de eerste keer openen kan Windows een blauw/rood scherm tonen met "Uw pc wordt beschermd". Dit is normaal — de .exe is niet digitaal ondertekend (geen code signing certificaat). Klik op **"Meer info"** → **"Toch uitvoeren"** om de app te starten. Dit hoef je maar één keer te doen.
+
 ---
 
 ## Mappenstructuur
