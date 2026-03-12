@@ -1,7 +1,11 @@
 <p align="center">
-  <img src="app/assets/mimicontrol.png" alt="MimiControl Logo" width="120">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="app/assets/Mennenstech_logo_wit.png">
+    <source media="(prefers-color-scheme: light)" srcset="app/assets/Mennenstech_logo.png">
+    <img src="app/assets/Mennenstech_logo.png" alt="Mennens.Tech Logo" width="100">
+  </picture>
   &nbsp;&nbsp;&nbsp;&nbsp;
-  <img src="app/assets/logo_mennens.png" alt="Mennens.Tech Logo" width="120">
+  <img src="app/assets/mimicontrol.png" alt="MimiControl Logo" width="100">
 </p>
 
 <h1 align="center">MimiControl Studio</h1>
