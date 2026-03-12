@@ -27,6 +27,12 @@ MimiControl is een toegankelijkheidstool waarmee gebruikers hun computer kunnen 
 
 De software herkent gezichtsbewegingen (zoals een lach, wenkbrauw optrekken, tong uitsteken) via de webcam en vertaalt deze naar toetsaanslagen — zodat de gebruiker programma's kan bedienen, kan scannen en keuzes kan maken.
 
+### Waarom MimiControl?
+
+Bestaande oplossingen zoals [SensePilot](https://sensepilot.com) en [Playability](https://www.playability.gg) bieden gezichtsbesturing, maar ondersteunen doorgaans slechts **één gezichtsuitdrukking per toetsaanslag**. Voor gebruikers met complexe motorische beperkingen is dat niet genoeg — hun bruikbare gezichtsbewegingen zijn vaak subtiel en niet eenduidig te vangen met een enkele meting.
+
+MimiControl lost dit op door **meerdere gezichtsmetingen te combineren tot één trigger**. Zo kun je bijvoorbeeld een lach *én* een wenkbrauwbeweging *samen* koppelen aan één toetsaanslag — waardoor de herkenning nauwkeuriger wordt en onbedoelde activeringen (door spasmen) worden gefilterd. Elke meting krijgt een eigen drempelwaarde die individueel is af te stellen, zodat de trigger precies past bij de mogelijkheden van de gebruiker.
+
 ---
 
 ## Versies
