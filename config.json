@@ -1,9 +1,0 @@
-{
-    "drempelwaarde_breedte": 0.558089,
-    "drempelwaarde_hoogte": 0.559603,
-    "toetsen": [
-        "space"
-    ],
-    "cooldown": 2.0,
-    "vasthoud_tijd": 0.5
-}

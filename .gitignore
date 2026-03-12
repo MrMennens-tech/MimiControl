@@ -1,9 +1,14 @@
 __pycache__/
 *.pyc
 *.pyo
+
 build/
 dist/
+releases/
 *.spec
+
 config.json
 config_multi.json
 config_explorer.json
+
+*.mp4

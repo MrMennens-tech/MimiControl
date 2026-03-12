@@ -26,7 +26,7 @@ echo.
 
 where pythonw >nul 2>&1
 if errorlevel 1 (
-    python mimiexplorer_ctk.py
+    python app\mimiexplorer_ctk.py
     if errorlevel 1 (
         echo.
         echo  [FOUT] MimiControl Studio is onverwacht gestopt.
@@ -36,5 +36,5 @@ if errorlevel 1 (
         exit /b 1
     )
 ) else (
-    start "" pythonw mimiexplorer_ctk.py
+    start "" pythonw app\mimiexplorer_ctk.py
 )

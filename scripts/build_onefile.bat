@@ -7,16 +7,15 @@ setlocal EnableDelayedExpansion
 :: =============================================================================
 ::
 :: Gebruik:
-::   1. Zorg dat face_landmarker.task in deze map staat (download van mediapipe)
-::   2. Dubbelklik build_onefile.bat of voer uit in de projectmap
-::   3. De .exe verschijnt in dist\MimiControl Studio.exe
+::   1. Dubbelklik build_onefile.bat
+::   2. De .exe verschijnt in ..\releases\MimiControl Studio.exe
 ::
 :: Vereisten: Python met alle dependencies uit requirements.txt
 :: =============================================================================
 
 set "SCRIPTDIR=%~dp0"
-set "SCRIPTDIR=%SCRIPTDIR:~0,-1%"
-cd /d "%SCRIPTDIR%"
+set "PROJECTDIR=%SCRIPTDIR%.."
+cd /d "%PROJECTDIR%"
 
 echo.
 echo [MimiControl Studio] Build-proces gestart...
@@ -46,17 +45,21 @@ if not defined CTK_PATH (
 )
 echo [OK] CustomTkinter data: %CTK_PATH%
 
+:: Maak releases map aan als die niet bestaat
+if not exist "releases" mkdir releases
+
 :: Bouw de executable
 echo.
 echo [MimiControl Studio] PyInstaller wordt uitgevoerd...
 echo.
 
-if exist "face_landmarker.task" (
+if exist "app\face_landmarker.task" (
     python -m PyInstaller --onefile --windowed --name "MimiControl Studio" ^
-        --icon "assets\mimicontrol.ico" ^
-        --add-data "face_landmarker.task;." ^
-        --add-data "assets\logo_mennens.png;assets" ^
-        --add-data "assets\mimicontrol.ico;assets" ^
+        --distpath "releases" ^
+        --icon "app\assets\mimicontrol.ico" ^
+        --add-data "app\face_landmarker.task;." ^
+        --add-data "app\assets\logo_mennens.png;assets" ^
+        --add-data "app\assets\mimicontrol.ico;assets" ^
         --add-data "%CTK_PATH%;customtkinter" ^
         --hidden-import=customtkinter ^
         --hidden-import=mediapipe ^
@@ -64,14 +67,15 @@ if exist "face_landmarker.task" (
         --hidden-import=PIL ^
         --hidden-import=PIL._tkinter_finder ^
         --hidden-import=pyautogui ^
-        mimiexplorer_ctk.py
+        app\mimiexplorer_ctk.py
 ) else (
-    echo [Waarschuwing] face_landmarker.task niet gevonden. Build zonder model. Plaats het bestand in de map voor volledige functionaliteit.
+    echo [Waarschuwing] face_landmarker.task niet gevonden in app\. Build zonder model.
     echo.
     python -m PyInstaller --onefile --windowed --name "MimiControl Studio" ^
-        --icon "assets\mimicontrol.ico" ^
-        --add-data "assets\logo_mennens.png;assets" ^
-        --add-data "assets\mimicontrol.ico;assets" ^
+        --distpath "releases" ^
+        --icon "app\assets\mimicontrol.ico" ^
+        --add-data "app\assets\logo_mennens.png;assets" ^
+        --add-data "app\assets\mimicontrol.ico;assets" ^
         --add-data "%CTK_PATH%;customtkinter" ^
         --hidden-import=customtkinter ^
         --hidden-import=mediapipe ^
@@ -79,7 +83,7 @@ if exist "face_landmarker.task" (
         --hidden-import=PIL ^
         --hidden-import=PIL._tkinter_finder ^
         --hidden-import=pyautogui ^
-        mimiexplorer_ctk.py
+        app\mimiexplorer_ctk.py
 )
 
 if errorlevel 1 (
@@ -91,6 +95,6 @@ if errorlevel 1 (
 
 echo.
 echo [Succes] Build voltooid!
-echo    Executable: dist\MimiControl Studio.exe
+echo    Executable: releases\MimiControl Studio.exe
 echo.
 pause
