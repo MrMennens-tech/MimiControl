@@ -6,6 +6,8 @@ camera-selectie en timing-instellingen.
 
 import sys
 import os
+import subprocess
+import threading
 import tkinter as tk
 from tkinter import messagebox
 from PIL import Image
@@ -60,14 +62,42 @@ TRIGGER_ACCENTEN = ["#4DB8BE", "#3D8FA5", "#68CCD1", "#2E7A8A", "#89D4D8"]
 # ---------------------------------------------------------------------------
 # Camera-detectie
 # ---------------------------------------------------------------------------
+def _haal_wmi_camera_namen():
+    """Haal camera-namen op via PowerShell/WMI (alleen Windows)."""
+    if sys.platform != "win32":
+        return []
+    try:
+        result = subprocess.run(
+            ["powershell", "-NoProfile", "-Command",
+             'Get-CimInstance Win32_PnPEntity | '
+             'Where-Object {$_.PNPClass -eq "Camera" -or $_.PNPClass -eq "Image"} | '
+             'Select-Object -ExpandProperty Name'],
+            capture_output=True, text=True, timeout=5,
+            creationflags=subprocess.CREATE_NO_WINDOW,
+        )
+        if result.returncode == 0 and result.stdout.strip():
+            return [n.strip() for n in result.stdout.strip().split("\n") if n.strip()]
+    except Exception:
+        pass
+    return []
+
+
 def detecteer_cameras(max_cameras=5):
-    """Detecteer beschikbare camera's via OpenCV."""
+    """Detecteer beschikbare camera's via OpenCV, verrijkt met WMI-namen."""
+    wmi_namen = _haal_wmi_camera_namen()
+
     cameras = []
+    wmi_idx = 0
     for i in range(max_cameras):
         cap = cv2.VideoCapture(i)
         if cap.isOpened():
-            cameras.append((i, f"Camera {i}"))
             cap.release()
+            if wmi_idx < len(wmi_namen):
+                label = f"{wmi_namen[wmi_idx]} (Camera {i})"
+                wmi_idx += 1
+            else:
+                label = f"Camera {i}"
+            cameras.append((i, label))
     return cameras
 
 
@@ -201,14 +231,14 @@ class MimiControlStudioApp:
         self.trigger_scroll.pack(fill="both", expand=True, padx=28, pady=(8, 12))
 
     def _bouw_camera_selectie(self):
-        """Camera-selectie dropdown boven de actieknoppen."""
-        cam_frame = ctk.CTkFrame(self.app, fg_color=KAART,
-                                  corner_radius=12, border_width=1,
-                                  border_color=RAND)
-        cam_frame.pack(fill="x", padx=32, pady=(14, 0))
+        """Camera-selectie dropdown met preview boven de actieknoppen."""
+        self.cam_frame = ctk.CTkFrame(self.app, fg_color=KAART,
+                                       corner_radius=12, border_width=1,
+                                       border_color=RAND)
+        self.cam_frame.pack(fill="x", padx=32, pady=(14, 0))
 
-        rij = ctk.CTkFrame(cam_frame, fg_color="transparent")
-        rij.pack(fill="x", padx=20, pady=12)
+        rij = ctk.CTkFrame(self.cam_frame, fg_color="transparent")
+        rij.pack(fill="x", padx=20, pady=(12, 6))
 
         ctk.CTkLabel(rij, text="Camera:",
                      font=(FONT, 13, "bold"), text_color=TEKST
@@ -219,9 +249,10 @@ class MimiControlStudioApp:
 
         if self._cameras:
             cam_namen = [naam for _, naam in self._cameras]
-            huidige_naam = f"Camera {huidige_index}"
-            if huidige_naam not in cam_namen:
-                huidige_naam = cam_namen[0]
+            huidige_naam = next(
+                (naam for idx, naam in self._cameras if idx == huidige_index),
+                cam_namen[0],
+            )
         else:
             cam_namen = ["Geen camera gevonden"]
             huidige_naam = cam_namen[0]
@@ -231,7 +262,7 @@ class MimiControlStudioApp:
             font=(FONT, 13), dropdown_font=(FONT, 12),
             fg_color=TEAL_BTN, button_color=TEAL_HOVER,
             button_hover_color=TEAL_HOVER,
-            corner_radius=10, height=34, width=180,
+            corner_radius=10, height=34, width=280,
             command=self._on_camera_change
         )
         self.camera_dropdown.set(huidige_naam)
@@ -250,6 +281,27 @@ class MimiControlStudioApp:
                      font=(FONT, 12), text_color=TEKST_LICHT
                      ).pack(side="right", padx=(0, 4))
 
+        # --- Camera preview ---
+        self._preview_ctk_img = None
+        preview_rij = ctk.CTkFrame(self.cam_frame, fg_color="transparent")
+        preview_rij.pack(fill="x", padx=20, pady=(0, 12))
+
+        self.preview_btn = ctk.CTkButton(
+            preview_rij, text="Camera preview",
+            font=(FONT, 12), height=30, width=130,
+            fg_color=DONKER, hover_color=DONKER_HOVER,
+            corner_radius=8, cursor="hand2",
+            command=self._toon_camera_preview
+        )
+        self.preview_btn.pack(side="left")
+
+        self.preview_label = ctk.CTkLabel(
+            preview_rij, text="", fg_color=BG,
+            corner_radius=8, width=200, height=150,
+        )
+        self.preview_label.pack(side="left", padx=(12, 0))
+        self.preview_label.pack_forget()
+
     def _on_camera_change(self, keuze):
         """Callback wanneer de gebruiker een andere camera kiest."""
         for idx, naam in self._cameras:
@@ -258,6 +310,7 @@ class MimiControlStudioApp:
                 config["camera_index"] = idx
                 sla_explorer_config_op(config)
                 break
+        self._toon_camera_preview()
 
     def _ververs_cameras(self):
         """Herdetecteer beschikbare camera's."""
@@ -271,6 +324,67 @@ class MimiControlStudioApp:
             self.camera_dropdown.set(cam_namen[0])
             if self._cameras:
                 self._on_camera_change(cam_namen[0])
+
+    # ---- Camera preview ----
+
+    def _toon_camera_preview(self):
+        """Pak één frame van de geselecteerde camera en toon als preview."""
+        cam_idx = self._get_camera_index()
+        self.preview_btn.configure(state="disabled", text="Laden...")
+        self.preview_label.configure(image=None, text="")
+        self.preview_label.pack(side="left", padx=(12, 0))
+
+        def _grab():
+            frame = None
+            try:
+                cap = cv2.VideoCapture(cam_idx)
+                if cap.isOpened():
+                    for _ in range(5):
+                        cap.read()
+                    ret, frame = cap.read()
+                    cap.release()
+                    if not ret:
+                        frame = None
+            except Exception:
+                frame = None
+            self.app.after(0, lambda: self._update_preview(frame))
+
+        threading.Thread(target=_grab, daemon=True).start()
+
+    def _update_preview(self, frame):
+        """Update het preview-label met het opgehaalde frame."""
+        self.preview_btn.configure(state="normal", text="Camera preview")
+
+        if frame is None:
+            self.preview_label.configure(
+                image=None,
+                text="Geen beeld beschikbaar",
+                font=(FONT, 11),
+                text_color=TEKST_LICHT,
+            )
+            self.preview_label.pack(side="left", padx=(12, 0))
+            return
+
+        frame_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+        h, w = frame_rgb.shape[:2]
+        max_w, max_h = 200, 150
+        schaal = min(max_w / w, max_h / h)
+        nieuw_w = int(w * schaal)
+        nieuw_h = int(h * schaal)
+        frame_klein = cv2.resize(frame_rgb, (nieuw_w, nieuw_h),
+                                 interpolation=cv2.INTER_AREA)
+
+        pil_img = Image.fromarray(frame_klein)
+        self._preview_ctk_img = ctk.CTkImage(
+            light_image=pil_img, size=(nieuw_w, nieuw_h)
+        )
+        self.preview_label.configure(
+            image=self._preview_ctk_img,
+            text="",
+            width=nieuw_w,
+            height=nieuw_h,
+        )
+        self.preview_label.pack(side="left", padx=(12, 0))
 
     # ---- Profiel ----
 
