@@ -319,6 +319,10 @@ def start_explorer(top_n=TOP_N, camera_index=0):
         print("  [!] Kan de webcam niet openen!")
         return None
 
+    # Camera warmup: eerste frames zijn vaak zwart op Windows
+    for _ in range(8):
+        cap.read()
+
     landmarker = maak_blendshape_landmarker(modus="video")
     ts = 0
     font = cv2.FONT_HERSHEY_SIMPLEX
@@ -340,6 +344,9 @@ def start_explorer(top_n=TOP_N, camera_index=0):
     print("  R       = Reset filter naar selectie")
     print("  Q       = Terug zonder opslaan\n")
 
+    cv2.namedWindow("MimiExplorer (Q=sluiten)", cv2.WINDOW_NORMAL)
+    eerste_frame = True
+
     while True:
         ret, frame = cap.read()
         if not ret:
@@ -352,6 +359,8 @@ def start_explorer(top_n=TOP_N, camera_index=0):
         bar_panel_w = 420
         canvas = np.zeros((cam_h, cam_w + bar_panel_w, 3), dtype=np.uint8)
         canvas[:, :cam_w] = frame
+        # Subtiele achtergrond voor het bar-panel zodat het niet zwart is
+        canvas[:, cam_w:] = (25, 25, 30)
 
         rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
         ts += 33
@@ -404,6 +413,9 @@ def start_explorer(top_n=TOP_N, camera_index=0):
             if zichtbare_bs is not None:
                 toon_scores = {k: v for k, v in scores.items()
                                if k in zichtbare_bs}
+            # Fallback: als filter leeg resultaat geeft, toon alle scores
+            if not toon_scores:
+                toon_scores = scores
             n_items = len(toon_scores)
             beschikbaar = cam_h - 60
             bh = max(8, min(14, beschikbaar // max(n_items, 1) - 4))
@@ -414,6 +426,21 @@ def start_explorer(top_n=TOP_N, camera_index=0):
                 pieken=pieken if heeft_pieken else None,
                 top_n_namen=top_namen if heeft_pieken else None
             )
+        else:
+            # Nog geen scores (geen gezicht) - toon labels als placeholder
+            y_placeholder = 50
+            for bs_naam in sorted(zichtbare_bs):
+                label = nl_label(bs_naam)
+                cv2.putText(canvas, label, (cam_w + 10, y_placeholder + 11),
+                            font, 0.35, (80, 80, 80), 1)
+                bx = cam_w + 155
+                cv2.rectangle(canvas, (bx, y_placeholder),
+                              (bx + 160, y_placeholder + 14),
+                              (40, 40, 40), -1)
+                y_placeholder += 18
+
+        # Verticale scheiding webcam / bar-panel
+        cv2.line(canvas, (cam_w, 0), (cam_w, cam_h), (60, 60, 60), 2)
 
         # Instructies bovenaan het bar-panel
         ix = cam_w + 10
@@ -432,6 +459,11 @@ def start_explorer(top_n=TOP_N, camera_index=0):
                         (10, 30), font, 0.65, (0, 0, 255), 2)
 
         cv2.imshow("MimiExplorer (Q=sluiten)", canvas)
+
+        if eerste_frame:
+            cv2.resizeWindow("MimiExplorer (Q=sluiten)",
+                             cam_w + bar_panel_w, cam_h)
+            eerste_frame = False
 
         key = cv2.waitKey(1) & 0xFF
 
@@ -467,6 +499,7 @@ def start_explorer(top_n=TOP_N, camera_index=0):
                         top_namen = {naam for naam, _ in gesorteerd[:top_n]}
                     zichtbare_bs = set(gefilterd.keys())
                     print(f"  [OK] Filter toegepast: {len(zichtbare_bs)} blendshapes zichtbaar")
+            cv2.namedWindow("MimiExplorer (Q=sluiten)", cv2.WINDOW_NORMAL)
 
         elif key == ord('r'):
             zichtbare_bs = set(originele_selectie)
