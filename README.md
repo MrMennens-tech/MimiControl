@@ -141,12 +141,14 @@ De **onefile** variant is één enkel bestand dat je direct kunt delen. De **one
 
 | Component | Technologie |
 |-----------|-------------|
-| Gezichtsherkenning | MediaPipe FaceLandmarker (52 blendshapes) |
+| Gezichtsherkenning | MediaPipe FaceLandmarker (51 blendshapes¹) |
 | Webcam | OpenCV |
 | Toetsaanslagen | PyAutoGUI |
 | GUI | CustomTkinter |
 | Configuratie | JSON |
 | Taal | Python 3.10+ |
+
+¹ Het MediaPipe-model ondersteunt 51 van de 52 ARKit-blendshapes; `tongueOut` ontbreekt ([details](https://github.com/google/mediapipe/issues/4403)).
 
 ---
 
@@ -184,6 +186,12 @@ Alle code is gecontroleerd en getest door de ontwikkelaar.
 - Optimalisatie voor verschillende webcams en lichtomstandigheden
 - Uitgebreidere foutafhandeling
 - Documentatie voor eindgebruikers
+
+### Bekende beperkingen
+
+| Blendshape | Status | Toelichting |
+|------------|--------|-------------|
+| `tongueOut` (Tong uitsteken) | ⚠ Niet beschikbaar | Het MediaPipe FaceLandmarker model (v2) retourneert deze blendshape niet, ondanks vermelding in de ARKit-spec. Dit is een [bekend probleem](https://github.com/google/mediapipe/issues/4403) sinds mei 2023. De blendshape is uitgeschakeld in de selectie-dialoog. |
 
 ---
 

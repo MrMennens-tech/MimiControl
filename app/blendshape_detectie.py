@@ -94,6 +94,10 @@ TESSELATION = vision.FaceLandmarksConnections.FACE_LANDMARKS_TESSELATION
 LIPPEN = vision.FaceLandmarksConnections.FACE_LANDMARKS_LIPS
 
 
+NIET_ONDERSTEUND = {
+    "tongueOut",
+}
+
 def nl_label(naam):
     """Geef het Nederlandse label voor een blendshape, of de originele naam."""
     return NL_LABELS.get(naam, naam)
@@ -122,12 +126,17 @@ def maak_blendshape_landmarker(modus="video"):
     return vision.FaceLandmarker.create_from_options(options)
 
 
+_blendshape_namen_gelogd = False
+
+
 def detecteer_blendshapes(landmarker, frame_rgb, timestamp_ms):
     """
     Voer detectie uit en retourneer (landmarks, blendshape_dict).
-    blendshape_dict: {naam: score} voor alle 52 blendshapes.
+    blendshape_dict: {naam: score} voor alle beschikbare blendshapes.
     landmarks: lijst van landmarks voor het eerste gezicht, of None.
     """
+    global _blendshape_namen_gelogd
+
     mp_image = mp.Image(image_format=mp.ImageFormat.SRGB, data=frame_rgb)
     resultaat = landmarker.detect_for_video(mp_image, timestamp_ms)
 
@@ -141,6 +150,16 @@ def detecteer_blendshapes(landmarker, frame_rgb, timestamp_ms):
         for cat in resultaat.face_blendshapes[0]:
             if cat.category_name != "_neutral":
                 scores[cat.category_name] = cat.score
+
+        if not _blendshape_namen_gelogd and scores:
+            _blendshape_namen_gelogd = True
+            namen = sorted(scores.keys())
+            print(f"  [DEBUG] MediaPipe blendshapes ({len(namen)}): "
+                  f"{', '.join(namen)}")
+            ontbrekend = set(NL_LABELS.keys()) - set(namen)
+            if ontbrekend:
+                print(f"  [DEBUG] Niet geleverd door model: "
+                      f"{', '.join(sorted(ontbrekend))}")
 
     return landmarks, scores
 

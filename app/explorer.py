@@ -12,7 +12,8 @@ import numpy as np
 
 from blendshape_detectie import (
     maak_blendshape_landmarker, detecteer_blendshapes,
-    teken_face_mesh_simpel, teken_blendshape_bars, nl_label
+    teken_face_mesh_simpel, teken_blendshape_bars, nl_label,
+    NIET_ONDERSTEUND
 )
 
 TOP_N = 5  # standaard aantal pieken dat gehighlight wordt
@@ -52,7 +53,7 @@ STANDAARD_SELECTIE = {
     "eyeSquintLeft", "eyeSquintRight",
     "browDownLeft", "browDownRight", "browInnerUp",
     "browOuterUpLeft", "browOuterUpRight",
-    "jawOpen", "tongueOut",
+    "jawOpen",
     "cheekPuff",
     "noseSneerLeft", "noseSneerRight",
 }
@@ -115,17 +116,27 @@ def _toon_blendshape_selectie_vooraf():
         groep_check_vars = []
 
         for bs_naam in bs_lijst:
-            var = ctk.IntVar(value=1 if bs_naam in STANDAARD_SELECTIE else 0)
+            niet_beschikbaar = bs_naam in NIET_ONDERSTEUND
+            var = ctk.IntVar(value=0 if niet_beschikbaar else
+                             (1 if bs_naam in STANDAARD_SELECTIE else 0))
             checks[bs_naam] = var
             groep_check_vars.append(var)
 
-            ctk.CTkCheckBox(
-                groep_frame, text=nl_label(bs_naam),
+            label_tekst = nl_label(bs_naam)
+            if niet_beschikbaar:
+                label_tekst += "  ⚠ niet beschikbaar in model"
+
+            cb = ctk.CTkCheckBox(
+                groep_frame, text=label_tekst,
                 font=(FONT, 11), variable=var,
-                fg_color="#4DB8BE", hover_color="#3A9DA3",
-                text_color="#1C1C1E",
+                fg_color="#4DB8BE" if not niet_beschikbaar else "#AAAAAA",
+                hover_color="#3A9DA3" if not niet_beschikbaar else "#999999",
+                text_color="#1C1C1E" if not niet_beschikbaar else "#999999",
                 checkbox_width=18, checkbox_height=18
-            ).pack(anchor="w", padx=20, pady=1)
+            )
+            cb.pack(anchor="w", padx=20, pady=1)
+            if niet_beschikbaar:
+                cb.configure(state="disabled")
 
         # Alles aan/uit knoppen per groep
         btn_rij = ctk.CTkFrame(groep_header, fg_color="transparent")
