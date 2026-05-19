@@ -2,12 +2,14 @@
 MimiExplorer - Live Modus
 Controleert alle geconfigureerde triggers gelijktijdig op basis
 van blendshape-scores, met anti-spasme filter en cooldown.
-Bevat een apart CustomTkinter paneel voor live drempelaanpassingen.
+Bevat een apart CustomTkinter paneel voor live drempelaanpassingen
+en een info-paneel onder het webcambeeld.
 """
 
 import cv2
 import time
 import threading
+import numpy as np
 import pyautogui
 
 import customtkinter as ctk
@@ -23,7 +25,7 @@ pyautogui.FAILSAFE = True
 pyautogui.PAUSE = 0.05
 
 # ---------------------------------------------------------------------------
-# Mennens.Tech kleurenpalet
+# Mennens.Tech kleurenpalet — Hex voor CustomTkinter
 # ---------------------------------------------------------------------------
 DONKER      = "#062D36"
 TEAL_BTN    = "#4DB8BE"
@@ -36,39 +38,52 @@ RAND        = "#E5E5EA"
 TEAL_BRAND  = "#68CCD1"
 FONT        = "Segoe UI"
 
-# Kleuren voor triggers in het OpenCV-venster (BGR)
-TRIGGER_KLEUREN = [
-    (0, 220, 0),
-    (220, 160, 0),
-    (0, 120, 255),
-    (180, 0, 220),
-    (0, 220, 220),
+# ---------------------------------------------------------------------------
+# BGR kleuren voor het OpenCV info-paneel
+# ---------------------------------------------------------------------------
+BGR_DONKER      = (54, 45, 6)       # #062D36
+BGR_TEAL        = (190, 184, 77)    # #4DB8BE
+BGR_BRAND       = (209, 204, 104)   # #68CCD1
+BGR_WIT         = (255, 255, 255)
+BGR_GROEN       = (60, 200, 0)
+BGR_ROOD        = (70, 70, 220)
+BGR_GRIJS       = (140, 140, 140)
+BGR_DONKERGRIJS = (60, 60, 60)
+BGR_SCHEIDING   = (70, 60, 12)
+
+TRIGGER_KLEUREN_BGR = [
+    (190, 184, 77),
+    (209, 204, 104),
+    (180, 160, 60),
+    (160, 200, 80),
+    (220, 200, 90),
 ]
 
 
 # ---------------------------------------------------------------------------
-# CustomTkinter slider-paneel voor live drempelaanpassingen
+# CustomTkinter slider-paneel met filter-checkboxes
 # ---------------------------------------------------------------------------
 class DrempelPaneel:
     """
     Apart CTk-venster dat naast het webcam-venster verschijnt.
-    Toont per trigger de blendshapes met sliders, zodat de
-    gebruiker drempels real-time kan bijstellen.
+    Toont per trigger de blendshapes met sliders voor drempels
+    en checkboxes om zichtbaarheid in het info-paneel te regelen.
     """
 
     def __init__(self, triggers):
         self._triggers = triggers
         self._gesloten = False
-        self._slider_refs = {}    # {(trigger_idx, bs_naam): slider}
-        self._waarde_refs = {}    # {(trigger_idx, bs_naam): label}
-        self._status_refs = {}    # {trigger_idx: status_label}
+        self._slider_refs = {}
+        self._waarde_refs = {}
+        self._status_refs = {}
+        self._filter_vars = {}    # {(trigger_idx, bs_naam): IntVar}
         self._lock = threading.Lock()
 
         self.venster = ctk.CTkToplevel()
         self.venster.title("Drempel Aanpassingen — MimiControl")
         self.venster.configure(fg_color=BG)
-        self.venster.geometry("420x640+50+50")
-        self.venster.minsize(380, 400)
+        self.venster.geometry("480x700+50+50")
+        self.venster.minsize(420, 400)
         self.venster.resizable(True, True)
         self.venster.protocol("WM_DELETE_WINDOW", self._sluit)
 
@@ -80,16 +95,20 @@ class DrempelPaneel:
         self._bouw_ui()
 
     def _bouw_ui(self):
-        # Header
         header = ctk.CTkFrame(self.venster, fg_color=DONKER, corner_radius=0, height=56)
         header.pack(fill="x")
         header.pack_propagate(False)
         ctk.CTkLabel(
-            header, text="Live Drempels Aanpassen",
+            header, text="Live Drempels & Filter",
             font=(FONT, 16, "bold"), text_color=KAART
         ).pack(pady=14)
 
-        # Scrollbaar trigger-overzicht
+        ctk.CTkLabel(
+            self.venster,
+            text="Vinkje = toon in overlay   |   Slider = drempel aanpassen",
+            font=(FONT, 10), text_color=TEKST_LICHT
+        ).pack(pady=(6, 2))
+
         scroll = ctk.CTkScrollableFrame(self.venster, fg_color=BG, corner_radius=0)
         scroll.pack(fill="both", expand=True, padx=0, pady=0)
 
@@ -101,16 +120,13 @@ class DrempelPaneel:
                 t_idx % 5
             ]
 
-            # Trigger-kaart
             kaart = ctk.CTkFrame(scroll, fg_color=KAART, corner_radius=12,
                                  border_width=1, border_color=RAND)
             kaart.pack(fill="x", padx=12, pady=6)
 
-            # Accent-balk
             ctk.CTkFrame(kaart, fg_color=accent, height=3, corner_radius=0
                          ).pack(fill="x", padx=10, pady=(8, 0))
 
-            # Titel-rij met naam, toets en live status
             titel_rij = ctk.CTkFrame(kaart, fg_color="transparent")
             titel_rij.pack(fill="x", padx=12, pady=(6, 2))
 
@@ -133,15 +149,23 @@ class DrempelPaneel:
             status_lbl.pack(side="right", padx=(0, 8))
             self._status_refs[t_idx] = status_lbl
 
-            # Sliders per blendshape
             for bs_naam, drempel in trigger["blendshapes"].items():
                 rij = ctk.CTkFrame(kaart, fg_color="transparent")
                 rij.pack(fill="x", padx=14, pady=2)
 
+                filter_var = ctk.IntVar(value=1)
+                self._filter_vars[(t_idx, bs_naam)] = filter_var
+                ctk.CTkCheckBox(
+                    rij, text="", width=24, height=24,
+                    variable=filter_var,
+                    fg_color=TEAL_BTN, hover_color=TEAL_HOVER,
+                    checkbox_width=18, checkbox_height=18
+                ).pack(side="left", padx=(0, 4))
+
                 ctk.CTkLabel(
                     rij, text=nl_label(bs_naam),
                     font=(FONT, 11), text_color=TEKST_LICHT,
-                    width=140, anchor="w"
+                    width=130, anchor="w"
                 ).pack(side="left")
 
                 waarde_lbl = ctk.CTkLabel(
@@ -161,10 +185,8 @@ class DrempelPaneel:
                 slider.pack(side="left", fill="x", expand=True, padx=(4, 4))
                 self._slider_refs[(t_idx, bs_naam)] = slider
 
-            # Ruimte onderaan kaart
             ctk.CTkFrame(kaart, fg_color="transparent", height=6).pack()
 
-        # Opslaan-knop onderaan
         btn_frame = ctk.CTkFrame(self.venster, fg_color=BG, height=56)
         btn_frame.pack(fill="x")
         btn_frame.pack_propagate(False)
@@ -201,6 +223,18 @@ class DrempelPaneel:
         with self._lock:
             return self._triggers[trigger_idx]["blendshapes"].get(bs_naam, 0)
 
+    def is_zichtbaar(self, trigger_idx, bs_naam):
+        """Check of een blendshape zichtbaar moet zijn in het info-paneel."""
+        if self._gesloten:
+            return True
+        var = self._filter_vars.get((trigger_idx, bs_naam))
+        if var is None:
+            return True
+        try:
+            return var.get() == 1
+        except Exception:
+            return True
+
     def _sluit(self):
         """Config opslaan en venster sluiten."""
         self._gesloten = True
@@ -217,136 +251,224 @@ class DrempelPaneel:
 
 
 # ---------------------------------------------------------------------------
-# Verbeterde overlay met grotere tekst en kleurcodering
+# Robuuste webcam-opening met retry en DirectShow fallback
 # ---------------------------------------------------------------------------
-def teken_live_overlay(frame, scores, triggers, trigger_states,
-                       nu, vasthoud_tijd, laatste_actie, cooldown,
-                       actie_flash, actie_idx, gezicht_ok):
-    """Teken overlay met trigger-statussen en actieve blendshapes."""
-    h, w, _ = frame.shape
+def _open_webcam_robuust(camera_index, max_pogingen=3, wachttijd=1.5):
+    """
+    Probeer de webcam te openen met retry-logica.
+    Retourneert (cap, foutmelding) — cap is None bij falen.
+    """
+    for poging in range(1, max_pogingen + 1):
+        try:
+            print(f"  [INFO] Webcam openen (poging {poging}/{max_pogingen})...")
+            if poging > 1:
+                cap = cv2.VideoCapture(camera_index, cv2.CAP_DSHOW)
+            else:
+                cap = cv2.VideoCapture(camera_index)
+        except Exception as e:
+            print(f"  [!] Fout bij openen webcam: {e}")
+            if poging < max_pogingen:
+                time.sleep(wachttijd)
+            continue
+
+        if not cap.isOpened():
+            print(f"  [!] Webcam niet beschikbaar (poging {poging})")
+            try:
+                cap.release()
+            except Exception:
+                pass
+            if poging < max_pogingen:
+                time.sleep(wachttijd)
+            continue
+
+        # Probeer eerste frames te lezen (sommige webcams hebben opstarttijd)
+        frame_ok = False
+        for leespoging in range(5):
+            try:
+                ret, frame = cap.read()
+                if ret and frame is not None:
+                    frame_ok = True
+                    break
+            except Exception:
+                pass
+            time.sleep(0.3)
+
+        if frame_ok:
+            print(f"  [OK] Webcam geopend op poging {poging}")
+            return cap, None
+
+        print(f"  [!] Kan geen frame lezen van webcam (poging {poging})")
+        try:
+            cap.release()
+        except Exception:
+            pass
+        if poging < max_pogingen:
+            time.sleep(wachttijd)
+
+    fout = (
+        f"Kan webcam {camera_index} niet openen na {max_pogingen} pogingen.\n\n"
+        "Mogelijke oorzaken:\n"
+        "- Webcam is in gebruik door een ander programma\n"
+        "- Webcam is niet aangesloten\n"
+        "- Webcam wordt niet ondersteund\n\n"
+        "Probeer een andere camera-index in de instellingen."
+    )
+    return None, fout
+
+
+# ---------------------------------------------------------------------------
+# Info-paneel onder het webcambeeld (donkere Mennens.Tech stijl)
+# ---------------------------------------------------------------------------
+def _maak_info_paneel(breedte, trigger_data, trigger_states,
+                      nu, vasthoud_tijd, laatste_actie, cooldown,
+                      actie_flash, actie_idx, gezicht_ok, paneel=None):
+    """
+    Bouw een donker info-paneel als numpy-array.
+    trigger_data: lijst van dicts met 'trigger', 'bs_matches', 'alle_match'.
+    """
     font = cv2.FONT_HERSHEY_SIMPLEX
 
-    actieve_triggers = [t for t in triggers if t.get("blendshapes")]
+    # Bereken benodigde hoogte
+    zichtbare_regels = 0
+    for i, td in enumerate(trigger_data):
+        zichtbare_regels += 1.3
+        for bs_naam in td["bs_matches"]:
+            if paneel is None or paneel.is_zichtbaar(i, bs_naam):
+                zichtbare_regels += 1
+        zichtbare_regels += 0.4
 
-    # Bereken overlay hoogte: titel + triggers + blendshape details
-    regels = 2 + len(actieve_triggers) * 3
-    overlay_h = max(80, 32 + regels * 22)
-    overlay_h = min(overlay_h, h - 40)
+    hoogte = max(80, int(50 + zichtbare_regels * 28 + 35))
+    info = np.full((hoogte, breedte, 3), BGR_DONKER, dtype=np.uint8)
 
-    overlay = frame.copy()
-    cv2.rectangle(overlay, (0, 0), (w, overlay_h), (0, 0, 0), -1)
-    cv2.addWeighted(overlay, 0.7, frame, 0.3, 0, frame)
+    # Teal accentlijn bovenaan
+    cv2.rectangle(info, (0, 0), (breedte, 3), BGR_TEAL, -1)
+
+    y = 30
 
     if not gezicht_ok:
-        cv2.putText(frame, "GEEN GEZICHT GEDETECTEERD",
-                    (10, 32), font, 0.7, (0, 0, 255), 2)
-        return []
+        cv2.putText(info, "GEEN GEZICHT GEDETECTEERD",
+                    (15, y), font, 0.65, BGR_ROOD, 2)
+        return info[:max(y + 25, 60), :, :]
 
-    y = 28
     in_cooldown = (nu - laatste_actie) < cooldown
     actie_recent = (nu - actie_flash) < 1.0
-    trigger_actief_lijst = []
 
-    for i, trigger in enumerate(actieve_triggers):
-        kleur = TRIGGER_KLEUREN[i % len(TRIGGER_KLEUREN)]
+    for i, td in enumerate(trigger_data):
+        trigger = td["trigger"]
+        bs_matches = td["bs_matches"]
+        alle_match = td["alle_match"]
+        state = trigger_states[i]
+
+        kleur = TRIGGER_KLEUREN_BGR[i % len(TRIGGER_KLEUREN_BGR)]
         toets = " + ".join(trigger["toetsen"]).upper()
 
-        # Check welke blendshapes matchen
-        bs_matches = {}
-        alle_match = True
-        for bs_naam, drempel in trigger["blendshapes"].items():
-            huidige_score = scores.get(bs_naam, 0)
-            bs_matches[bs_naam] = (huidige_score, drempel, huidige_score > drempel)
-            if huidige_score <= drempel:
-                alle_match = False
+        # Accentlijn links van de trigger
+        cv2.rectangle(info, (8, y - 16), (12, y + 4), kleur, -1)
 
-        state = trigger_states[i]
-        trigger_actief_lijst.append(alle_match)
-
-        # Trigger-naam en status (grotere tekst)
+        # Status bepalen
         if actie_recent and actie_idx == i:
-            label = f"[{i+1}] {trigger['naam']}  [{toets}]"
-            cv2.putText(frame, label,
-                        (10, y), font, 0.6, (0, 255, 255), 2)
-            cv2.putText(frame, ">>> ACTIE UITGEVOERD! <<<",
-                        (w - 310, y), font, 0.55, (0, 255, 255), 2)
+            status_tekst = "ACTIE UITGEVOERD!"
+            status_kleur = (0, 255, 255)
+            naam_kleur = (0, 255, 255)
         elif in_cooldown:
             rest = cooldown - (nu - laatste_actie)
-            label = f"[{i+1}] {trigger['naam']}  [{toets}]"
-            cv2.putText(frame, label,
-                        (10, y), font, 0.55, (100, 100, 100), 1)
-            cv2.putText(frame, f"cooldown {rest:.1f}s",
-                        (w - 180, y), font, 0.5, (100, 100, 100), 1)
+            status_tekst = f"cooldown {rest:.1f}s"
+            status_kleur = BGR_GRIJS
+            naam_kleur = BGR_GRIJS
         elif alle_match and state["start"] is not None:
             duur = nu - state["start"]
-            label = f"[{i+1}] {trigger['naam']}  [{toets}]"
-            cv2.putText(frame, label,
-                        (10, y), font, 0.6, kleur, 2)
-            # Voortgangsbalk voor vasthoudtijd
-            bar_x = w - 200
-            bar_w = 150
-            vr = min(duur / vasthoud_tijd, 1.0)
-            cv2.rectangle(frame, (bar_x, y - 12), (bar_x + bar_w, y + 4),
-                          (40, 40, 40), -1)
-            cv2.rectangle(frame, (bar_x, y - 12),
-                          (bar_x + int(bar_w * vr), y + 4),
-                          kleur, -1)
-            cv2.putText(frame, f"{duur:.1f}s / {vasthoud_tijd:.1f}s",
-                        (bar_x + bar_w + 5, y), font, 0.4, kleur, 1)
+            status_tekst = f"ACTIEF  {duur:.1f}s / {vasthoud_tijd:.1f}s"
+            status_kleur = BGR_GROEN
+            naam_kleur = BGR_WIT
         elif alle_match:
-            label = f"[{i+1}] {trigger['naam']}  [{toets}]  MATCH!"
-            cv2.putText(frame, label,
-                        (10, y), font, 0.6, kleur, 2)
+            status_tekst = "ACTIEF"
+            status_kleur = BGR_GROEN
+            naam_kleur = BGR_WIT
         else:
-            label = f"[{i+1}] {trigger['naam']}  [{toets}]"
-            cv2.putText(frame, label,
-                        (10, y), font, 0.55, (120, 120, 120), 1)
+            status_tekst = "inactief"
+            status_kleur = BGR_DONKERGRIJS
+            naam_kleur = (200, 200, 200)
 
-        y += 24
+        # Trigger naam + toets
+        cv2.putText(info, trigger["naam"], (18, y), font, 0.6, naam_kleur, 2)
+        naam_breedte = cv2.getTextSize(trigger["naam"], font, 0.6, 2)[0][0]
+        cv2.putText(info, f"[{toets}]", (22 + naam_breedte, y),
+                    font, 0.45, BGR_TEAL, 1)
 
-        # Per blendshape: naam, score, drempel, kleurcodering
+        # Status rechts uitgelijnd
+        status_breedte = cv2.getTextSize(status_tekst, font, 0.5, 1)[0][0]
+        dikte = 2 if alle_match or (actie_recent and actie_idx == i) else 1
+        cv2.putText(info, status_tekst,
+                    (breedte - status_breedte - 15, y),
+                    font, 0.5, status_kleur, dikte)
+
+        # Voortgangsbalk bij vasthouden
+        if alle_match and state["start"] is not None and not in_cooldown:
+            duur = nu - state["start"]
+            vr = min(duur / vasthoud_tijd, 1.0)
+            bar_y = y + 5
+            bar_x = breedte - 240
+            bar_w = 220
+            cv2.rectangle(info, (bar_x, bar_y), (bar_x + bar_w, bar_y + 7),
+                          BGR_DONKERGRIJS, -1)
+            cv2.rectangle(info, (bar_x, bar_y),
+                          (bar_x + int(bar_w * vr), bar_y + 7),
+                          BGR_GROEN, -1)
+            y += 14
+
+        y += 28
+
+        # Blendshapes per trigger
         for bs_naam, (score, drempel, match) in bs_matches.items():
+            if paneel and not paneel.is_zichtbaar(i, bs_naam):
+                continue
+
             bs_label = nl_label(bs_naam)
-            if len(bs_label) > 20:
-                bs_label = bs_label[:18] + ".."
+            if len(bs_label) > 24:
+                bs_label = bs_label[:22] + ".."
 
-            if match:
-                bs_kleur = (0, 220, 0)     # groen = boven drempel
-                status_tekst = "OK"
-            else:
-                bs_kleur = (0, 0, 220)     # rood = onder drempel
-                status_tekst = "--"
+            tekst_kleur = BGR_WIT if match else (170, 170, 170)
+            cv2.putText(info, bs_label, (30, y), font, 0.48, tekst_kleur, 1)
 
-            tekst = f"  {bs_label}: {score:.2f} / {drempel:.2f}  [{status_tekst}]"
-            cv2.putText(frame, tekst, (20, y), font, 0.4, bs_kleur, 1)
+            waarde_tekst = f"{score:.2f} / {drempel:.2f}"
+            cv2.putText(info, waarde_tekst, (220, y), font, 0.42,
+                        BGR_GROEN if match else BGR_ROOD, 1)
 
-            # Mini-bar voor score vs drempel
-            bar_x = w - 200
-            bar_w = 120
-            cv2.rectangle(frame, (bar_x, y - 8), (bar_x + bar_w, y + 2),
+            # Score-balk
+            bar_x = breedte - 240
+            bar_w = 220
+            bar_h = 15
+            bar_y_top = y - 12
+
+            cv2.rectangle(info, (bar_x, bar_y_top),
+                          (bar_x + bar_w, bar_y_top + bar_h),
                           (30, 30, 30), -1)
+
             score_px = int(bar_w * min(score, 1.0))
-            drempel_px = int(bar_w * min(drempel, 1.0))
+            bar_kleur = BGR_GROEN if match else BGR_ROOD
             if score_px > 0:
-                cv2.rectangle(frame, (bar_x, y - 8),
-                              (bar_x + score_px, y + 2), bs_kleur, -1)
-            # Drempel-marker (witte lijn)
-            cv2.line(frame, (bar_x + drempel_px, y - 10),
-                     (bar_x + drempel_px, y + 4), (255, 255, 255), 2)
+                cv2.rectangle(info, (bar_x, bar_y_top),
+                              (bar_x + score_px, bar_y_top + bar_h),
+                              bar_kleur, -1)
 
-            y += 18
+            drempel_px = int(bar_w * min(drempel, 1.0))
+            cv2.line(info, (bar_x + drempel_px, bar_y_top - 2),
+                     (bar_x + drempel_px, bar_y_top + bar_h + 2),
+                     BGR_WIT, 2)
 
-        y += 6
+            y += 26
 
-    # Actie-flash rand
-    if actie_recent:
-        dikte = max(4, int(10 * (1 - (nu - actie_flash))))
-        cv2.rectangle(frame, (0, 0), (w - 1, h - 1), (0, 255, 255), dikte)
+        # Scheiding tussen triggers
+        y += 4
+        cv2.line(info, (15, y), (breedte - 15, y), BGR_SCHEIDING, 1)
+        y += 10
 
-    cv2.putText(frame, "Q=stoppen  |  Sliders: drempels live aanpassen",
-                (10, h - 12), font, 0.4, (160, 160, 160), 1)
+    # Footer
+    cv2.putText(info, "Q = stoppen  |  Sliders: drempels live aanpassen",
+                (15, y + 4), font, 0.4, BGR_GRIJS, 1)
+    y += 22
 
-    return trigger_actief_lijst
+    return info[:max(y, 60), :, :]
 
 
 # ---------------------------------------------------------------------------
@@ -367,7 +489,7 @@ def start_live_explorer(camera_index=0):
         return
 
     print("\n" + "=" * 50)
-    print("  LIVE MODUS - MimiExplorer")
+    print("  LIVE MODUS - MimiControl Studio")
     print("=" * 50)
     for i, t in enumerate(actieve):
         toets = " + ".join(t["toetsen"]).upper()
@@ -376,14 +498,19 @@ def start_live_explorer(camera_index=0):
     print(f"\n  Cooldown: {cooldown}s  |  Vasthoudtijd: {vasthoud_tijd}s")
     print("  [INFO] Slider-paneel wordt geopend voor live drempelaanpassingen.\n")
 
-    # Start het CTk slider-paneel in de main thread (Tkinter vereist dit)
     paneel = DrempelPaneel(actieve)
 
-    cap = cv2.VideoCapture(camera_index)
-    if not cap.isOpened():
-        print("  [!] Kan de webcam niet openen!")
+    # Robuust webcam openen met retry
+    cap, fout = _open_webcam_robuust(camera_index)
+    if cap is None:
+        print(f"  [!] {fout}")
+        try:
+            from tkinter import messagebox as mb
+            mb.showerror("Webcam Fout — MimiControl Studio", fout)
+        except Exception:
+            pass
         if paneel.is_open:
-            paneel.venster.destroy()
+            paneel._sluit()
         return
 
     landmarker = maak_blendshape_landmarker(modus="video")
@@ -396,12 +523,17 @@ def start_live_explorer(camera_index=0):
 
     print("  [INFO] Live besturing gestart. Druk 'q' om te stoppen.\n")
 
-    while cap.isOpened():
-        ret, frame = cap.read()
-        if not ret:
+    while True:
+        try:
+            ret, frame = cap.read()
+        except Exception as e:
+            print(f"  [!] Fout bij lezen webcam frame: {e}")
+            break
+        if not ret or frame is None:
             break
 
         frame = cv2.flip(frame, 1)
+        cam_h, cam_w = frame.shape[:2]
         rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
         ts += 33
         landmarks, scores = detecteer_blendshapes(landmarker, rgb, ts)
@@ -412,24 +544,53 @@ def start_live_explorer(camera_index=0):
         if landmarks:
             teken_face_mesh_simpel(frame, landmarks)
 
-        # Trigger detectie (met live drempels uit het paneel)
+        # Subtiele statusrand: groen bij gezicht, rood als geen gezicht
+        if gezicht_ok:
+            cv2.rectangle(frame, (0, 0), (cam_w - 1, cam_h - 1),
+                          (0, 120, 0), 2)
+        else:
+            cv2.rectangle(frame, (0, 0), (cam_w - 1, cam_h - 1),
+                          (0, 0, 160), 2)
+            cv2.putText(frame, "Geen gezicht", (10, 28),
+                        cv2.FONT_HERSHEY_SIMPLEX, 0.6, (0, 0, 220), 2)
+
+        # ---- Trigger detectie ----
         in_cooldown = (nu - laatste_actie) < cooldown
         gevuurd = False
+        trigger_data = []
 
         for i, trigger in enumerate(actieve):
             if not gezicht_ok:
                 trigger_states[i]["start"] = None
+                bs_matches = {}
+                for bs_naam, drempel in trigger["blendshapes"].items():
+                    bs_matches[bs_naam] = (0.0, drempel, False)
+                trigger_data.append({
+                    "trigger": trigger,
+                    "bs_matches": bs_matches,
+                    "alle_match": False,
+                })
                 continue
 
-            # Haal drempels op uit het paneel (real-time bijgewerkt via sliders)
-            match = True
+            bs_matches = {}
+            alle_match = True
             for bs_naam in trigger["blendshapes"]:
-                drempel = paneel.haal_drempel(i, bs_naam) if paneel.is_open else trigger["blendshapes"][bs_naam]
-                if scores.get(bs_naam, 0) <= drempel:
-                    match = False
-                    break
+                drempel = (paneel.haal_drempel(i, bs_naam)
+                           if paneel.is_open
+                           else trigger["blendshapes"][bs_naam])
+                huidige_score = scores.get(bs_naam, 0)
+                match = huidige_score > drempel
+                bs_matches[bs_naam] = (huidige_score, drempel, match)
+                if not match:
+                    alle_match = False
 
-            if match and not in_cooldown and not gevuurd:
+            trigger_data.append({
+                "trigger": trigger,
+                "bs_matches": bs_matches,
+                "alle_match": alle_match,
+            })
+
+            if alle_match and not in_cooldown and not gevuurd:
                 if trigger_states[i]["start"] is None:
                     trigger_states[i]["start"] = nu
 
@@ -449,25 +610,37 @@ def start_live_explorer(camera_index=0):
             else:
                 trigger_states[i]["start"] = None
 
-        actief_lijst = teken_live_overlay(
-            frame, scores, actieve, trigger_states,
+        # Actie-flash rand op webcambeeld
+        actie_recent = (nu - actie_flash) < 1.0
+        if actie_recent:
+            dikte = max(3, int(8 * (1 - (nu - actie_flash))))
+            cv2.rectangle(frame, (0, 0), (cam_w - 1, cam_h - 1),
+                          (0, 255, 255), dikte)
+
+        # Info-paneel genereren
+        info = _maak_info_paneel(
+            cam_w, trigger_data, trigger_states,
             nu, vasthoud_tijd, laatste_actie, cooldown,
-            actie_flash, actie_idx, gezicht_ok
+            actie_flash, actie_idx, gezicht_ok,
+            paneel=paneel
         )
 
-        # Update status in het slider-paneel
-        if paneel.is_open and actief_lijst:
-            for i, is_actief in enumerate(actief_lijst):
-                paneel.update_status(i, is_actief)
+        # Combineer webcam + info-paneel verticaal
+        canvas = np.vstack([frame, info])
 
-        # CTk event-loop bijhouden (nodig omdat we in dezelfde thread zitten)
+        # DrempelPaneel status bijwerken
+        if paneel.is_open:
+            for i, td in enumerate(trigger_data):
+                paneel.update_status(i, td["alle_match"])
+
+        # CTk event-loop bijhouden (Tkinter vereist dit in de main thread)
         if paneel.is_open:
             try:
                 paneel.venster.update()
             except Exception:
                 pass
 
-        cv2.imshow("MimiExplorer - Live (Q=stoppen)", frame)
+        cv2.imshow("MimiControl Studio - Live (Q=stoppen)", canvas)
         if cv2.waitKey(1) & 0xFF == ord('q'):
             break
 
@@ -475,7 +648,6 @@ def start_live_explorer(camera_index=0):
     cv2.destroyAllWindows()
     landmarker.close()
 
-    # Paneel netjes sluiten als het nog open is
     if paneel.is_open:
         paneel._sluit()
 

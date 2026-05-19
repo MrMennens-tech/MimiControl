@@ -143,12 +143,14 @@ def start_explorer(top_n=TOP_N, camera_index=0):
     opname_actief = False
     opname_start = 0.0
     heeft_pieken = False
+    zichtbare_bs = None  # None = toon alles, set = alleen deze namen
 
     print("\n  === EXPLORER MODUS ===")
     print("  SPATIE  = Start piek-opname (onbeperkt)")
     print("  Tijdens opname: SPATIE/ESC = Stoppen")
     print("  ENTER   = Opslaan als trigger")
-    print("  F       = Filter blendshapes")
+    print("  F       = Filter blendshapes (altijd beschikbaar)")
+    print("  R       = Reset filter (toon alles)")
     print("  Q       = Terug zonder opslaan\n")
 
     while True:
@@ -209,10 +211,14 @@ def start_explorer(top_n=TOP_N, camera_index=0):
                           (bx + puls_start + puls_breedte, by + 10),
                           (0, 0, 255), -1)
 
-        # Bars tekenen op het rechter panel
+        # Bars tekenen op het rechter panel (gefilterd indien actief)
         if scores:
+            toon_scores = scores
+            if zichtbare_bs is not None:
+                toon_scores = {k: v for k, v in scores.items()
+                               if k in zichtbare_bs}
             teken_blendshape_bars(
-                canvas, scores,
+                canvas, toon_scores,
                 x_start=cam_w + 10, y_start=50,
                 bar_breedte=160, bar_hoogte=14, max_items=22,
                 pieken=pieken if heeft_pieken else None,
@@ -258,15 +264,23 @@ def start_explorer(top_n=TOP_N, camera_index=0):
             opname_start = time.time()
             print("  [REC] Piek-opname gestart... Maak de uitdrukking! (SPATIE/ESC=stop)")
 
-        elif key == ord('f') and heeft_pieken:
+        elif key == ord('f') and not opname_actief:
             cv2.destroyAllWindows()
-            gefilterd = _toon_filter_dialoog(pieken, top_n)
-            if gefilterd is not None:
-                pieken = gefilterd
-                gesorteerd = sorted(pieken.items(),
-                                    key=lambda kv: kv[1], reverse=True)
-                top_namen = {naam for naam, _ in gesorteerd[:top_n]}
-                print(f"  [OK] Filter toegepast: {len(pieken)} blendshapes behouden")
+            brondata = pieken if heeft_pieken else (scores if scores else None)
+            if brondata:
+                gefilterd = _toon_filter_dialoog(brondata, top_n)
+                if gefilterd is not None:
+                    if heeft_pieken:
+                        pieken = gefilterd
+                        gesorteerd = sorted(pieken.items(),
+                                            key=lambda kv: kv[1], reverse=True)
+                        top_namen = {naam for naam, _ in gesorteerd[:top_n]}
+                    zichtbare_bs = set(gefilterd.keys())
+                    print(f"  [OK] Filter toegepast: {len(zichtbare_bs)} blendshapes zichtbaar")
+
+        elif key == ord('r') and zichtbare_bs is not None:
+            zichtbare_bs = None
+            print("  [OK] Filter gereset — alle blendshapes zichtbaar")
 
         elif key == 13 and heeft_pieken:  # ENTER
             cap.release()

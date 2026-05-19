@@ -14,7 +14,9 @@ import cv2
 import customtkinter as ctk
 
 from config_explorer import (
-    laad_explorer_config, sla_explorer_config_op, verwijder_trigger
+    laad_explorer_config, sla_explorer_config_op, verwijder_trigger,
+    lijst_profielen, actief_profiel, wissel_profiel,
+    sla_profiel_op, verwijder_profiel
 )
 from blendshape_detectie import nl_label
 from explorer import start_explorer
@@ -132,6 +134,9 @@ class MimiControlStudioApp:
 
         # --- Camera-selectie ---
         self._bouw_camera_selectie()
+
+        # --- Profiel-selector ---
+        self._bouw_profiel_selector()
 
         # --- Actieknoppen (compact, naast beschrijving) ---
         knoppen = ctk.CTkFrame(self.app, fg_color="transparent")
@@ -266,6 +271,116 @@ class MimiControlStudioApp:
             self.camera_dropdown.set(cam_namen[0])
             if self._cameras:
                 self._on_camera_change(cam_namen[0])
+
+    # ---- Profiel ----
+
+    def _bouw_profiel_selector(self):
+        """Profiel-selector met dropdown, nieuw-knop en verwijder-knop."""
+        self.profiel_frame = ctk.CTkFrame(self.app, fg_color=KAART,
+                                           corner_radius=12, border_width=1,
+                                           border_color=RAND)
+        self.profiel_frame.pack(fill="x", padx=32, pady=(10, 0))
+
+        rij = ctk.CTkFrame(self.profiel_frame, fg_color="transparent")
+        rij.pack(fill="x", padx=20, pady=12)
+
+        ctk.CTkLabel(rij, text="Profiel:",
+                     font=(FONT, 13, "bold"), text_color=TEKST
+                     ).pack(side="left", padx=(0, 12))
+
+        profielen = lijst_profielen()
+        huidig = actief_profiel()
+
+        self.profiel_dropdown = ctk.CTkOptionMenu(
+            rij, values=profielen if profielen else ["Standaard"],
+            font=(FONT, 13), dropdown_font=(FONT, 12),
+            fg_color=TEAL_BTN, button_color=TEAL_HOVER,
+            button_hover_color=TEAL_HOVER,
+            corner_radius=10, height=34, width=200,
+            command=self._on_profiel_wissel
+        )
+        self.profiel_dropdown.set(huidig)
+        self.profiel_dropdown.pack(side="left")
+
+        self.profiel_nieuw_btn = ctk.CTkButton(
+            rij, text="+", font=(FONT, 16, "bold"),
+            fg_color=TEAL_BTN, hover_color=TEAL_HOVER,
+            corner_radius=8, height=34, width=34, cursor="hand2",
+            command=self._nieuw_profiel
+        )
+        self.profiel_nieuw_btn.pack(side="left", padx=(8, 0))
+
+        self.profiel_verwijder_btn = ctk.CTkButton(
+            rij, text="✕", font=(FONT, 14, "bold"),
+            fg_color=ROOD, hover_color=ROOD_HOVER,
+            corner_radius=8, height=34, width=34, cursor="hand2",
+            command=self._verwijder_huidig_profiel
+        )
+        self.profiel_verwijder_btn.pack(side="left", padx=(6, 0))
+        self._update_verwijder_knop()
+
+    def _update_verwijder_knop(self):
+        """Verberg de verwijderknop als er maar één profiel is."""
+        if len(lijst_profielen()) <= 1:
+            self.profiel_verwijder_btn.configure(state="disabled",
+                                                 fg_color=RAND)
+        else:
+            self.profiel_verwijder_btn.configure(state="normal",
+                                                 fg_color=ROOD)
+
+    def _on_profiel_wissel(self, naam):
+        """Wissel naar een ander profiel en herlaad de interface."""
+        wissel_profiel(naam)
+        self._ververs_triggers()
+        self._update_verwijder_knop()
+
+    def _nieuw_profiel(self):
+        """Open een dialoog om een nieuw profiel aan te maken."""
+        dialoog = ctk.CTkInputDialog(
+            text="Voer een naam in voor het nieuwe profiel:",
+            title="Nieuw profiel",
+            font=(FONT, 13)
+        )
+        naam = dialoog.get_input()
+        if not naam or not naam.strip():
+            return
+        naam = naam.strip()
+        if naam in lijst_profielen():
+            messagebox.showwarning(
+                "Profiel bestaat al",
+                f'Er bestaat al een profiel met de naam "{naam}".',
+                parent=self.app)
+            return
+        from config_explorer import STANDAARD_CONFIG
+        import copy
+        sla_profiel_op(naam, copy.deepcopy(STANDAARD_CONFIG))
+        wissel_profiel(naam)
+        self._ververs_profiel_dropdown()
+        self._ververs_triggers()
+
+    def _verwijder_huidig_profiel(self):
+        """Verwijder het huidige profiel na bevestiging."""
+        naam = actief_profiel()
+        ok = messagebox.askyesno(
+            "Profiel verwijderen",
+            f'Wil je profiel "{naam}" echt verwijderen?\n'
+            f'Alle triggers in dit profiel gaan verloren.',
+            parent=self.app)
+        if not ok:
+            return
+        verwijder_profiel(naam)
+        self._ververs_profiel_dropdown()
+        self._ververs_triggers()
+
+    def _ververs_profiel_dropdown(self):
+        """Werk de dropdown bij met de actuele profiellijst."""
+        profielen = lijst_profielen()
+        huidig = actief_profiel()
+        self.profiel_dropdown.configure(values=profielen)
+        self.profiel_dropdown.set(huidig)
+        self._update_verwijder_knop()
+
+    # ---- Timing ----
 
     def _bouw_timing(self):
         timing = ctk.CTkFrame(self.app, fg_color=KAART,
