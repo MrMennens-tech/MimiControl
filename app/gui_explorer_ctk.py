@@ -1,7 +1,7 @@
 """
 MimiControl Studio - CustomTkinter GUI (Mennens.Tech branding)
-Hoofdvenster met triggerlijst, Explorer-knop, Live-knop en
-timing-instellingen.
+Hoofdvenster met triggerlijst, Explorer-knop, Live-knop,
+camera-selectie en timing-instellingen.
 """
 
 import sys
@@ -10,6 +10,7 @@ import tkinter as tk
 from tkinter import messagebox
 from PIL import Image
 
+import cv2
 import customtkinter as ctk
 
 from config_explorer import (
@@ -55,6 +56,20 @@ TRIGGER_ACCENTEN = ["#4DB8BE", "#3D8FA5", "#68CCD1", "#2E7A8A", "#89D4D8"]
 
 
 # ---------------------------------------------------------------------------
+# Camera-detectie
+# ---------------------------------------------------------------------------
+def detecteer_cameras(max_cameras=5):
+    """Detecteer beschikbare camera's via OpenCV."""
+    cameras = []
+    for i in range(max_cameras):
+        cap = cv2.VideoCapture(i)
+        if cap.isOpened():
+            cameras.append((i, f"Camera {i}"))
+            cap.release()
+    return cameras
+
+
+# ---------------------------------------------------------------------------
 # Hoofdvenster
 # ---------------------------------------------------------------------------
 class MimiControlStudioApp:
@@ -74,6 +89,7 @@ class MimiControlStudioApp:
         sx = (self.app.winfo_screenwidth() - breedte) // 2
         self.app.geometry(f"{breedte}x{hoogte}+{sx}+20")
 
+        self._cameras = detecteer_cameras()
         self._bouw_interface()
         self._ververs_triggers()
 
@@ -92,7 +108,6 @@ class MimiControlStudioApp:
         if os.path.exists(LOGO_PAD):
             try:
                 pil_img = Image.open(LOGO_PAD).convert("RGBA")
-                # Maak donkere pixels wit zodat het logo zichtbaar is op de donkere header
                 pixels = pil_img.load()
                 w_img, h_img = pil_img.size
                 for y in range(h_img):
@@ -115,9 +130,12 @@ class MimiControlStudioApp:
                      font=(FONT, 13), text_color=TEAL_BRAND
                      ).pack(anchor="center", pady=(2, 0))
 
+        # --- Camera-selectie ---
+        self._bouw_camera_selectie()
+
         # --- Actieknoppen (compact, naast beschrijving) ---
         knoppen = ctk.CTkFrame(self.app, fg_color="transparent")
-        knoppen.pack(fill="x", padx=32, pady=(18, 0))
+        knoppen.pack(fill="x", padx=32, pady=(12, 0))
 
         rij1 = ctk.CTkFrame(knoppen, fg_color=KAART, corner_radius=12,
                              border_width=1, border_color=RAND)
@@ -131,7 +149,7 @@ class MimiControlStudioApp:
         ).pack(side="left", padx=6, pady=6)
         ctk.CTkLabel(rij1,
                      text="Herken gezichtsuitdrukkingen en stel triggers in",
-                     font=(FONT, 12), text_color=TEKST_LICHT
+                     font=(FONT, 13), text_color=TEKST_LICHT
                      ).pack(side="left", padx=(8, 14))
 
         rij2 = ctk.CTkFrame(knoppen, fg_color=KAART, corner_radius=12,
@@ -146,7 +164,7 @@ class MimiControlStudioApp:
         ).pack(side="left", padx=6, pady=6)
         ctk.CTkLabel(rij2,
                      text="Start de webcam en voer toetsacties uit",
-                     font=(FONT, 12), text_color=TEKST_LICHT
+                     font=(FONT, 13), text_color=TEKST_LICHT
                      ).pack(side="left", padx=(8, 14))
 
         # --- Separator ---
@@ -161,15 +179,93 @@ class MimiControlStudioApp:
                      ).pack(fill="x", padx=32, pady=(6, 10))
 
         # --- Trigger header ---
-        ctk.CTkLabel(self.app, text="Geconfigureerde triggers",
-                     font=(FONT, 16, "bold"), text_color=TEKST
-                     ).pack(anchor="w", padx=36)
+        trigger_header = ctk.CTkFrame(self.app, fg_color="transparent")
+        trigger_header.pack(fill="x", padx=32)
+
+        ctk.CTkLabel(trigger_header, text="\u2022",
+                     font=(FONT, 22, "bold"), text_color=TEAL_BTN
+                     ).pack(side="left", padx=(4, 6))
+        ctk.CTkLabel(trigger_header, text="Geconfigureerde triggers",
+                     font=(FONT, 17, "bold"), text_color=TEKST
+                     ).pack(side="left")
 
         # --- Scrollable trigger container ---
         self.trigger_scroll = ctk.CTkScrollableFrame(
             self.app, fg_color="transparent", corner_radius=0
         )
         self.trigger_scroll.pack(fill="both", expand=True, padx=28, pady=(8, 12))
+
+    def _bouw_camera_selectie(self):
+        """Camera-selectie dropdown boven de actieknoppen."""
+        cam_frame = ctk.CTkFrame(self.app, fg_color=KAART,
+                                  corner_radius=12, border_width=1,
+                                  border_color=RAND)
+        cam_frame.pack(fill="x", padx=32, pady=(14, 0))
+
+        rij = ctk.CTkFrame(cam_frame, fg_color="transparent")
+        rij.pack(fill="x", padx=20, pady=12)
+
+        ctk.CTkLabel(rij, text="Camera:",
+                     font=(FONT, 13, "bold"), text_color=TEKST
+                     ).pack(side="left", padx=(0, 12))
+
+        config = laad_explorer_config()
+        huidige_index = config.get("camera_index", 0)
+
+        if self._cameras:
+            cam_namen = [naam for _, naam in self._cameras]
+            huidige_naam = f"Camera {huidige_index}"
+            if huidige_naam not in cam_namen:
+                huidige_naam = cam_namen[0]
+        else:
+            cam_namen = ["Geen camera gevonden"]
+            huidige_naam = cam_namen[0]
+
+        self.camera_dropdown = ctk.CTkOptionMenu(
+            rij, values=cam_namen,
+            font=(FONT, 13), dropdown_font=(FONT, 12),
+            fg_color=TEAL_BTN, button_color=TEAL_HOVER,
+            button_hover_color=TEAL_HOVER,
+            corner_radius=10, height=34, width=180,
+            command=self._on_camera_change
+        )
+        self.camera_dropdown.set(huidige_naam)
+        self.camera_dropdown.pack(side="left")
+
+        self.camera_ververs_btn = ctk.CTkButton(
+            rij, text="\u21BB", font=(FONT, 16),
+            fg_color="transparent", hover_color=RAND,
+            text_color=TEKST_LICHT,
+            corner_radius=8, height=34, width=34,
+            command=self._ververs_cameras
+        )
+        self.camera_ververs_btn.pack(side="left", padx=(8, 0))
+
+        ctk.CTkLabel(rij, text="Selecteer je webcam",
+                     font=(FONT, 12), text_color=TEKST_LICHT
+                     ).pack(side="right", padx=(0, 4))
+
+    def _on_camera_change(self, keuze):
+        """Callback wanneer de gebruiker een andere camera kiest."""
+        for idx, naam in self._cameras:
+            if naam == keuze:
+                config = laad_explorer_config()
+                config["camera_index"] = idx
+                sla_explorer_config_op(config)
+                break
+
+    def _ververs_cameras(self):
+        """Herdetecteer beschikbare camera's."""
+        self._cameras = detecteer_cameras()
+        if self._cameras:
+            cam_namen = [naam for _, naam in self._cameras]
+        else:
+            cam_namen = ["Geen camera gevonden"]
+        self.camera_dropdown.configure(values=cam_namen)
+        if cam_namen:
+            self.camera_dropdown.set(cam_namen[0])
+            if self._cameras:
+                self._on_camera_change(cam_namen[0])
 
     def _bouw_timing(self):
         timing = ctk.CTkFrame(self.app, fg_color=KAART,
@@ -185,7 +281,7 @@ class MimiControlStudioApp:
         rij1 = ctk.CTkFrame(timing, fg_color="transparent")
         rij1.pack(fill="x", padx=20, pady=4)
 
-        ctk.CTkLabel(rij1, text="Cooldown:", font=(FONT, 12),
+        ctk.CTkLabel(rij1, text="Cooldown:", font=(FONT, 13),
                      text_color=TEKST_LICHT, width=120, anchor="w"
                      ).pack(side="left")
 
@@ -203,9 +299,9 @@ class MimiControlStudioApp:
 
         # Vasthoudtijd
         rij2 = ctk.CTkFrame(timing, fg_color="transparent")
-        rij2.pack(fill="x", padx=20, pady=(4, 16))
+        rij2.pack(fill="x", padx=20, pady=4)
 
-        ctk.CTkLabel(rij2, text="Vasthoudtijd:", font=(FONT, 12),
+        ctk.CTkLabel(rij2, text="Vasthoudtijd:", font=(FONT, 13),
                      text_color=TEKST_LICHT, width=120, anchor="w"
                      ).pack(side="left")
 
@@ -221,6 +317,26 @@ class MimiControlStudioApp:
         )
         self.vh_slider.pack(side="left", fill="x", expand=True, padx=(8, 8))
 
+        # Toetsduur
+        rij3 = ctk.CTkFrame(timing, fg_color="transparent")
+        rij3.pack(fill="x", padx=20, pady=(4, 16))
+
+        ctk.CTkLabel(rij3, text="Toetsduur:", font=(FONT, 13),
+                     text_color=TEKST_LICHT, width=120, anchor="w"
+                     ).pack(side="left")
+
+        self.td_lbl = ctk.CTkLabel(rij3, text="—", font=(FONT, 13, "bold"),
+                                    text_color=TEKST, width=55, anchor="e")
+        self.td_lbl.pack(side="right", padx=(0, 4))
+
+        self.td_slider = ctk.CTkSlider(
+            rij3, from_=20, to=500,
+            button_color=TEAL_BTN, button_hover_color=TEAL_HOVER,
+            progress_color=TEAL_BTN,
+            command=self._on_td_change
+        )
+        self.td_slider.pack(side="left", fill="x", expand=True, padx=(8, 8))
+
     # ---- Triggers ----
 
     def _ververs_triggers(self):
@@ -234,16 +350,55 @@ class MimiControlStudioApp:
         self.cd_lbl.configure(text=f"{config['cooldown']:.1f}s")
         self.vh_slider.set(config["vasthoud_tijd"])
         self.vh_lbl.configure(text=f"{config['vasthoud_tijd']:.1f}s")
+        td = config.get("toets_duur_ms", 100)
+        self.td_slider.set(td)
+        self.td_lbl.configure(text=f"{int(td)}ms")
 
         if not triggers:
-            ctk.CTkLabel(
-                self.trigger_scroll,
-                text="Nog geen triggers.\nOpen de Explorer om je eerste trigger aan te maken.",
-                font=(FONT, 12), text_color=TEKST_LICHT, justify="center"
-            ).pack(pady=40)
+            self._toon_welkomstbericht()
         else:
             for i, t in enumerate(triggers):
                 self._maak_trigger_kaart(i, t)
+
+    def _toon_welkomstbericht(self):
+        """Toon een stap-voor-stap welkomstbericht als er nog geen triggers zijn."""
+        welkom = ctk.CTkFrame(self.trigger_scroll, fg_color=KAART,
+                               corner_radius=14, border_width=1,
+                               border_color=RAND)
+        welkom.pack(fill="x", pady=12, padx=8)
+
+        inner = ctk.CTkFrame(welkom, fg_color="transparent")
+        inner.pack(fill="x", padx=24, pady=24)
+
+        ctk.CTkLabel(inner, text="Welkom bij MimiControl Studio!",
+                     font=(FONT, 16, "bold"), text_color=TEKST
+                     ).pack(anchor="w", pady=(0, 6))
+
+        ctk.CTkLabel(inner,
+                     text="Je hebt nog geen triggers ingesteld. Volg deze stappen:",
+                     font=(FONT, 13), text_color=TEKST_LICHT
+                     ).pack(anchor="w", pady=(0, 14))
+
+        stappen = [
+            ("1", "Klik op \"Mimiek verkennen\" hierboven"),
+            ("2", "Maak het gebaar dat je wilt gebruiken voor de webcam"),
+            ("3", "Stel de trigger in met de gewenste toets"),
+            ("4", "Klik op \"Live modus starten\" om te beginnen"),
+        ]
+
+        for nr, tekst in stappen:
+            stap_rij = ctk.CTkFrame(inner, fg_color="transparent")
+            stap_rij.pack(fill="x", pady=4)
+
+            ctk.CTkLabel(stap_rij, text=nr,
+                         font=(FONT, 13, "bold"), text_color=KAART,
+                         fg_color=TEAL_BTN, corner_radius=12,
+                         width=26, height=26
+                         ).pack(side="left", padx=(0, 12))
+
+            ctk.CTkLabel(stap_rij, text=tekst,
+                         font=(FONT, 13), text_color=TEKST
+                         ).pack(side="left")
 
     def _maak_trigger_kaart(self, index, trigger):
         accent = TRIGGER_ACCENTEN[index % len(TRIGGER_ACCENTEN)]
@@ -251,16 +406,16 @@ class MimiControlStudioApp:
         kaart = ctk.CTkFrame(self.trigger_scroll, fg_color=KAART,
                               corner_radius=14, border_width=1,
                               border_color=RAND)
-        kaart.pack(fill="x", pady=5, padx=4)
+        kaart.pack(fill="x", pady=6, padx=4)
 
         # Gekleurde accent-balk bovenaan
         accent_bar = ctk.CTkFrame(kaart, fg_color=accent, height=4,
                                    corner_radius=0)
-        accent_bar.pack(fill="x", padx=14, pady=(10, 0))
+        accent_bar.pack(fill="x", padx=14, pady=(12, 0))
 
         # Inhoud
         inhoud = ctk.CTkFrame(kaart, fg_color="transparent")
-        inhoud.pack(fill="x", padx=16, pady=(8, 12))
+        inhoud.pack(fill="x", padx=18, pady=(10, 14))
 
         # Bovenste rij: naam + toets badge
         rij_top = ctk.CTkFrame(inhoud, fg_color="transparent")
@@ -268,24 +423,35 @@ class MimiControlStudioApp:
 
         toets = " + ".join(trigger["toetsen"]).upper()
         ctk.CTkLabel(rij_top, text=f"{index+1}. {trigger['naam']}",
-                     font=(FONT, 14, "bold"), text_color=TEKST
+                     font=(FONT, 15, "bold"), text_color=TEKST
                      ).pack(side="left")
 
-        ctk.CTkButton(rij_top, text=toets, font=(FONT, 11, "bold"),
+        ctk.CTkButton(rij_top, text=toets, font=(FONT, 12, "bold"),
                       fg_color=accent, hover_color=accent,
-                      corner_radius=10, height=28, width=70,
+                      corner_radius=10, height=32, width=80,
                       state="disabled", text_color_disabled=KAART
                       ).pack(side="right")
 
-        # Blendshapes detail
+        # Blendshapes detail (meerdere regels voor leesbaarheid)
         bs = trigger.get("blendshapes", {})
         if bs:
-            bs_tekst = "  |  ".join(
-                f"{nl_label(n)} > {d:.2f}" for n, d in bs.items()
-            )
-            ctk.CTkLabel(inhoud, text=bs_tekst, font=(FONT, 10),
-                         text_color=TEKST_LICHT, wraplength=540,
-                         justify="left").pack(anchor="w", pady=(6, 6))
+            bs_frame = ctk.CTkFrame(inhoud, fg_color=BG, corner_radius=8)
+            bs_frame.pack(fill="x", pady=(8, 8))
+
+            bs_inner = ctk.CTkFrame(bs_frame, fg_color="transparent")
+            bs_inner.pack(fill="x", padx=12, pady=8)
+
+            for naam, drempel in bs.items():
+                bs_rij = ctk.CTkFrame(bs_inner, fg_color="transparent")
+                bs_rij.pack(fill="x", pady=1)
+                ctk.CTkLabel(bs_rij, text=f"\u25B8 {nl_label(naam)}",
+                             font=(FONT, 12), text_color=TEKST,
+                             anchor="w"
+                             ).pack(side="left")
+                ctk.CTkLabel(bs_rij, text=f"> {drempel:.2f}",
+                             font=(FONT, 12, "bold"), text_color=TEKST_LICHT,
+                             anchor="e"
+                             ).pack(side="right")
 
         # Knoppen
         btn_rij = ctk.CTkFrame(inhoud, fg_color="transparent")
@@ -321,12 +487,24 @@ class MimiControlStudioApp:
         config["vasthoud_tijd"] = val
         sla_explorer_config_op(config)
 
+    def _on_td_change(self, value):
+        val = int(round(value))
+        self.td_lbl.configure(text=f"{val}ms")
+        config = laad_explorer_config()
+        config["toets_duur_ms"] = val
+        sla_explorer_config_op(config)
+
     # ---- Acties ----
+
+    def _get_camera_index(self):
+        """Geef de huidig geselecteerde camera-index."""
+        config = laad_explorer_config()
+        return config.get("camera_index", 0)
 
     def _lanceer_explorer(self):
         self.app.withdraw()
         self.app.update()
-        pieken = start_explorer()
+        pieken = start_explorer(camera_index=self._get_camera_index())
         self.app.deiconify()
 
         if pieken:
@@ -345,7 +523,7 @@ class MimiControlStudioApp:
             return
         self.app.withdraw()
         self.app.update()
-        start_live_explorer()
+        start_live_explorer(camera_index=self._get_camera_index())
         self.app.deiconify()
 
     def _bewerk_trigger(self, index):

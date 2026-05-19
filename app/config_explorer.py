@@ -14,7 +14,9 @@ CONFIG_PAD = os.path.join(
 STANDAARD_CONFIG = {
     "triggers": [],
     "cooldown": 2.0,
-    "vasthoud_tijd": 0.5
+    "vasthoud_tijd": 0.5,
+    "toets_duur_ms": 100,
+    "camera_index": 0
 }
 
 
@@ -27,8 +29,12 @@ def laad_explorer_config():
             config["cooldown"] = 2.0
         if "vasthoud_tijd" not in config:
             config["vasthoud_tijd"] = 0.5
+        if "toets_duur_ms" not in config:
+            config["toets_duur_ms"] = 100
         if "triggers" not in config:
             config["triggers"] = []
+        if "camera_index" not in config:
+            config["camera_index"] = 0
         return config
     return copy.deepcopy(STANDAARD_CONFIG)
 

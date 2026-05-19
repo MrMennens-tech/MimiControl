@@ -28,7 +28,8 @@ STANDAARD_CONFIG = {
          "toetsen": ["escape"], "drempelwaarden": {}},
     ],
     "cooldown": 2.0,
-    "vasthoud_tijd": 0.5
+    "vasthoud_tijd": 0.5,
+    "toets_duur_ms": 100
 }
 
 
@@ -41,6 +42,8 @@ def laad_multi_config():
             config["cooldown"] = 2.0
         if "vasthoud_tijd" not in config:
             config["vasthoud_tijd"] = 0.5
+        if "toets_duur_ms" not in config:
+            config["toets_duur_ms"] = 100
         return config
     return copy.deepcopy(STANDAARD_CONFIG)
 

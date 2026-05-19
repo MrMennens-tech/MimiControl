@@ -13,7 +13,8 @@ STANDAARD_CONFIG = {
     "drempelwaarde_hoogte": 0.0,
     "toetsen": ["space"],
     "cooldown": 2.0,
-    "vasthoud_tijd": 0.5
+    "vasthoud_tijd": 0.5,
+    "toets_duur_ms": 100
 }
 
 

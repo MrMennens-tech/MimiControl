@@ -15,6 +15,7 @@ from gezichtsdetectie import (
     maak_face_landmarker, detecteer_gezicht, bereken_alle_metingen,
     teken_face_mesh, teken_alle_meetpunten, METING_NAMEN
 )
+from toets_actie import voer_toetsen_uit
 
 pyautogui.FAILSAFE = True
 pyautogui.PAUSE = 0.05
@@ -114,6 +115,7 @@ def start_live_multi():
     triggers = config["triggers"]
     cooldown = config["cooldown"]
     vasthoud_tijd = config["vasthoud_tijd"]
+    toets_duur_ms = config.get("toets_duur_ms", 100)
 
     actieve = aantal_actieve_triggers(config)
     if actieve == 0:
@@ -190,10 +192,7 @@ def start_live_multi():
 
                 if (nu - trigger_states[i]["start"]) >= vasthoud_tijd:
                     toetsen = trigger["toetsen"]
-                    if len(toetsen) == 1:
-                        pyautogui.press(toetsen[0])
-                    else:
-                        pyautogui.hotkey(*toetsen)
+                    voer_toetsen_uit(toetsen, duur_ms=toets_duur_ms)
 
                     laatste_actie = nu
                     actie_flash = nu

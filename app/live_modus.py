@@ -13,6 +13,7 @@ from gezichtsdetectie import (
     maak_face_landmarker, detecteer_gezicht, bereken_mond_metingen,
     teken_face_mesh, teken_meetpunten
 )
+from toets_actie import voer_toetsen_uit
 
 pyautogui.FAILSAFE = True
 pyautogui.PAUSE = 0.05
@@ -111,6 +112,7 @@ def start_live_modus():
     toetsen = config["toetsen"]
     cooldown = config["cooldown"]
     vasthoud_tijd = config["vasthoud_tijd"]
+    toets_duur_ms = config.get("toets_duur_ms", 100)
 
     if drempel_b == 0 or drempel_h == 0:
         print("\n  [!] Geen kalibratiedata gevonden in config.json!")
@@ -175,10 +177,7 @@ def start_live_modus():
                 trigger_start = nu
 
             if (nu - trigger_start) >= vasthoud_tijd:
-                if len(toetsen) == 1:
-                    pyautogui.press(toetsen[0])
-                else:
-                    pyautogui.hotkey(*toetsen)
+                voer_toetsen_uit(toetsen, duur_ms=toets_duur_ms)
 
                 laatste_actie = nu
                 actie_flash = nu
