@@ -404,10 +404,13 @@ def start_explorer(top_n=TOP_N, camera_index=0):
             if zichtbare_bs is not None:
                 toon_scores = {k: v for k, v in scores.items()
                                if k in zichtbare_bs}
+            n_items = len(toon_scores)
+            beschikbaar = cam_h - 60
+            bh = max(8, min(14, beschikbaar // max(n_items, 1) - 4))
             teken_blendshape_bars(
                 canvas, toon_scores,
                 x_start=cam_w + 10, y_start=50,
-                bar_breedte=160, bar_hoogte=14, max_items=22,
+                bar_breedte=160, bar_hoogte=bh, max_items=n_items,
                 pieken=pieken if heeft_pieken else None,
                 top_n_namen=top_namen if heeft_pieken else None
             )

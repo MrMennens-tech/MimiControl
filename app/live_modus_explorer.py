@@ -77,7 +77,8 @@ class DrempelPaneel:
         self._waarde_refs = {}
         self._status_refs = {}
         self._filter_vars = {}    # {(trigger_idx, bs_naam): IntVar}
-        self._trigger_filter_vars = {}  # {trigger_idx: IntVar} — master toggle
+        self._trigger_actief_vars = {}  # {trigger_idx: IntVar} — actief/inactief
+        self._actief_labels = {}        # {trigger_idx: CTkLabel}
         self._lock = threading.Lock()
 
         self.venster = ctk.CTkToplevel()
@@ -106,7 +107,7 @@ class DrempelPaneel:
 
         ctk.CTkLabel(
             self.venster,
-            text="Vinkje = toon in overlay   |   Slider = drempel aanpassen",
+            text="Toggle = trigger actief/inactief   |   Slider = drempel",
             font=(FONT, 10), text_color=TEKST_LICHT
         ).pack(pady=(6, 2))
 
@@ -150,18 +151,33 @@ class DrempelPaneel:
             status_lbl.pack(side="right", padx=(0, 8))
             self._status_refs[t_idx] = status_lbl
 
-            # Master checkbox: hele trigger tonen/verbergen in overlay
+            # Actief/inactief toggle per trigger (sessie-only, niet opgeslagen)
             trigger_var = ctk.IntVar(value=1)
-            self._trigger_filter_vars[t_idx] = trigger_var
+            self._trigger_actief_vars[t_idx] = trigger_var
             master_rij = ctk.CTkFrame(kaart, fg_color="transparent")
             master_rij.pack(fill="x", padx=14, pady=(4, 2))
-            ctk.CTkCheckBox(
-                master_rij, text="Toon in overlay",
-                font=(FONT, 11, "bold"), variable=trigger_var,
-                fg_color=accent, hover_color=TEAL_HOVER,
-                checkbox_width=20, checkbox_height=20,
-                text_color=TEKST
+
+            actief_lbl = ctk.CTkLabel(
+                master_rij, text="ACTIEF", font=(FONT, 12, "bold"),
+                text_color="#22AA44", width=90, anchor="w"
+            )
+            self._actief_labels[t_idx] = actief_lbl
+
+            def _on_toggle(var=trigger_var, lbl=actief_lbl):
+                if var.get() == 1:
+                    lbl.configure(text="ACTIEF", text_color="#22AA44")
+                else:
+                    lbl.configure(text="INACTIEF", text_color="#999999")
+
+            ctk.CTkSwitch(
+                master_rij, text="",
+                variable=trigger_var, onvalue=1, offvalue=0,
+                progress_color=accent, button_color=KAART,
+                button_hover_color=RAND, fg_color="#999999",
+                switch_width=44, switch_height=22,
+                command=_on_toggle
             ).pack(side="left")
+            actief_lbl.pack(side="left", padx=(8, 0))
 
             for bs_naam, drempel in trigger["blendshapes"].items():
                 rij = ctk.CTkFrame(kaart, fg_color="transparent")
@@ -249,11 +265,11 @@ class DrempelPaneel:
         except Exception:
             return True
 
-    def is_trigger_zichtbaar(self, trigger_idx):
-        """Check of een hele trigger zichtbaar moet zijn in het info-paneel."""
+    def is_trigger_actief(self, trigger_idx):
+        """Check of een trigger actief is (voert acties uit en toont normaal)."""
         if self._gesloten:
             return True
-        var = self._trigger_filter_vars.get(trigger_idx)
+        var = self._trigger_actief_vars.get(trigger_idx)
         if var is None:
             return True
         try:
@@ -343,16 +359,18 @@ def _open_webcam_robuust(camera_index, max_pogingen=3, wachttijd=1.5):
 
 # ---------------------------------------------------------------------------
 # Info-paneel onder het webcambeeld (donkere Mennens.Tech stijl)
-# Actieve triggers worden uitgebreid getoond, inactieve compact
-# bij veel triggers. Ondersteunt scrolling via pijltjestoetsen.
+# Alle triggers worden altijd volledig uitgeklapt getoond.
+# Uitgeschakelde triggers verschijnen gedempt.
+# Ondersteunt scrolling via pijltjestoetsen.
 # ---------------------------------------------------------------------------
 def _maak_info_paneel(breedte, trigger_data, trigger_states,
                       nu, vasthoud_tijd, laatste_actie, cooldown,
                       actie_flash, actie_idx, gezicht_ok, paneel=None,
-                      scroll_offset=0, max_hoogte=400, gepauzeerd=False):
+                      scroll_offset=0, max_hoogte=500, gepauzeerd=False):
     """
     Bouw een donker info-paneel als numpy-array.
-    Actieve triggers uitgebreid, inactieve compact bij weinig ruimte.
+    Alle triggers altijd volledig uitgeklapt.
+    Uitgeschakelde triggers worden gedempt weergegeven.
     Retourneert (panel_array, inhoud_hoogte).
     """
     font = cv2.FONT_HERSHEY_SIMPLEX
@@ -377,24 +395,8 @@ def _maak_info_paneel(breedte, trigger_data, trigger_states,
     in_cooldown = (nu - laatste_actie) < cooldown
     actie_recent = (nu - actie_flash) < 1.0
 
-    # Bepaal welke triggers zichtbaar zijn (master checkbox)
-    zichtbaar_idxs = []
-    for i in range(len(trigger_data)):
-        if paneel and not paneel.is_trigger_zichtbaar(i):
-            continue
-        zichtbaar_idxs.append(i)
-
-    # Schat totale hoogte om compact modus te bepalen
-    totale_schat = y
-    for i in zichtbaar_idxs:
-        td = trigger_data[i]
-        zb_count = sum(
-            1 for bs in td["bs_matches"]
-            if paneel is None or paneel.is_zichtbaar(i, bs)
-        )
-        totale_schat += 42 + zb_count * 26 + 14
-    totale_schat += 22
-    gebruik_compact = totale_schat > max_hoogte
+    # Alle triggers tonen (altijd uitgeklapt, geen compact modus)
+    zichtbaar_idxs = list(range(len(trigger_data)))
 
     for i in zichtbaar_idxs:
         td = trigger_data[i]
@@ -403,37 +405,48 @@ def _maak_info_paneel(breedte, trigger_data, trigger_states,
         alle_match = td["alle_match"]
         state = trigger_states[i]
 
+        trigger_actief = True
+        if paneel and hasattr(paneel, 'is_trigger_actief'):
+            trigger_actief = paneel.is_trigger_actief(i)
+
         kleur = TRIGGER_KLEUREN_BGR[i % len(TRIGGER_KLEUREN_BGR)]
+        if not trigger_actief:
+            kleur = BGR_DONKERGRIJS
         toets = " + ".join(trigger["toetsen"]).upper()
 
         # Status bepalen
-        if actie_recent and actie_idx == i:
+        if not trigger_actief:
+            status_tekst = "UITGESCHAKELD"
+            status_kleur = BGR_DONKERGRIJS
+            naam_kleur = BGR_GRIJS
+            dikte = 1
+        elif actie_recent and actie_idx == i:
             status_tekst = "ACTIE UITGEVOERD!"
             status_kleur = (0, 255, 255)
             naam_kleur = (0, 255, 255)
-            toon_detail = True
+            dikte = 2
         elif in_cooldown:
             rest = cooldown - (nu - laatste_actie)
             status_tekst = f"cooldown {rest:.1f}s"
             status_kleur = BGR_GRIJS
             naam_kleur = BGR_GRIJS
-            toon_detail = False
+            dikte = 1
         elif alle_match and state["start"] is not None:
             duur = nu - state["start"]
             status_tekst = f"ACTIEF  {duur:.1f}s / {vasthoud_tijd:.1f}s"
             status_kleur = BGR_GROEN
             naam_kleur = BGR_WIT
-            toon_detail = True
+            dikte = 2
         elif alle_match:
             status_tekst = "ACTIEF"
             status_kleur = BGR_GROEN
             naam_kleur = BGR_WIT
-            toon_detail = True
+            dikte = 2
         else:
             status_tekst = "inactief"
             status_kleur = BGR_DONKERGRIJS
             naam_kleur = (200, 200, 200)
-            toon_detail = False
+            dikte = 1
 
         # Accentlijn links van de trigger
         cv2.rectangle(info, (8, y - 16), (12, y + 4), kleur, -1)
@@ -441,78 +454,82 @@ def _maak_info_paneel(breedte, trigger_data, trigger_states,
         # Trigger naam + toets
         cv2.putText(info, trigger["naam"], (18, y), font, 0.6, naam_kleur, 2)
         naam_breedte = cv2.getTextSize(trigger["naam"], font, 0.6, 2)[0][0]
+        toets_kleur = BGR_TEAL if trigger_actief else BGR_DONKERGRIJS
         cv2.putText(info, f"[{toets}]", (22 + naam_breedte, y),
-                    font, 0.45, BGR_TEAL, 1)
+                    font, 0.45, toets_kleur, 1)
 
         # Status rechts uitgelijnd
         status_breedte = cv2.getTextSize(status_tekst, font, 0.5, 1)[0][0]
-        dikte = 2 if toon_detail else 1
         cv2.putText(info, status_tekst,
                     (breedte - status_breedte - 15, y),
                     font, 0.5, status_kleur, dikte)
 
-        # Toon blendshape-details als actief, of als compact niet nodig is
-        toon_bs = toon_detail or not gebruik_compact
+        # Voortgangsbalk bij vasthouden (alleen actieve triggers)
+        if trigger_actief and alle_match and state["start"] is not None and not in_cooldown:
+            duur = nu - state["start"]
+            vr = min(duur / vasthoud_tijd, 1.0)
+            bar_y = y + 5
+            bar_x = breedte - 240
+            bar_w = 220
+            cv2.rectangle(info, (bar_x, bar_y), (bar_x + bar_w, bar_y + 7),
+                          BGR_DONKERGRIJS, -1)
+            cv2.rectangle(info, (bar_x, bar_y),
+                          (bar_x + int(bar_w * vr), bar_y + 7),
+                          BGR_GROEN, -1)
+            y += 14
 
-        if toon_bs:
-            # Voortgangsbalk bij vasthouden
-            if alle_match and state["start"] is not None and not in_cooldown:
-                duur = nu - state["start"]
-                vr = min(duur / vasthoud_tijd, 1.0)
-                bar_y = y + 5
-                bar_x = breedte - 240
-                bar_w = 220
-                cv2.rectangle(info, (bar_x, bar_y), (bar_x + bar_w, bar_y + 7),
-                              BGR_DONKERGRIJS, -1)
-                cv2.rectangle(info, (bar_x, bar_y),
-                              (bar_x + int(bar_w * vr), bar_y + 7),
-                              BGR_GROEN, -1)
-                y += 14
+        y += 28
 
-            y += 28
+        # Blendshapes per trigger (altijd getoond)
+        for bs_naam, (score, drempel, match) in bs_matches.items():
+            if paneel and not paneel.is_zichtbaar(i, bs_naam):
+                continue
 
-            # Blendshapes per trigger
-            for bs_naam, (score, drempel, match) in bs_matches.items():
-                if paneel and not paneel.is_zichtbaar(i, bs_naam):
-                    continue
+            bs_label = nl_label(bs_naam)
+            if len(bs_label) > 24:
+                bs_label = bs_label[:22] + ".."
 
-                bs_label = nl_label(bs_naam)
-                if len(bs_label) > 24:
-                    bs_label = bs_label[:22] + ".."
-
+            if not trigger_actief:
+                tekst_kleur = BGR_GRIJS
+            else:
                 tekst_kleur = BGR_WIT if match else (170, 170, 170)
-                cv2.putText(info, bs_label, (30, y), font, 0.48, tekst_kleur, 1)
+            cv2.putText(info, bs_label, (30, y), font, 0.48, tekst_kleur, 1)
 
-                waarde_tekst = f"{score:.2f} / {drempel:.2f}"
-                cv2.putText(info, waarde_tekst, (220, y), font, 0.42,
-                            BGR_GROEN if match else BGR_ROOD, 1)
+            waarde_tekst = f"{score:.2f} / {drempel:.2f}"
+            if not trigger_actief:
+                waarde_kleur = BGR_GRIJS
+            else:
+                waarde_kleur = BGR_GROEN if match else BGR_ROOD
+            cv2.putText(info, waarde_tekst, (220, y), font, 0.42,
+                        waarde_kleur, 1)
 
-                # Score-balk
-                bar_x = breedte - 240
-                bar_w = 220
-                bar_h = 15
-                bar_y_top = y - 12
+            # Score-balk
+            bar_x = breedte - 240
+            bar_w = 220
+            bar_h = 15
+            bar_y_top = y - 12
 
-                cv2.rectangle(info, (bar_x, bar_y_top),
-                              (bar_x + bar_w, bar_y_top + bar_h),
-                              (30, 30, 30), -1)
+            cv2.rectangle(info, (bar_x, bar_y_top),
+                          (bar_x + bar_w, bar_y_top + bar_h),
+                          (30, 30, 30), -1)
 
-                score_px = int(bar_w * min(score, 1.0))
+            score_px = int(bar_w * min(score, 1.0))
+            if not trigger_actief:
+                bar_kleur = BGR_DONKERGRIJS
+            else:
                 bar_kleur = BGR_GROEN if match else BGR_ROOD
-                if score_px > 0:
-                    cv2.rectangle(info, (bar_x, bar_y_top),
-                                  (bar_x + score_px, bar_y_top + bar_h),
-                                  bar_kleur, -1)
+            if score_px > 0:
+                cv2.rectangle(info, (bar_x, bar_y_top),
+                              (bar_x + score_px, bar_y_top + bar_h),
+                              bar_kleur, -1)
 
-                drempel_px = int(bar_w * min(drempel, 1.0))
-                cv2.line(info, (bar_x + drempel_px, bar_y_top - 2),
-                         (bar_x + drempel_px, bar_y_top + bar_h + 2),
-                         BGR_WIT, 2)
+            drempel_px = int(bar_w * min(drempel, 1.0))
+            lijn_kleur = BGR_WIT if trigger_actief else BGR_GRIJS
+            cv2.line(info, (bar_x + drempel_px, bar_y_top - 2),
+                     (bar_x + drempel_px, bar_y_top + bar_h + 2),
+                     lijn_kleur, 2)
 
-                y += 26
-        else:
-            # Compact modus: alleen de header-regel, geen blendshape-details
-            y += 22
+            y += 26
 
         # Scheiding tussen triggers
         y += 4
@@ -705,7 +722,9 @@ def start_live_explorer(camera_index=0):
                 "alle_match": alle_match,
             })
 
-            if alle_match and not in_cooldown and not gevuurd:
+            trigger_actief = not paneel.is_open or paneel.is_trigger_actief(i)
+
+            if alle_match and not in_cooldown and not gevuurd and trigger_actief:
                 if trigger_states[i]["start"] is None:
                     trigger_states[i]["start"] = nu
 
@@ -738,12 +757,12 @@ def start_live_explorer(camera_index=0):
             nu, vasthoud_tijd, laatste_actie, cooldown,
             actie_flash, actie_idx, gezicht_ok,
             paneel=paneel, scroll_offset=scroll_offset,
-            max_hoogte=400, gepauzeerd=gepauzeerd
+            max_hoogte=500, gepauzeerd=gepauzeerd
         )
 
         # Scroll offset begrenzen
-        if inhoud_hoogte > 400:
-            scroll_offset = min(scroll_offset, inhoud_hoogte - 400)
+        if inhoud_hoogte > 500:
+            scroll_offset = min(scroll_offset, inhoud_hoogte - 500)
         else:
             scroll_offset = 0
 
