@@ -86,6 +86,7 @@ NL_LABELS = {
     "mouthUpperUpRight": "Bovenlip op R",
     "noseSneerLeft": "Neus optrekken L",
     "noseSneerRight": "Neus optrekken R",
+    "tongueOut": "Tong uitsteken",
 }
 
 # Face mesh connecties voor tekenen

@@ -17,7 +17,187 @@ from blendshape_detectie import (
 
 TOP_N = 5  # standaard aantal pieken dat gehighlight wordt
 
+# ---------------------------------------------------------------------------
+# Alle 52 ARKit blendshapes gegroepeerd (Nederlandse groepsnamen)
+# ---------------------------------------------------------------------------
+BLENDSHAPE_GROEPEN = [
+    ("Mond", [
+        "mouthSmileLeft", "mouthSmileRight", "mouthFrownLeft", "mouthFrownRight",
+        "mouthPucker", "mouthLeft", "mouthRight",
+        "mouthShrugUpper", "mouthShrugLower", "mouthClose", "mouthFunnel",
+        "mouthDimpleLeft", "mouthDimpleRight", "mouthStretchLeft", "mouthStretchRight",
+        "mouthRollUpper", "mouthRollLower", "mouthPressLeft", "mouthPressRight",
+        "mouthUpperUpLeft", "mouthUpperUpRight", "mouthLowerDownLeft", "mouthLowerDownRight",
+    ]),
+    ("Ogen", [
+        "eyeBlinkLeft", "eyeBlinkRight", "eyeWideLeft", "eyeWideRight",
+        "eyeSquintLeft", "eyeSquintRight", "eyeLookUpLeft", "eyeLookUpRight",
+        "eyeLookDownLeft", "eyeLookDownRight", "eyeLookInLeft", "eyeLookInRight",
+        "eyeLookOutLeft", "eyeLookOutRight",
+    ]),
+    ("Wenkbrauwen", [
+        "browDownLeft", "browDownRight", "browInnerUp",
+        "browOuterUpLeft", "browOuterUpRight",
+    ]),
+    ("Kaak", ["jawOpen", "jawForward", "jawLeft", "jawRight"]),
+    ("Tong", ["tongueOut"]),
+    ("Wang", ["cheekPuff", "cheekSquintLeft", "cheekSquintRight"]),
+    ("Neus", ["noseSneerLeft", "noseSneerRight"]),
+]
 
+STANDAARD_SELECTIE = {
+    "mouthSmileLeft", "mouthSmileRight", "mouthFrownLeft", "mouthFrownRight",
+    "mouthPucker", "mouthFunnel", "mouthClose",
+    "eyeBlinkLeft", "eyeBlinkRight", "eyeWideLeft", "eyeWideRight",
+    "eyeSquintLeft", "eyeSquintRight",
+    "browDownLeft", "browDownRight", "browInnerUp",
+    "browOuterUpLeft", "browOuterUpRight",
+    "jawOpen", "tongueOut",
+    "cheekPuff",
+    "noseSneerLeft", "noseSneerRight",
+}
+
+
+# ---------------------------------------------------------------------------
+# Blendshape selectie-dialoog (wordt getoond VOOR de webcam start)
+# ---------------------------------------------------------------------------
+def _toon_blendshape_selectie_vooraf():
+    """
+    CustomTkinter dialoog VOOR de webcam start.
+    Gebruiker kiest welke blendshapes zichtbaar zijn in de Explorer.
+    Retourneert een set van blendshape-namen, of None bij annuleren.
+    """
+    import customtkinter as ctk
+
+    FONT = "Segoe UI"
+    resultaat = {"selectie": None}
+
+    venster = ctk.CTkToplevel()
+    venster.title("Blendshape Selectie \u2014 MimiControl Studio")
+    venster.geometry("520x650")
+    venster.resizable(True, True)
+    venster.configure(fg_color="#F2F2F7")
+    venster.attributes("-topmost", True)
+    venster.grab_set()
+
+    header = ctk.CTkFrame(venster, fg_color="#062D36", corner_radius=0, height=56)
+    header.pack(fill="x")
+    header.pack_propagate(False)
+    ctk.CTkLabel(
+        header, text="Kies blendshapes om te tonen",
+        font=(FONT, 16, "bold"), text_color="#FFFFFF"
+    ).pack(pady=14)
+
+    ctk.CTkLabel(
+        venster,
+        text="Selecteer welke gezichtsmetingen zichtbaar zijn in de Explorer.",
+        font=(FONT, 11), text_color="#5A5A5E"
+    ).pack(pady=(8, 4))
+
+    scroll = ctk.CTkScrollableFrame(venster, fg_color="#F2F2F7", corner_radius=0)
+    scroll.pack(fill="both", expand=True, padx=8, pady=4)
+
+    checks = {}
+
+    for groep_naam, bs_lijst in BLENDSHAPE_GROEPEN:
+        groep_frame = ctk.CTkFrame(scroll, fg_color="#FFFFFF", corner_radius=10,
+                                   border_width=1, border_color="#E5E5EA")
+        groep_frame.pack(fill="x", padx=4, pady=4)
+
+        groep_header = ctk.CTkFrame(groep_frame, fg_color="transparent")
+        groep_header.pack(fill="x", padx=10, pady=(6, 2))
+
+        ctk.CTkLabel(
+            groep_header, text=groep_naam,
+            font=(FONT, 13, "bold"), text_color="#1C1C1E"
+        ).pack(side="left")
+
+        groep_check_vars = []
+
+        for bs_naam in bs_lijst:
+            var = ctk.IntVar(value=1 if bs_naam in STANDAARD_SELECTIE else 0)
+            checks[bs_naam] = var
+            groep_check_vars.append(var)
+
+            ctk.CTkCheckBox(
+                groep_frame, text=nl_label(bs_naam),
+                font=(FONT, 11), variable=var,
+                fg_color="#4DB8BE", hover_color="#3A9DA3",
+                text_color="#1C1C1E",
+                checkbox_width=18, checkbox_height=18
+            ).pack(anchor="w", padx=20, pady=1)
+
+        # Alles aan/uit knoppen per groep
+        btn_rij = ctk.CTkFrame(groep_header, fg_color="transparent")
+        btn_rij.pack(side="right")
+
+        def _alles_aan(vars_=groep_check_vars):
+            for v in vars_:
+                v.set(1)
+
+        def _alles_uit(vars_=groep_check_vars):
+            for v in vars_:
+                v.set(0)
+
+        ctk.CTkButton(
+            btn_rij, text="Alles", width=50, height=22,
+            font=(FONT, 10), fg_color="#4DB8BE", hover_color="#3A9DA3",
+            corner_radius=6, command=_alles_aan
+        ).pack(side="left", padx=2)
+
+        ctk.CTkButton(
+            btn_rij, text="Geen", width=50, height=22,
+            font=(FONT, 10), fg_color="#E5E5EA", hover_color="#D0D0D5",
+            text_color="#1C1C1E", corner_radius=6, command=_alles_uit
+        ).pack(side="left", padx=2)
+
+        ctk.CTkFrame(groep_frame, fg_color="transparent", height=4).pack()
+
+    # Knoppen onderaan
+    btn_frame = ctk.CTkFrame(venster, fg_color="#F2F2F7", height=56)
+    btn_frame.pack(fill="x")
+    btn_frame.pack_propagate(False)
+
+    btn_inner = ctk.CTkFrame(btn_frame, fg_color="transparent")
+    btn_inner.pack(pady=10)
+
+    def _bevestig():
+        selectie = {naam for naam, var in checks.items() if var.get() == 1}
+        resultaat["selectie"] = selectie if selectie else set(checks.keys())
+        venster.destroy()
+
+    def _alles_selecteren():
+        for var in checks.values():
+            var.set(1)
+
+    def _annuleer():
+        venster.destroy()
+
+    ctk.CTkButton(
+        btn_inner, text="Alle tonen", font=(FONT, 11),
+        fg_color="#E5E5EA", hover_color="#D0D0D5", text_color="#1C1C1E",
+        corner_radius=10, height=34, width=110, command=_alles_selecteren
+    ).pack(side="left", padx=4)
+
+    ctk.CTkButton(
+        btn_inner, text="Toepassen", font=(FONT, 13, "bold"),
+        fg_color="#4DB8BE", hover_color="#3A9DA3",
+        corner_radius=10, height=34, width=120, command=_bevestig
+    ).pack(side="left", padx=4)
+
+    ctk.CTkButton(
+        btn_inner, text="Annuleren", font=(FONT, 11),
+        fg_color="#E05A50", hover_color="#C44840",
+        corner_radius=10, height=34, width=100, command=_annuleer
+    ).pack(side="left", padx=4)
+
+    venster.wait_window()
+    return resultaat["selectie"]
+
+
+# ---------------------------------------------------------------------------
+# Filter-dialoog na piek-opname (bestaande functionaliteit)
+# ---------------------------------------------------------------------------
 def _toon_filter_dialoog(pieken, top_n=TOP_N):
     """
     CustomTkinter dialoog waarmee de gebruiker kiest welke blendshapes
@@ -128,6 +308,12 @@ def start_explorer(top_n=TOP_N, camera_index=0):
         dict met piekwaarden als de gebruiker ENTER drukt,
         of None als de gebruiker Q drukt.
     """
+    # Blendshape selectie-dialoog VOOR de webcam start
+    selectie = _toon_blendshape_selectie_vooraf()
+    if selectie is None:
+        print("  [INFO] Blendshape selectie geannuleerd.")
+        return None
+
     cap = cv2.VideoCapture(camera_index)
     if not cap.isOpened():
         print("  [!] Kan de webcam niet openen!")
@@ -143,14 +329,15 @@ def start_explorer(top_n=TOP_N, camera_index=0):
     opname_actief = False
     opname_start = 0.0
     heeft_pieken = False
-    zichtbare_bs = None  # None = toon alles, set = alleen deze namen
+    zichtbare_bs = selectie
+    originele_selectie = selectie
 
     print("\n  === EXPLORER MODUS ===")
     print("  SPATIE  = Start piek-opname (onbeperkt)")
     print("  Tijdens opname: SPATIE/ESC = Stoppen")
     print("  ENTER   = Opslaan als trigger")
     print("  F       = Filter blendshapes (altijd beschikbaar)")
-    print("  R       = Reset filter (toon alles)")
+    print("  R       = Reset filter naar selectie")
     print("  Q       = Terug zonder opslaan\n")
 
     while True:
@@ -278,9 +465,9 @@ def start_explorer(top_n=TOP_N, camera_index=0):
                     zichtbare_bs = set(gefilterd.keys())
                     print(f"  [OK] Filter toegepast: {len(zichtbare_bs)} blendshapes zichtbaar")
 
-        elif key == ord('r') and zichtbare_bs is not None:
-            zichtbare_bs = None
-            print("  [OK] Filter gereset — alle blendshapes zichtbaar")
+        elif key == ord('r'):
+            zichtbare_bs = set(originele_selectie)
+            print("  [OK] Filter gereset naar selectie")
 
         elif key == 13 and heeft_pieken:  # ENTER
             cap.release()
