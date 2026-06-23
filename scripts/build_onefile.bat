@@ -61,9 +61,14 @@ if exist "app\face_landmarker.task" (
         --add-data "app\assets\logo_mennens.png;assets" ^
         --add-data "app\assets\mimicontrol.ico;assets" ^
         --add-data "%CTK_PATH%;customtkinter" ^
+        --additional-hooks-dir hooks ^
+        --collect-all mediapipe ^
+        --copy-metadata mediapipe ^
         --hidden-import=customtkinter ^
         --hidden-import=mediapipe ^
+        --hidden-import=mediapipe.tasks.c ^
         --hidden-import=mediapipe.tasks.python ^
+        --hidden-import=mediapipe.tasks.python.core.mediapipe_c_bindings ^
         --hidden-import=mediapipe.tasks.python.vision ^
         --hidden-import=cv2 ^
         --hidden-import=PIL ^
@@ -81,9 +86,14 @@ if exist "app\face_landmarker.task" (
         --add-data "app\assets\logo_mennens.png;assets" ^
         --add-data "app\assets\mimicontrol.ico;assets" ^
         --add-data "%CTK_PATH%;customtkinter" ^
+        --additional-hooks-dir hooks ^
+        --collect-all mediapipe ^
+        --copy-metadata mediapipe ^
         --hidden-import=customtkinter ^
         --hidden-import=mediapipe ^
+        --hidden-import=mediapipe.tasks.c ^
         --hidden-import=mediapipe.tasks.python ^
+        --hidden-import=mediapipe.tasks.python.core.mediapipe_c_bindings ^
         --hidden-import=mediapipe.tasks.python.vision ^
         --hidden-import=cv2 ^
         --hidden-import=PIL ^
