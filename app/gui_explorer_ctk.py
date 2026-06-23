@@ -734,10 +734,17 @@ class MimiControlStudioApp:
         return config.get("camera_index", 0)
 
     def _lanceer_explorer(self):
-        self.app.withdraw()
-        self.app.update()
-        pieken = start_explorer(camera_index=self._get_camera_index())
-        self.app.deiconify()
+        try:
+            pieken = start_explorer(
+                camera_index=self._get_camera_index(),
+                parent=self.app,
+            )
+        finally:
+            try:
+                self.app.deiconify()
+                self.app.lift()
+            except Exception:
+                pass
 
         if pieken:
             open_trigger_editor(

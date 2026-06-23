@@ -8,8 +8,10 @@ stopt zelf met SPATIE of ESC.
 
 import cv2
 import time
+import traceback
 import numpy as np
 
+from paths import log_message
 from blendshape_detectie import (
     maak_blendshape_landmarker, detecteer_blendshapes,
     teken_face_mesh_simpel, teken_blendshape_bars, nl_label,
@@ -59,10 +61,62 @@ STANDAARD_SELECTIE = {
 }
 
 
+def _toon_fout(parent, titel, bericht):
+    """Toon een foutmelding; GUI blijft open als parent gezet is."""
+    try:
+        from tkinter import messagebox
+        messagebox.showerror(titel, bericht, parent=parent)
+    except Exception:
+        print(f"  [!] {titel}: {bericht}")
+
+
+def _maak_ctk_dialoog(parent, titel, geometry, resizable=True):
+    """CTkToplevel gekoppeld aan het hoofdvenster (voorkomt app-exit bij destroy)."""
+    import customtkinter as ctk
+
+    if parent is not None:
+        venster = ctk.CTkToplevel(parent)
+        venster.transient(parent)
+    else:
+        venster = ctk.CTkToplevel()
+
+    venster.title(titel)
+    venster.geometry(geometry)
+    venster.resizable(resizable, resizable)
+    venster.configure(fg_color="#F2F2F7")
+    venster.attributes("-topmost", True)
+
+    if parent is not None:
+        try:
+            parent.update_idletasks()
+            pw, ph = parent.winfo_width(), parent.winfo_height()
+            px, py = parent.winfo_x(), parent.winfo_y()
+            breedte, rest = geometry.split("x", 1)
+            hoogte = rest.split("+")[0]
+            sx = px + max(0, (pw - int(breedte)) // 2)
+            sy = py + max(0, (ph - int(hoogte)) // 2)
+            venster.geometry(f"{breedte}x{hoogte}+{sx}+{sy}")
+        except Exception:
+            pass
+
+    venster.lift()
+    venster.focus_force()
+    venster.grab_set()
+    return venster
+
+
+def _sluit_dialoog(venster):
+    try:
+        venster.grab_release()
+    except Exception:
+        pass
+    venster.destroy()
+
+
 # ---------------------------------------------------------------------------
 # Blendshape selectie-dialoog (wordt getoond VOOR de webcam start)
 # ---------------------------------------------------------------------------
-def _toon_blendshape_selectie_vooraf():
+def _toon_blendshape_selectie_vooraf(parent=None):
     """
     CustomTkinter dialoog VOOR de webcam start.
     Gebruiker kiest welke blendshapes zichtbaar zijn in de Explorer.
@@ -73,13 +127,11 @@ def _toon_blendshape_selectie_vooraf():
     FONT = "Segoe UI"
     resultaat = {"selectie": None}
 
-    venster = ctk.CTkToplevel()
-    venster.title("Blendshape Selectie \u2014 MimiControl Studio")
-    venster.geometry("520x650")
-    venster.resizable(True, True)
-    venster.configure(fg_color="#F2F2F7")
-    venster.attributes("-topmost", True)
-    venster.grab_set()
+    venster = _maak_ctk_dialoog(
+        parent,
+        "Blendshape Selectie \u2014 MimiControl Studio",
+        "520x650",
+    )
 
     header = ctk.CTkFrame(venster, fg_color="#062D36", corner_radius=0, height=56)
     header.pack(fill="x")
@@ -175,14 +227,17 @@ def _toon_blendshape_selectie_vooraf():
     def _bevestig():
         selectie = {naam for naam, var in checks.items() if var.get() == 1}
         resultaat["selectie"] = selectie if selectie else set(checks.keys())
-        venster.destroy()
+        _sluit_dialoog(venster)
 
     def _alles_selecteren():
         for var in checks.values():
             var.set(1)
 
     def _annuleer():
-        venster.destroy()
+        resultaat["selectie"] = None
+        _sluit_dialoog(venster)
+
+    venster.protocol("WM_DELETE_WINDOW", _annuleer)
 
     ctk.CTkButton(
         btn_inner, text="Alle tonen", font=(FONT, 11),
@@ -209,7 +264,7 @@ def _toon_blendshape_selectie_vooraf():
 # ---------------------------------------------------------------------------
 # Filter-dialoog na piek-opname (bestaande functionaliteit)
 # ---------------------------------------------------------------------------
-def _toon_filter_dialoog(pieken, top_n=TOP_N):
+def _toon_filter_dialoog(pieken, top_n=TOP_N, parent=None):
     """
     CustomTkinter dialoog waarmee de gebruiker kiest welke blendshapes
     zichtbaar zijn (checkboxen) en hoeveel (top-N slider).
@@ -220,13 +275,7 @@ def _toon_filter_dialoog(pieken, top_n=TOP_N):
     gesorteerd = sorted(pieken.items(), key=lambda kv: kv[1], reverse=True)
     resultaat = {"pieken": None}
 
-    venster = ctk.CTkToplevel()
-    venster.title("Blendshape Filter")
-    venster.geometry("480x560")
-    venster.resizable(False, True)
-    venster.configure(fg_color="#F2F2F7")
-    venster.attributes("-topmost", True)
-    venster.grab_set()
+    venster = _maak_ctk_dialoog(parent, "Blendshape Filter", "480x560", resizable=False)
 
     FONT = "Segoe UI"
 
@@ -290,10 +339,13 @@ def _toon_filter_dialoog(pieken, top_n=TOP_N):
     def _bevestig():
         gefilterd = {n: s for n, s in pieken.items() if checks[n].get() == 1}
         resultaat["pieken"] = gefilterd if gefilterd else pieken
-        venster.destroy()
+        _sluit_dialoog(venster)
 
     def _annuleer():
-        venster.destroy()
+        resultaat["pieken"] = None
+        _sluit_dialoog(venster)
+
+    venster.protocol("WM_DELETE_WINDOW", _annuleer)
 
     ctk.CTkButton(
         btn_frame, text="Toepassen", font=(FONT, 13, "bold"),
@@ -311,221 +363,273 @@ def _toon_filter_dialoog(pieken, top_n=TOP_N):
     return resultaat["pieken"]
 
 
-def start_explorer(top_n=TOP_N, camera_index=0):
+def start_explorer(top_n=TOP_N, camera_index=0, parent=None):
     """
     Open de Explorer: webcam + live blendshape-bars.
+
+    Args:
+        parent: CTk-hoofdvenster voor modale dialogen (verplicht vanuit GUI).
 
     Returns:
         dict met piekwaarden als de gebruiker ENTER drukt,
         of None als de gebruiker Q drukt.
     """
-    # Blendshape selectie-dialoog VOOR de webcam start
-    selectie = _toon_blendshape_selectie_vooraf()
+    # Dialoog tonen terwijl het hoofdvenster nog zichtbaar is (niet withdrawen).
+    selectie = _toon_blendshape_selectie_vooraf(parent)
     if selectie is None:
         print("  [INFO] Blendshape selectie geannuleerd.")
         return None
 
-    cap = cv2.VideoCapture(camera_index)
-    if not cap.isOpened():
-        print("  [!] Kan de webcam niet openen!")
-        return None
+    withdrawn = False
+    if parent is not None:
+        try:
+            parent.withdraw()
+            parent.update()
+            withdrawn = True
+        except Exception:
+            pass
 
-    # Camera warmup: eerste frames zijn vaak zwart op Windows
-    for _ in range(8):
-        cap.read()
+    cap = None
+    landmarker = None
+    resultaat = None
 
-    landmarker = maak_blendshape_landmarker(modus="video")
-    ts = 0
-    font = cv2.FONT_HERSHEY_SIMPLEX
+    try:
+        from live_modus_explorer import _open_webcam_robuust
 
-    # State
-    pieken = {}
-    top_namen = set()
-    opname_actief = False
-    opname_start = 0.0
-    heeft_pieken = False
-    zichtbare_bs = selectie
-    originele_selectie = selectie
+        cap, fout = _open_webcam_robuust(camera_index)
+        if cap is None:
+            melding = fout or "Kan de webcam niet openen. Controleer of geen andere app de camera gebruikt."
+            print(f"  [!] {melding}")
+            _toon_fout(parent, "Webcam Fout — MimiControl Studio", melding)
+            return None
 
-    print("\n  === EXPLORER MODUS ===")
-    print("  SPATIE  = Start piek-opname (onbeperkt)")
-    print("  Tijdens opname: SPATIE/ESC = Stoppen")
-    print("  ENTER   = Opslaan als trigger")
-    print("  F       = Filter blendshapes (altijd beschikbaar)")
-    print("  R       = Reset filter naar selectie")
-    print("  Q       = Terug zonder opslaan\n")
-
-    cv2.namedWindow("MimiExplorer (Q=sluiten)", cv2.WINDOW_NORMAL)
-    eerste_frame = True
-
-    while True:
-        ret, frame = cap.read()
-        if not ret:
-            break
-
-        frame = cv2.flip(frame, 1)
-        cam_h, cam_w = frame.shape[:2]
-
-        # Breed canvas: webcam links, bars rechts
-        bar_panel_w = 420
-        canvas = np.zeros((cam_h, cam_w + bar_panel_w, 3), dtype=np.uint8)
-        canvas[:, :cam_w] = frame
-        # Subtiele achtergrond voor het bar-panel zodat het niet zwart is
-        canvas[:, cam_w:] = (25, 25, 30)
-
-        rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-        ts += 33
-        landmarks, scores = detecteer_blendshapes(landmarker, rgb, ts)
-
-        if landmarks:
-            teken_face_mesh_simpel(frame, landmarks)
-        canvas[:, :cam_w] = frame
-
-        # Piek-opname logica (onbeperkte duur, gebruiker stopt zelf)
-        if opname_actief:
-            verstreken = time.time() - opname_start
-
-            # Verzamel pieken
-            for naam, score in scores.items():
-                if score > pieken.get(naam, 0):
-                    pieken[naam] = score
-
-            # REC indicator op webcam
-            cv2.circle(canvas, (cam_w - 30, 30), 10, (0, 0, 255), -1)
-            cv2.putText(canvas, f"REC {verstreken:.1f}s",
-                        (cam_w - 130, 37), font, 0.6, (0, 0, 255), 2)
-
-            # Hint om te stoppen - goed zichtbaar op webcam
-            hint_tekst = "SPATIE of ESC = STOP"
-            tekst_grootte = cv2.getTextSize(hint_tekst, font, 0.7, 2)[0]
-            hint_x = (cam_w - tekst_grootte[0]) // 2
-            cv2.rectangle(canvas, (hint_x - 8, cam_h - 55),
-                          (hint_x + tekst_grootte[0] + 8, cam_h - 25),
-                          (0, 0, 0), -1)
-            cv2.putText(canvas, hint_tekst,
-                        (hint_x, cam_h - 32), font, 0.7, (0, 200, 255), 2)
-
-            # Pulserende balk (geen einddoel want onbeperkte duur)
-            puls = abs((verstreken % 2.0) - 1.0)
-            bx = int(cam_w * 0.1)
-            bw = int(cam_w * 0.8)
-            by = cam_h - 18
-            cv2.rectangle(canvas, (bx, by), (bx + bw, by + 10),
-                          (50, 50, 50), -1)
-            puls_breedte = int(bw * 0.3)
-            puls_start = int((bw - puls_breedte) * puls)
-            cv2.rectangle(canvas, (bx + puls_start, by),
-                          (bx + puls_start + puls_breedte, by + 10),
-                          (0, 0, 255), -1)
-
-        # Bars tekenen op het rechter panel (gefilterd indien actief)
-        if scores:
-            toon_scores = scores
-            if zichtbare_bs is not None:
-                toon_scores = {k: v for k, v in scores.items()
-                               if k in zichtbare_bs}
-            # Fallback: als filter leeg resultaat geeft, toon alle scores
-            if not toon_scores:
-                toon_scores = scores
-            n_items = len(toon_scores)
-            beschikbaar = cam_h - 60
-            bh = max(8, min(14, beschikbaar // max(n_items, 1) - 4))
-            teken_blendshape_bars(
-                canvas, toon_scores,
-                x_start=cam_w + 10, y_start=50,
-                bar_breedte=160, bar_hoogte=bh, max_items=n_items,
-                pieken=pieken if heeft_pieken else None,
-                top_n_namen=top_namen if heeft_pieken else None
+        try:
+            landmarker = maak_blendshape_landmarker(modus="video")
+        except Exception as exc:
+            log_message(f"Landmarker kon niet starten:\n{traceback.format_exc()}")
+            _toon_fout(
+                parent,
+                "Model Fout — MimiControl Studio",
+                f"Face Landmarker kon niet geladen worden:\n\n{exc}",
             )
-        else:
-            # Nog geen scores (geen gezicht) - toon labels als placeholder
-            y_placeholder = 50
-            for bs_naam in sorted(zichtbare_bs):
-                label = nl_label(bs_naam)
-                cv2.putText(canvas, label, (cam_w + 10, y_placeholder + 11),
-                            font, 0.35, (80, 80, 80), 1)
-                bx = cam_w + 155
-                cv2.rectangle(canvas, (bx, y_placeholder),
-                              (bx + 160, y_placeholder + 14),
-                              (40, 40, 40), -1)
-                y_placeholder += 18
+            return None
 
-        # Verticale scheiding webcam / bar-panel
-        cv2.line(canvas, (cam_w, 0), (cam_w, cam_h), (60, 60, 60), 2)
+        ts = 0
+        font = cv2.FONT_HERSHEY_SIMPLEX
 
-        # Instructies bovenaan het bar-panel
-        ix = cam_w + 10
-        if opname_actief:
-            cv2.putText(canvas, "OPNAME LOOPT... (SPATIE=stop)",
-                        (ix, 25), font, 0.45, (0, 0, 255), 2)
-        elif heeft_pieken:
-            cv2.putText(canvas, "ENTER=trigger  SPATIE=opnieuw  F=filter",
-                        (ix, 25), font, 0.38, (0, 255, 255), 1)
-        else:
-            cv2.putText(canvas, "SPATIE = piek-opname starten",
-                        (ix, 25), font, 0.45, (200, 200, 200), 1)
+        # State
+        pieken = {}
+        top_namen = set()
+        opname_actief = False
+        opname_start = 0.0
+        heeft_pieken = False
+        zichtbare_bs = selectie
+        originele_selectie = selectie
 
-        if not landmarks:
-            cv2.putText(canvas, "Geen gezicht",
-                        (10, 30), font, 0.65, (0, 0, 255), 2)
+        print("\n  === EXPLORER MODUS ===")
+        print("  SPATIE  = Start piek-opname (onbeperkt)")
+        print("  Tijdens opname: SPATIE/ESC = Stoppen")
+        print("  ENTER   = Opslaan als trigger")
+        print("  F       = Filter blendshapes (altijd beschikbaar)")
+        print("  R       = Reset filter naar selectie")
+        print("  Q       = Terug zonder opslaan\n")
 
-        cv2.imshow("MimiExplorer (Q=sluiten)", canvas)
+        cv2.namedWindow("MimiExplorer (Q=sluiten)", cv2.WINDOW_NORMAL)
+        eerste_frame = True
 
-        if eerste_frame:
-            cv2.resizeWindow("MimiExplorer (Q=sluiten)",
-                             cam_w + bar_panel_w, cam_h)
-            eerste_frame = False
+        while True:
+            ret, frame = cap.read()
+            if not ret:
+                break
 
-        key = cv2.waitKey(1) & 0xFF
+            frame = cv2.flip(frame, 1)
+            cam_h, cam_w = frame.shape[:2]
 
-        # SPATIE of ESC stopt de opname als die actief is
-        if opname_actief and key in (ord(' '), 27):
-            opname_actief = False
-            heeft_pieken = True
-            gesorteerd = sorted(pieken.items(),
-                                key=lambda kv: kv[1], reverse=True)
-            top_namen = {naam for naam, _ in gesorteerd[:top_n]}
-            print(f"  [OK] Piek-opname gestopt! Top {top_n}:")
-            for naam, waarde in gesorteerd[:top_n]:
-                print(f"    {nl_label(naam):30s} {waarde:.3f}")
+            # Breed canvas: webcam links, bars rechts
+            bar_panel_w = 420
+            canvas = np.zeros((cam_h, cam_w + bar_panel_w, 3), dtype=np.uint8)
+            canvas[:, :cam_w] = frame
+            # Subtiele achtergrond voor het bar-panel zodat het niet zwart is
+            canvas[:, cam_w:] = (25, 25, 30)
 
-        elif key == ord(' ') and not opname_actief:
-            pieken = {}
-            top_namen = set()
-            heeft_pieken = False
-            opname_actief = True
-            opname_start = time.time()
-            print("  [REC] Piek-opname gestart... Maak de uitdrukking! (SPATIE/ESC=stop)")
+            rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+            ts += 33
+            landmarks, scores = detecteer_blendshapes(landmarker, rgb, ts)
 
-        elif key == ord('f') and not opname_actief:
+            if landmarks:
+                teken_face_mesh_simpel(frame, landmarks)
+            canvas[:, :cam_w] = frame
+
+            # Piek-opname logica (onbeperkte duur, gebruiker stopt zelf)
+            if opname_actief:
+                verstreken = time.time() - opname_start
+
+                # Verzamel pieken
+                for naam, score in scores.items():
+                    if score > pieken.get(naam, 0):
+                        pieken[naam] = score
+
+                # REC indicator op webcam
+                cv2.circle(canvas, (cam_w - 30, 30), 10, (0, 0, 255), -1)
+                cv2.putText(canvas, f"REC {verstreken:.1f}s",
+                            (cam_w - 130, 37), font, 0.6, (0, 0, 255), 2)
+
+                # Hint om te stoppen - goed zichtbaar op webcam
+                hint_tekst = "SPATIE of ESC = STOP"
+                tekst_grootte = cv2.getTextSize(hint_tekst, font, 0.7, 2)[0]
+                hint_x = (cam_w - tekst_grootte[0]) // 2
+                cv2.rectangle(canvas, (hint_x - 8, cam_h - 55),
+                              (hint_x + tekst_grootte[0] + 8, cam_h - 25),
+                              (0, 0, 0), -1)
+                cv2.putText(canvas, hint_tekst,
+                            (hint_x, cam_h - 32), font, 0.7, (0, 200, 255), 2)
+
+                # Pulserende balk (geen einddoel want onbeperkte duur)
+                puls = abs((verstreken % 2.0) - 1.0)
+                bx = int(cam_w * 0.1)
+                bw = int(cam_w * 0.8)
+                by = cam_h - 18
+                cv2.rectangle(canvas, (bx, by), (bx + bw, by + 10),
+                              (50, 50, 50), -1)
+                puls_breedte = int(bw * 0.3)
+                puls_start = int((bw - puls_breedte) * puls)
+                cv2.rectangle(canvas, (bx + puls_start, by),
+                              (bx + puls_start + puls_breedte, by + 10),
+                              (0, 0, 255), -1)
+
+            # Bars tekenen op het rechter panel (gefilterd indien actief)
+            if scores:
+                toon_scores = scores
+                if zichtbare_bs is not None:
+                    toon_scores = {k: v for k, v in scores.items()
+                                   if k in zichtbare_bs}
+                # Fallback: als filter leeg resultaat geeft, toon alle scores
+                if not toon_scores:
+                    toon_scores = scores
+                n_items = len(toon_scores)
+                beschikbaar = cam_h - 60
+                bh = max(8, min(14, beschikbaar // max(n_items, 1) - 4))
+                teken_blendshape_bars(
+                    canvas, toon_scores,
+                    x_start=cam_w + 10, y_start=50,
+                    bar_breedte=160, bar_hoogte=bh, max_items=n_items,
+                    pieken=pieken if heeft_pieken else None,
+                    top_n_namen=top_namen if heeft_pieken else None
+                )
+            else:
+                # Nog geen scores (geen gezicht) - toon labels als placeholder
+                y_placeholder = 50
+                for bs_naam in sorted(zichtbare_bs):
+                    label = nl_label(bs_naam)
+                    cv2.putText(canvas, label, (cam_w + 10, y_placeholder + 11),
+                                font, 0.35, (80, 80, 80), 1)
+                    bx = cam_w + 155
+                    cv2.rectangle(canvas, (bx, y_placeholder),
+                                  (bx + 160, y_placeholder + 14),
+                                  (40, 40, 40), -1)
+                    y_placeholder += 18
+
+            # Verticale scheiding webcam / bar-panel
+            cv2.line(canvas, (cam_w, 0), (cam_w, cam_h), (60, 60, 60), 2)
+
+            # Instructies bovenaan het bar-panel
+            ix = cam_w + 10
+            if opname_actief:
+                cv2.putText(canvas, "OPNAME LOOPT... (SPATIE=stop)",
+                            (ix, 25), font, 0.45, (0, 0, 255), 2)
+            elif heeft_pieken:
+                cv2.putText(canvas, "ENTER=trigger  SPATIE=opnieuw  F=filter",
+                            (ix, 25), font, 0.38, (0, 255, 255), 1)
+            else:
+                cv2.putText(canvas, "SPATIE = piek-opname starten",
+                            (ix, 25), font, 0.45, (200, 200, 200), 1)
+
+            if not landmarks:
+                cv2.putText(canvas, "Geen gezicht",
+                            (10, 30), font, 0.65, (0, 0, 255), 2)
+
+            cv2.imshow("MimiExplorer (Q=sluiten)", canvas)
+
+            if eerste_frame:
+                cv2.resizeWindow("MimiExplorer (Q=sluiten)",
+                                 cam_w + bar_panel_w, cam_h)
+                eerste_frame = False
+
+            key = cv2.waitKey(1) & 0xFF
+
+            # SPATIE of ESC stopt de opname als die actief is
+            if opname_actief and key in (ord(' '), 27):
+                opname_actief = False
+                heeft_pieken = True
+                gesorteerd = sorted(pieken.items(),
+                                    key=lambda kv: kv[1], reverse=True)
+                top_namen = {naam for naam, _ in gesorteerd[:top_n]}
+                print(f"  [OK] Piek-opname gestopt! Top {top_n}:")
+                for naam, waarde in gesorteerd[:top_n]:
+                    print(f"    {nl_label(naam):30s} {waarde:.3f}")
+
+            elif key == ord(' ') and not opname_actief:
+                pieken = {}
+                top_namen = set()
+                heeft_pieken = False
+                opname_actief = True
+                opname_start = time.time()
+                print("  [REC] Piek-opname gestart... Maak de uitdrukking! (SPATIE/ESC=stop)")
+
+            elif key == ord('f') and not opname_actief:
+                cv2.destroyAllWindows()
+                brondata = pieken if heeft_pieken else (scores if scores else None)
+                if brondata:
+                    gefilterd = _toon_filter_dialoog(brondata, top_n, parent=parent)
+                    if gefilterd is not None:
+                        if heeft_pieken:
+                            pieken = gefilterd
+                            gesorteerd = sorted(pieken.items(),
+                                                key=lambda kv: kv[1], reverse=True)
+                            top_namen = {naam for naam, _ in gesorteerd[:top_n]}
+                        zichtbare_bs = set(gefilterd.keys())
+                        print(f"  [OK] Filter toegepast: {len(zichtbare_bs)} blendshapes zichtbaar")
+                cv2.namedWindow("MimiExplorer (Q=sluiten)", cv2.WINDOW_NORMAL)
+
+            elif key == ord('r'):
+                zichtbare_bs = set(originele_selectie)
+                print("  [OK] Filter gereset naar selectie")
+
+            elif key == 13 and heeft_pieken:  # ENTER
+                resultaat = pieken
+                break
+
+            elif key == ord('q'):
+                break
+
+    except Exception as exc:
+        log_message(f"Explorer crash:\n{traceback.format_exc()}")
+        _toon_fout(
+            parent,
+            "Explorer Fout — MimiControl Studio",
+            f"De Explorer is onverwacht gestopt:\n\n{exc}",
+        )
+        return None
+    finally:
+        if cap is not None:
+            try:
+                cap.release()
+            except Exception:
+                pass
+        try:
             cv2.destroyAllWindows()
-            brondata = pieken if heeft_pieken else (scores if scores else None)
-            if brondata:
-                gefilterd = _toon_filter_dialoog(brondata, top_n)
-                if gefilterd is not None:
-                    if heeft_pieken:
-                        pieken = gefilterd
-                        gesorteerd = sorted(pieken.items(),
-                                            key=lambda kv: kv[1], reverse=True)
-                        top_namen = {naam for naam, _ in gesorteerd[:top_n]}
-                    zichtbare_bs = set(gefilterd.keys())
-                    print(f"  [OK] Filter toegepast: {len(zichtbare_bs)} blendshapes zichtbaar")
-            cv2.namedWindow("MimiExplorer (Q=sluiten)", cv2.WINDOW_NORMAL)
+        except Exception:
+            pass
+        if landmarker is not None:
+            try:
+                landmarker.close()
+            except Exception:
+                pass
+        if withdrawn and parent is not None:
+            try:
+                parent.deiconify()
+                parent.lift()
+            except Exception:
+                pass
 
-        elif key == ord('r'):
-            zichtbare_bs = set(originele_selectie)
-            print("  [OK] Filter gereset naar selectie")
-
-        elif key == 13 and heeft_pieken:  # ENTER
-            cap.release()
-            cv2.destroyAllWindows()
-            landmarker.close()
-            return pieken
-
-        elif key == ord('q'):
-            break
-
-    cap.release()
-    cv2.destroyAllWindows()
-    landmarker.close()
-    return None
+    return resultaat
