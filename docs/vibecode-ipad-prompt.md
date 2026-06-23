@@ -13,7 +13,9 @@ Bouw een native iPad-app: **MimiControl** — gezichtsbesturing voor toegankelij
 
 MimiControl is software waarmee mensen met ernstige motorische beperkingen (bijv. spasmen) hun apparaat kunnen bedienen via gezichtsuitdrukkingen in plaats van handen. Het project is ontwikkeld door Mennens.Tech. De bestaande Windows-app (Python + MediaPipe + CustomTkinter) heet **MimiControl Studio** en werkt als volgt:
 
-- Webcam detecteert 52 ARKit-compatibele **blendshapes** (MediaPipe Face Landmarker)
+**Kerngebruik (echte casus):** MimiControl is oorspronkelijk gebouwd voor een leerling met spasmen. Haar unieke, betrouwbare trigger is **lach + tong** — tong bollen in de mond of tong uitsteken. Op PC werkt `tongueOut` **niet**: MediaPipe levert slechts 51 van 52 blendshapes en mist `tongueOut` ([bekend issue](https://github.com/google/mediapipe/issues/4403)). De iPad-app met ARKit is daarom de **primaire kans** om tongdetectie wél betrouwbaar te bieden. Dit is geen nice-to-have maar de **hoofdreden** voor de iOS-versie.
+
+- Webcam detecteert 51 ARKit-compatibele **blendshapes** (MediaPipe Face Landmarker — `tongueOut` ontbreekt)
 - Gebruiker stelt **triggers** samen: meerdere blendshapes met drempelwaarden (AND-logica)
 - Bij match + vasthoudtijd → simuleer toetsaanslag (pyautogui op Windows)
 - **Anti-spasmefilter**: trigger moet X seconden vasthouden vóór actie
@@ -31,11 +33,14 @@ Referentie-architectuur Python-app (niet letterlijk kopiëren, wel conceptueel v
 | Cooldown | `cooldown` (default 2.0s) | Identiek |
 | Profielen | JSON in `profielen/` map | SwiftData of JSON in app sandbox |
 | Explorer/kalibratie | Live balkjes per blendshape | Live score-overzicht |
-| tongueOut | **Niet beschikbaar** in MediaPipe | **WEL beschikbaar** via ARKit — belangrijk voordeel iOS |
+| tongueOut | **Niet beschikbaar** in MediaPipe (51/52) | **WEL beschikbaar** via ARKit — **MVP must-have** |
+| mouthFunnel | Beschikbaar (tongbol-proxy) | Beschikbaar — combineer met `tongueOut` voor AND-triggers |
 
 ### Doel van de iPad-app
 
 Een **native iPad-app** die gezichtsuitdrukkingen detecteert via de **front camera + ARKit Face Tracking** (TrueDepth of LiDAR/iPad Pro vereist voor ARFaceTrackingConfiguration). De app moet bruikbaar zijn als standalone besturingsinterface én als kalibratie-/configuratietool.
+
+**Prioriteit #1:** betrouwbare detectie van `tongueOut` (tong uitsteken) en combinaties zoals `mouthSmileLeft/Right` + `tongueOut` of `mouthSmileLeft/Right` + `mouthFunnel` (lach + tongbol). Zonder werkende tongdetectie is de app voor de primaire gebruiker niet bruikbaar.
 
 ### Technische stack (voorkeur)
 
@@ -48,6 +53,19 @@ Een **native iPad-app** die gezichtsuitdrukkingen detecteert via de **front came
 - Taal UI: **Nederlands**
 
 ### Core features — MVP (must have)
+
+**0. Tongdetectie (`tongueOut`) — HOOGSTE PRIORITEIT**
+
+Dit is de reden dat de iPad-app gebouwd wordt. Implementeer en test dit vóór alle andere features.
+
+- Lees `tongueOut` live uit `ARFaceAnchor.blendShapes` (0.0–1.0)
+- Toon `tongueOut` **altijd** prominent in Explorer (eigen sectie "Tong", niet verborgen)
+- Kalibratie-flow specifiek voor tong: gebruiker doet tong uit / tongbol; app toont score en suggereert drempel
+- Ondersteun AND-triggers met tong, bijv.:
+  - `mouthSmileLeft` + `mouthSmileRight` + `tongueOut` (lach + tong uit)
+  - `mouthSmileLeft` + `mouthSmileRight` + `mouthFunnel` (lach + tongbol in mond)
+- Live modus: visuele feedback wanneer `tongueOut` boven drempel is (aparte indicator, niet alleen trigger-status)
+- Voorbeeldprofiel "Standaard" moet minstens één tong-trigger bevatten (zie Deliverables)
 
 1. **Face tracking scherm**
    - Start ARKit sessie met front camera
@@ -66,7 +84,7 @@ Een **native iPad-app** die gezichtsuitdrukkingen detecteert via de **front came
    - Evaluatie: **alle** geselecteerde blendshapes moeten ≥ drempel zijn (AND)
    - **Vasthoudtijd**: trigger moet `vasthoudTijd` seconden actief blijven
    - **Cooldown**: na actie wacht `cooldown` seconden
-   - Ondersteun minstens `tongueOut`, `mouthSmileLeft/Right`, `jawOpen`, `browInnerUp`, `eyeBlinkLeft/Right`
+   - **Verplicht:** `tongueOut` (hoogste prioriteit), plus `mouthSmileLeft/Right`, `mouthFunnel`, `jawOpen`, `browInnerUp`, `eyeBlinkLeft/Right`
 
 4. **Actie-uitvoer (realistisch voor iOS)**
    - iOS staat **geen system-wide keyboard injection** toe zonder speciale entitlements
@@ -200,6 +218,20 @@ for each frame with blendshape scores:
 - Statistieken / logging voor therapeuten
 - Meerdere talen
 
+### Testcriteria — tongdetectie (acceptatie MVP)
+
+De MVP is **niet** acceptabel zonder werkende tongdetectie. Test met echte gebruiker of video-opname van de primaire casus (lach + tong).
+
+| Test | Verwacht resultaat |
+|------|-------------------|
+| Tong uitsteken | `tongueOut` score ≥ 0.5 binnen 1 frame-cyclus; indicator actief |
+| Tong in rust | `tongueOut` score < 0.2; geen false trigger |
+| Lach + tong uit (AND) | Trigger vuurt alleen als beide blendshapes boven drempel |
+| Lach + tongbol (`mouthFunnel`) | Trigger vuurt bij combinatie; `tongueOut` blijft laag |
+| Vasthoudtijd + cooldown | Tong-trigger respecteert timing; geen spasmefalse positives |
+| Explorer kalibratie | Gebruiker kan drempel voor `tongueOut` instellen en direct zien of trigger "vuurt" |
+| 30+ fps | Tong-score updates vloeiend zonder haperen op iPad Pro |
+
 ### Kwaliteitseisen
 
 - Graceful degradation als geen gezicht gedetecteerd
@@ -214,10 +246,12 @@ for each frame with blendshape scores:
 1. Xcode project met werkende MVP
 2. README in het Nederlands
 3. Info.plist met privacy strings
-4. Voorbeeldprofiel "Standaard" met 2 demo-triggers
+4. Voorbeeldprofiel "Standaard" met minstens 2 demo-triggers, waarvan **één tong-trigger**:
+   - Trigger "Lach + tong uit": `mouthSmileLeft` ≥ 0.4, `mouthSmileRight` ≥ 0.4, `tongueOut` ≥ 0.5
+   - Trigger "Lach + tongbol": `mouthSmileLeft` ≥ 0.4, `mouthSmileRight` ≥ 0.4, `mouthFunnel` ≥ 0.4
 5. Comments in code waar iOS-beperkingen gelden
 
-Begin met project setup, ARKit face tracking proof-of-concept, dan TriggerEngine, dan UI schermen in bovenstaande volgorde.
+Begin met project setup, dan **ARKit POC met `tongueOut` live score** (acceptatie-gate), dan TriggerEngine met tong-AND-logica, dan UI schermen in bovenstaande volgorde.
 ```
 
 ---
