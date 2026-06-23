@@ -90,6 +90,7 @@ if exist "app\face_landmarker.task" (
         --hidden-import PIL.Image ^
         --hidden-import PIL._tkinter_finder ^
         --hidden-import pyautogui ^
+        --hidden-import paths ^
         app\mimiexplorer_ctk.py
 ) else (
     pyinstaller --onedir ^
@@ -109,6 +110,7 @@ if exist "app\face_landmarker.task" (
         --hidden-import PIL.Image ^
         --hidden-import PIL._tkinter_finder ^
         --hidden-import pyautogui ^
+        --hidden-import paths ^
         app\mimiexplorer_ctk.py
 )
 

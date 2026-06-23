@@ -20,6 +20,7 @@ from config_explorer import (
     lijst_profielen, actief_profiel, wissel_profiel,
     sla_profiel_op, verwijder_profiel
 )
+from paths import resource_path
 from blendshape_detectie import nl_label
 from explorer import start_explorer
 from trigger_editor_ctk import open_trigger_editor
@@ -49,12 +50,8 @@ RAND        = "#E5E5EA"
 
 FONT = "Segoe UI" if sys.platform == "win32" else "Helvetica"
 
-LOGO_PAD = os.path.join(
-    os.path.dirname(os.path.abspath(__file__)), "assets", "logo_mennens.png"
-)
-ICON_PAD = os.path.join(
-    os.path.dirname(os.path.abspath(__file__)), "assets", "mimicontrol.ico"
-)
+LOGO_PAD = resource_path("assets", "logo_mennens.png")
+ICON_PAD = resource_path("assets", "mimicontrol.ico")
 
 TRIGGER_ACCENTEN = ["#4DB8BE", "#3D8FA5", "#68CCD1", "#2E7A8A", "#89D4D8"]
 
@@ -84,21 +81,24 @@ def _haal_wmi_camera_namen():
 
 def detecteer_cameras(max_cameras=5):
     """Detecteer beschikbare camera's via OpenCV, verrijkt met WMI-namen."""
-    wmi_namen = _haal_wmi_camera_namen()
+    try:
+        wmi_namen = _haal_wmi_camera_namen()
 
-    cameras = []
-    wmi_idx = 0
-    for i in range(max_cameras):
-        cap = cv2.VideoCapture(i)
-        if cap.isOpened():
-            cap.release()
-            if wmi_idx < len(wmi_namen):
-                label = f"{wmi_namen[wmi_idx]} (Camera {i})"
-                wmi_idx += 1
-            else:
-                label = f"Camera {i}"
-            cameras.append((i, label))
-    return cameras
+        cameras = []
+        wmi_idx = 0
+        for i in range(max_cameras):
+            cap = cv2.VideoCapture(i)
+            if cap.isOpened():
+                cap.release()
+                if wmi_idx < len(wmi_namen):
+                    label = f"{wmi_namen[wmi_idx]} (Camera {i})"
+                    wmi_idx += 1
+                else:
+                    label = f"Camera {i}"
+                cameras.append((i, label))
+        return cameras
+    except Exception:
+        return []
 
 
 # ---------------------------------------------------------------------------
@@ -111,7 +111,10 @@ class MimiControlStudioApp:
         self.app.title("MimiControl Studio — Mennens.Tech")
         self.app.configure(fg_color=BG)
         if os.path.exists(ICON_PAD):
-            self.app.iconbitmap(ICON_PAD)
+            try:
+                self.app.iconbitmap(ICON_PAD)
+            except Exception:
+                pass
         self.app.resizable(True, True)
         self.app.minsize(680, 600)
 

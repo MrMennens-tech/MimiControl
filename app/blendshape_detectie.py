@@ -12,6 +12,8 @@ import mediapipe as mp
 from mediapipe.tasks import python
 from mediapipe.tasks.python import vision
 
+from paths import model_path
+
 # ---------------------------------------------------------------------------
 # Model (hergebruik van gezichtsdetectie.py)
 # ---------------------------------------------------------------------------
@@ -19,15 +21,14 @@ MODEL_URL = (
     "https://storage.googleapis.com/mediapipe-models/"
     "face_landmarker/face_landmarker/float16/1/face_landmarker.task"
 )
-MODEL_PAD = os.path.join(
-    os.path.dirname(os.path.abspath(__file__)), "face_landmarker.task"
-)
 
 
 def zorg_voor_model():
-    if not os.path.exists(MODEL_PAD):
+    pad = model_path()
+    if not os.path.exists(pad):
         print("  [INFO] Face Landmarker model downloaden...")
-        urllib.request.urlretrieve(MODEL_URL, MODEL_PAD)
+        os.makedirs(os.path.dirname(pad), exist_ok=True)
+        urllib.request.urlretrieve(MODEL_URL, pad)
         print("  [OK] Model opgeslagen.")
 
 
@@ -115,7 +116,7 @@ def maak_blendshape_landmarker(modus="video"):
         else vision.RunningMode.IMAGE
     )
     options = vision.FaceLandmarkerOptions(
-        base_options=python.BaseOptions(model_asset_path=MODEL_PAD),
+        base_options=python.BaseOptions(model_asset_path=model_path()),
         running_mode=running_mode,
         num_faces=1,
         min_face_detection_confidence=0.5,

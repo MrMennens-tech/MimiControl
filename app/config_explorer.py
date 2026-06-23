@@ -9,10 +9,12 @@ import os
 import copy
 import re
 
-_APP_DIR = os.path.dirname(os.path.abspath(__file__))
+from paths import user_data_dir
 
-CONFIG_PAD = os.path.join(_APP_DIR, "config_explorer.json")
-PROFIELEN_MAP = os.path.join(_APP_DIR, "profielen")
+_DATA_DIR = user_data_dir()
+
+CONFIG_PAD = os.path.join(_DATA_DIR, "config_explorer.json")
+PROFIELEN_MAP = os.path.join(_DATA_DIR, "profielen")
 ACTIEF_PROFIEL_PAD = os.path.join(PROFIELEN_MAP, "actief_profiel.txt")
 
 STANDAARD_CONFIG = {

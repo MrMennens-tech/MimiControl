@@ -63,10 +63,14 @@ if exist "app\face_landmarker.task" (
         --add-data "%CTK_PATH%;customtkinter" ^
         --hidden-import=customtkinter ^
         --hidden-import=mediapipe ^
+        --hidden-import=mediapipe.tasks.python ^
+        --hidden-import=mediapipe.tasks.python.vision ^
         --hidden-import=cv2 ^
         --hidden-import=PIL ^
+        --hidden-import=PIL.Image ^
         --hidden-import=PIL._tkinter_finder ^
         --hidden-import=pyautogui ^
+        --hidden-import=paths ^
         app\mimiexplorer_ctk.py
 ) else (
     echo [Waarschuwing] face_landmarker.task niet gevonden in app\. Build zonder model.
@@ -79,10 +83,14 @@ if exist "app\face_landmarker.task" (
         --add-data "%CTK_PATH%;customtkinter" ^
         --hidden-import=customtkinter ^
         --hidden-import=mediapipe ^
+        --hidden-import=mediapipe.tasks.python ^
+        --hidden-import=mediapipe.tasks.python.vision ^
         --hidden-import=cv2 ^
         --hidden-import=PIL ^
+        --hidden-import=PIL.Image ^
         --hidden-import=PIL._tkinter_finder ^
         --hidden-import=pyautogui ^
+        --hidden-import=paths ^
         app\mimiexplorer_ctk.py
 )
 
