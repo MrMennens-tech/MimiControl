@@ -8,11 +8,11 @@ import sys
 import os
 import subprocess
 import threading
+import time
 import tkinter as tk
 from tkinter import messagebox
 from PIL import Image
 
-import cv2
 import customtkinter as ctk
 
 from config_explorer import (
@@ -20,11 +20,8 @@ from config_explorer import (
     lijst_profielen, actief_profiel, wissel_profiel,
     sla_profiel_op, verwijder_profiel
 )
-from paths import resource_path
-from blendshape_detectie import nl_label
-from explorer import start_explorer
-from trigger_editor_ctk import open_trigger_editor
-from live_modus_explorer import start_live_explorer
+from paths import resource_path, log_startup_timing
+from blendshape_labels import nl_label
 
 # ---------------------------------------------------------------------------
 # Appearance
@@ -81,6 +78,8 @@ def _haal_wmi_camera_namen():
 
 def detecteer_cameras(max_cameras=5):
     """Detecteer beschikbare camera's via OpenCV, verrijkt met WMI-namen."""
+    import cv2
+
     try:
         wmi_namen = _haal_wmi_camera_namen()
 
@@ -106,7 +105,12 @@ def detecteer_cameras(max_cameras=5):
 # ---------------------------------------------------------------------------
 class MimiControlStudioApp:
 
-    def __init__(self):
+    def __init__(self, startup_t0=None):
+        self._startup_t0 = startup_t0
+        self._loading_val = 0.0
+        self._loading_overlay = None
+        self._loading_progress = None
+
         self.app = ctk.CTk()
         self.app.title("MimiControl Studio — Mennens.Tech")
         self.app.configure(fg_color=BG)
@@ -124,9 +128,86 @@ class MimiControlStudioApp:
         sx = (self.app.winfo_screenwidth() - breedte) // 2
         self.app.geometry(f"{breedte}x{hoogte}+{sx}+20")
 
-        self._cameras = detecteer_cameras()
+        self._cameras = []
+        self._loading_overlay = self._maak_laad_overlay()
+        self.app.update_idletasks()
+        self.app.update()
+
+        if self._startup_t0 is not None:
+            log_startup_timing("splash_visible", self._startup_t0)
+
+        threading.Thread(target=self._achtergrond_init, daemon=True).start()
+
+    def _maak_laad_overlay(self):
+        """Toon direct een laadscherm terwijl zware modules op de achtergrond laden."""
+        overlay = ctk.CTkFrame(self.app, fg_color=BG, corner_radius=0)
+        overlay.place(relx=0, rely=0, relwidth=1, relheight=1)
+
+        center = ctk.CTkFrame(overlay, fg_color="transparent")
+        center.place(relx=0.5, rely=0.5, anchor="center")
+
+        ctk.CTkLabel(
+            center,
+            text="MimiControl Studio",
+            font=(FONT, 22, "bold"),
+            text_color=DONKER,
+        ).pack(pady=(0, 8))
+
+        ctk.CTkLabel(
+            center,
+            text="Wordt geladen…",
+            font=(FONT, 14),
+            text_color=TEKST_LICHT,
+        ).pack(pady=(0, 16))
+
+        self._loading_progress = ctk.CTkProgressBar(
+            center, width=280, height=8,
+            progress_color=TEAL_BTN,
+            fg_color=RAND,
+        )
+        self._loading_progress.pack()
+        self._loading_progress.set(0)
+        self._animeer_laad_balk()
+
+        return overlay
+
+    def _animeer_laad_balk(self):
+        if self._loading_overlay is None or not self._loading_overlay.winfo_exists():
+            return
+        self._loading_val = (self._loading_val + 0.04) % 1.0
+        if self._loading_progress is not None:
+            self._loading_progress.set(self._loading_val)
+        self.app.after(80, self._animeer_laad_balk)
+
+    def _achtergrond_init(self):
+        """Laad OpenCV en detecteer camera's buiten de GUI-thread."""
+        t0 = time.perf_counter()
+        import cv2  # noqa: F401 — warm-up voor latere preview/explorer
+
+        if self._startup_t0 is not None:
+            log_startup_timing("cv2_imported", self._startup_t0)
+
+        cameras = detecteer_cameras()
+
+        if self._startup_t0 is not None:
+            log_startup_timing(
+                f"cameras_detected ({len(cameras)}, thread {time.perf_counter() - t0:.2f}s)",
+                self._startup_t0,
+            )
+
+        self.app.after(0, lambda: self._rond_init_af(cameras))
+
+    def _rond_init_af(self, cameras):
+        self._cameras = cameras
+        if self._loading_overlay is not None and self._loading_overlay.winfo_exists():
+            self._loading_overlay.destroy()
+        self._loading_overlay = None
+        self._loading_progress = None
         self._bouw_interface()
         self._ververs_triggers()
+
+        if self._startup_t0 is not None:
+            log_startup_timing("gui_ready", self._startup_t0)
 
     # ---- Layout ----
 
@@ -338,6 +419,8 @@ class MimiControlStudioApp:
         self.preview_label.pack(side="left", padx=(12, 0))
 
         def _grab():
+            import cv2
+
             frame = None
             try:
                 cap = cv2.VideoCapture(cam_idx)
@@ -356,6 +439,8 @@ class MimiControlStudioApp:
 
     def _update_preview(self, frame):
         """Update het preview-label met het opgehaalde frame."""
+        import cv2
+
         self.preview_btn.configure(state="normal", text="Camera preview")
 
         if frame is None:
@@ -734,6 +819,9 @@ class MimiControlStudioApp:
         return config.get("camera_index", 0)
 
     def _lanceer_explorer(self):
+        from explorer import start_explorer
+        from trigger_editor_ctk import open_trigger_editor
+
         try:
             pieken = start_explorer(
                 camera_index=self._get_camera_index(),
@@ -753,6 +841,8 @@ class MimiControlStudioApp:
             )
 
     def _lanceer_live(self):
+        from live_modus_explorer import start_live_explorer
+
         config = laad_explorer_config()
         if not config["triggers"]:
             messagebox.showwarning(
@@ -766,6 +856,8 @@ class MimiControlStudioApp:
         self.app.deiconify()
 
     def _bewerk_trigger(self, index):
+        from trigger_editor_ctk import open_trigger_editor
+
         config = laad_explorer_config()
         trigger = config["triggers"][index]
         pieken = {naam: min(drempel / 0.7, 1.0)
@@ -795,8 +887,8 @@ class MimiControlStudioApp:
 # ---------------------------------------------------------------------------
 # Entrypoint
 # ---------------------------------------------------------------------------
-def start_gui_explorer_ctk():
-    app = MimiControlStudioApp()
+def start_gui_explorer_ctk(startup_t0=None):
+    app = MimiControlStudioApp(startup_t0=startup_t0)
     app.start()
 
 

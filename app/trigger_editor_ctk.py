@@ -10,7 +10,7 @@ from tkinter import messagebox
 
 import customtkinter as ctk
 
-from blendshape_detectie import nl_label
+from blendshape_labels import nl_label
 from config_explorer import (
     laad_explorer_config, sla_explorer_config_op, voeg_trigger_toe
 )

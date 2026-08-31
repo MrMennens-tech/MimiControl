@@ -135,6 +135,19 @@ Vanuit de `scripts/` map:
 
 De **onefile** variant is één enkel bestand dat je direct kunt delen. De **onedir** variant start sneller op en is makkelijker te debuggen.
 
+### Opstarttijd (.exe)
+
+| Variant | Opstart | Geschikt voor |
+|---------|---------|---------------|
+| **onefile** (`build_onefile.bat`) | Trager (~119 MB wordt bij elke start naar `%TEMP%` uitgepakt) | Delen via e-mail/USB — één bestand |
+| **onedir** (`build_onedir.bat`) | Veel sneller (geen extract) | Dagelijks gebruik op dezelfde PC |
+
+**Tip voor collega's:** gebruik **onedir** op vaste werkplekken waar snelle opstart belangrijk is; gebruik **onefile** alleen wanneer je één portable bestand moet delen.
+
+Bij opstart toont de app een laadscherm terwijl OpenCV en camera-detectie op de achtergrond laden. MediaPipe wordt pas geladen wanneer je **Mimiek verkennen** of **Live modus** start.
+
+Optionele diagnostiek: `%APPDATA%\MimiControl Studio\startup.log` bevat timing per fase.
+
 ---
 
 ## Technische stack

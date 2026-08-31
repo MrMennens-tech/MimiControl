@@ -7,6 +7,7 @@ Profielen, logs en gedownloade modellen gaan naar een beschrijfbare user-data ma
 
 import os
 import sys
+import time
 import traceback
 from datetime import datetime
 
@@ -57,6 +58,20 @@ def model_path():
 
 def crash_log_path():
     return os.path.join(user_data_dir(), "crash.log")
+
+
+def startup_log_path():
+    return os.path.join(user_data_dir(), "startup.log")
+
+
+def log_startup_timing(phase, start_time=None):
+    """Log een startup-fase met verstreken tijd sinds start_time (perf_counter)."""
+    try:
+        elapsed = time.perf_counter() - start_time if start_time is not None else 0.0
+        with open(startup_log_path(), "a", encoding="utf-8") as f:
+            f.write(f"{datetime.now().isoformat()}  {phase}: {elapsed:.3f}s\n")
+    except Exception:
+        pass
 
 
 def log_message(msg):
