@@ -35,8 +35,8 @@ if errorlevel 1 (
     exit /b 1
 )
 
-REM Controleer of PyInstaller geïnstalleerd is
-pip show pyinstaller >nul 2>&1
+REM Controleer of PyInstaller geïnstalleerd is (via python -m, niet PATH)
+python -c "import PyInstaller" 2>nul
 if errorlevel 1 (
     echo [INFO] PyInstaller niet gevonden. Installeren...
     pip install --user pyinstaller
@@ -72,7 +72,7 @@ echo [INFO] Build starten...
 echo.
 
 if exist "app\face_landmarker.task" (
-    pyinstaller --onedir ^
+    python -m PyInstaller --onedir ^
         --windowed ^
         --name "MimiControl Studio" ^
         --distpath "releases" ^
@@ -98,7 +98,7 @@ if exist "app\face_landmarker.task" (
         --hidden-import paths ^
         app\mimiexplorer_ctk.py
 ) else (
-    pyinstaller --onedir ^
+    python -m PyInstaller --onedir ^
         --windowed ^
         --name "MimiControl Studio" ^
         --distpath "releases" ^
@@ -131,16 +131,29 @@ if errorlevel 1 (
     exit /b 1
 )
 
+REM Hulp-bestanden voor distributie naar andere PC's
+copy /Y "%SCRIPTDIR%onedir_launcher.bat" "releases\MimiControl Studio\Start MimiControl Studio.bat" >nul
+copy /Y "%SCRIPTDIR%onedir_controleer.bat" "releases\MimiControl Studio\Controleer installatie.bat" >nul
+
+REM Zip voor betrouwbare overdracht (voorkomt incomplete kopieen)
+if exist "releases\MimiControl-Studio-onedir.zip" del "releases\MimiControl-Studio-onedir.zip"
+powershell -NoProfile -Command "Compress-Archive -Path 'releases\MimiControl Studio' -DestinationPath 'releases\MimiControl-Studio-onedir.zip' -Force" 2>nul
+
 echo.
 echo ============================================================
 echo [KLAAR] Build voltooid!
 echo ============================================================
 echo.
 echo Output staat in: %CD%\releases\MimiControl Studio\
+echo Zip voor andere PC: %CD%\releases\MimiControl-Studio-onedir.zip
 echo.
-echo Je kunt de hele map "MimiControl Studio" kopiëren naar een andere
-echo PC om de applicatie te gebruiken.
+echo DISTRIBUTIE NAAR ANDERE PC:
+echo   1. Kopieer het ZIP-bestand OF de hele map "MimiControl Studio"
+echo   2. Pak uit / plaats op doel-PC (niet alleen de .exe!)
+echo   3. Draai eerst "Controleer installatie.bat"
+echo   4. Start via "Start MimiControl Studio.bat"
 echo.
-echo Start de app via: MimiControl Studio.exe
+echo Bij DLL-fout: installeer VC++ Redistributable x64:
+echo   https://aka.ms/vs/17/release/vc_redist.x64.exe
 echo.
 pause

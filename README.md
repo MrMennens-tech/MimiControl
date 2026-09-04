@@ -144,6 +144,24 @@ De **onefile** variant is één enkel bestand dat je direct kunt delen. De **one
 
 **Tip voor collega's:** gebruik **onedir** op vaste werkplekken waar snelle opstart belangrijk is; gebruik **onefile** alleen wanneer je één portable bestand moet delen.
 
+### Onedir naar andere PC plaatsen
+
+De **onedir**-versie is een **hele map**, niet één los bestand. Alleen `MimiControl Studio.exe` kopiëren werkt niet.
+
+1. Bouw met `scripts\build_onedir.bat`
+2. Deel **`releases\MimiControl-Studio-onedir.zip`** (aanbevolen) of kopieer de map `releases\MimiControl Studio\` volledig
+3. Op de doel-PC: zip uitpakken naar bijv. `C:\Programma's\MimiControl Studio\`
+4. Draai eerst **`Controleer installatie.bat`** — controleert o.a. `python310.dll`
+5. Start via **`Start MimiControl Studio.bat`**
+
+**Foutmelding `Failed to load Python DLL` / `python310.dll`?**
+
+| Oorzaak | Oplossing |
+|---------|-----------|
+| Alleen de `.exe` gekopieerd | Hele map of zip opnieuw uitpakken |
+| `_internal` incompleet | Opnieuw uitpakken; verwacht ~300 MB en honderden bestanden |
+| Ontbrekende systeem-DLLs | Installeer [Visual C++ Redistributable 2015–2022 (x64)](https://aka.ms/vs/17/release/vc_redist.x64.exe) op de doel-PC |
+
 Bij opstart toont de app een laadscherm terwijl OpenCV en camera-detectie op de achtergrond laden. MediaPipe wordt pas geladen wanneer je **Mimiek verkennen** of **Live modus** start.
 
 Optionele diagnostiek: `%APPDATA%\MimiControl Studio\startup.log` bevat timing per fase.
