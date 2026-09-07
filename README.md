@@ -151,8 +151,11 @@ De **onedir**-versie is een **hele map**, niet één los bestand. Alleen `MimiCo
 1. Bouw met `scripts\build_onedir.bat`
 2. Deel **`releases\MimiControl-Studio-onedir.zip`** (aanbevolen) of kopieer de map `releases\MimiControl Studio\` volledig
 3. Op de doel-PC: zip uitpakken naar bijv. `C:\Programma's\MimiControl Studio\`
-4. Draai eerst **`Controleer installatie.bat`** — controleert o.a. `python310.dll`
-5. Start via **`Start MimiControl Studio.bat`**
+4. Start **`MimiControl Studio.exe`** (dubbelklik — dat is de normale manier)
+
+Optioneel bij eerste installatie of problemen:
+- **`Controleer installatie.bat`** — controleert of `_internal` compleet is
+- **`Start MimiControl Studio.bat`** — alleen nodig als de `.exe` een DLL-fout geeft
 
 **Foutmelding `Failed to load Python DLL` / `python310.dll`?**
 
