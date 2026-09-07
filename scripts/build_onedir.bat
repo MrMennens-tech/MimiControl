@@ -73,6 +73,7 @@ echo.
 
 if exist "app\face_landmarker.task" (
     python -m PyInstaller --onedir ^
+        --noconfirm ^
         --windowed ^
         --name "MimiControl Studio" ^
         --distpath "releases" ^
@@ -99,6 +100,7 @@ if exist "app\face_landmarker.task" (
         app\mimiexplorer_ctk.py
 ) else (
     python -m PyInstaller --onedir ^
+        --noconfirm ^
         --windowed ^
         --name "MimiControl Studio" ^
         --distpath "releases" ^
@@ -150,8 +152,9 @@ echo.
 echo DISTRIBUTIE NAAR ANDERE PC:
 echo   1. Kopieer het ZIP-bestand OF de hele map "MimiControl Studio"
 echo   2. Pak uit / plaats op doel-PC (niet alleen de .exe!)
-echo   3. Draai eerst "Controleer installatie.bat"
-echo   4. Start via "Start MimiControl Studio.bat"
+echo   3. Start "MimiControl Studio.exe" (dubbelklik)
+echo.
+echo Optioneel bij problemen: "Controleer installatie.bat" of "Start MimiControl Studio.bat"
 echo.
 echo Bij DLL-fout: installeer VC++ Redistributable x64:
 echo   https://aka.ms/vs/17/release/vc_redist.x64.exe

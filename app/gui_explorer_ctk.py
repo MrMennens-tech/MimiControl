@@ -738,14 +738,16 @@ class MimiControlStudioApp:
         rij_top = ctk.CTkFrame(inhoud, fg_color="transparent")
         rij_top.pack(fill="x")
 
-        toets = " + ".join(trigger["toetsen"]).upper()
+        from toets_keuze import label_voor_toetsen
+        toets = label_voor_toetsen(trigger["toetsen"])
         ctk.CTkLabel(rij_top, text=f"{index+1}. {trigger['naam']}",
                      font=(FONT, 15, "bold"), text_color=TEKST
                      ).pack(side="left")
 
         ctk.CTkButton(rij_top, text=toets, font=(FONT, 12, "bold"),
                       fg_color=accent, hover_color=accent,
-                      corner_radius=10, height=32, width=80,
+                      corner_radius=10, height=32,
+                      width=max(80, 12 * len(toets)),
                       state="disabled", text_color_disabled=KAART
                       ).pack(side="right")
 
@@ -818,16 +820,32 @@ class MimiControlStudioApp:
         config = laad_explorer_config()
         return config.get("camera_index", 0)
 
+    def _maak_laad_venster(self, titel):
+        """Toon een laadvenster; None als het niet gemaakt kan worden."""
+        try:
+            from laad_venster import LaadVenster
+            return LaadVenster(self.app, titel=titel,
+                               tekst="Even geduld, de camera start op…")
+        except Exception:
+            return None
+
     def _lanceer_explorer(self):
         from explorer import start_explorer
         from trigger_editor_ctk import open_trigger_editor
 
+        pieken = None
+        laad_ui = None
         try:
+            laad_ui = self._maak_laad_venster("Mimiek verkennen wordt gestart")
             pieken = start_explorer(
                 camera_index=self._get_camera_index(),
                 parent=self.app,
+                laad_ui=laad_ui,
+                on_gereed=self._verberg_hoofdvenster,
             )
         finally:
+            if laad_ui is not None:
+                laad_ui.sluit()
             try:
                 self.app.deiconify()
                 self.app.lift()
@@ -850,10 +868,31 @@ class MimiControlStudioApp:
                 "Maak eerst minstens één trigger aan via de Explorer.",
                 parent=self.app)
             return
-        self.app.withdraw()
-        self.app.update()
-        start_live_explorer(camera_index=self._get_camera_index())
-        self.app.deiconify()
+
+        laad_ui = None
+        try:
+            laad_ui = self._maak_laad_venster("Live modus wordt gestart")
+            start_live_explorer(
+                camera_index=self._get_camera_index(),
+                laad_ui=laad_ui,
+                on_gereed=self._verberg_hoofdvenster,
+            )
+        finally:
+            if laad_ui is not None:
+                laad_ui.sluit()
+            try:
+                self.app.deiconify()
+                self.app.lift()
+            except Exception:
+                pass
+
+    def _verberg_hoofdvenster(self):
+        """Verberg het dashboard zodra het webcamvenster opent."""
+        try:
+            self.app.withdraw()
+            self.app.update()
+        except Exception:
+            pass
 
     def _bewerk_trigger(self, index):
         from trigger_editor_ctk import open_trigger_editor

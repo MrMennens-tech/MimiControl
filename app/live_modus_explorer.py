@@ -570,8 +570,28 @@ def _maak_info_paneel(breedte, trigger_data, trigger_states,
 # ---------------------------------------------------------------------------
 # Hoofdfunctie live modus
 # ---------------------------------------------------------------------------
-def start_live_explorer(camera_index=0):
-    """Start de live modus met blendshape-triggers en live slider-paneel."""
+def start_live_explorer(camera_index=0, laad_ui=None, on_gereed=None):
+    """
+    Start de live modus met blendshape-triggers en live slider-paneel.
+
+    Args:
+        laad_ui: optioneel laadvenster met .status(tekst) en .sluit().
+        on_gereed: callback zodra het webcambeeld start.
+    """
+    def _status(tekst, voortgang=None):
+        if laad_ui is not None:
+            try:
+                laad_ui.status(tekst, voortgang)
+            except Exception:
+                pass
+
+    def _sluit_laad_ui():
+        if laad_ui is not None:
+            try:
+                laad_ui.sluit()
+            except Exception:
+                pass
+
     config = laad_explorer_config()
     triggers = config["triggers"]
     cooldown = config["cooldown"]
@@ -594,12 +614,15 @@ def start_live_explorer(camera_index=0):
     print(f"\n  Cooldown: {cooldown}s  |  Vasthoudtijd: {vasthoud_tijd}s")
     print("  [INFO] Slider-paneel wordt geopend voor live drempelaanpassingen.\n")
 
+    _status("Instellingen-paneel wordt geopend…", 0.25)
     paneel = DrempelPaneel(actieve)
 
     # Robuust webcam openen met retry
+    _status("Camera wordt gestart…", 0.5)
     cap, fout = _open_webcam_robuust(camera_index)
     if cap is None:
         print(f"  [!] {fout}")
+        _sluit_laad_ui()
         try:
             from tkinter import messagebox as mb
             mb.showerror("Webcam Fout — MimiControl Studio", fout)
@@ -609,7 +632,16 @@ def start_live_explorer(camera_index=0):
             paneel._sluit()
         return
 
+    _status("Gezichtsmodel wordt geladen…", 0.8)
     landmarker = maak_blendshape_landmarker(modus="video")
+
+    _status("Beeld wordt geopend…", 0.95)
+    _sluit_laad_ui()
+    if on_gereed is not None:
+        try:
+            on_gereed()
+        except Exception:
+            pass
 
     trigger_states = [{"start": None} for _ in actieve]
     laatste_actie = 0.0

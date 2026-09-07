@@ -363,12 +363,16 @@ def _toon_filter_dialoog(pieken, top_n=TOP_N, parent=None):
     return resultaat["pieken"]
 
 
-def start_explorer(top_n=TOP_N, camera_index=0, parent=None):
+def start_explorer(top_n=TOP_N, camera_index=0, parent=None,
+                   laad_ui=None, on_gereed=None):
     """
     Open de Explorer: webcam + live blendshape-bars.
 
     Args:
         parent: CTk-hoofdvenster voor modale dialogen (verplicht vanuit GUI).
+        laad_ui: optioneel laadvenster met .status(tekst) en .sluit().
+        on_gereed: callback zonder argumenten, aangeroepen zodra het
+                   webcamvenster opent. De GUI regelt dan zelf het verbergen.
 
     Returns:
         dict met piekwaarden als de gebruiker ENTER drukt,
@@ -380,8 +384,22 @@ def start_explorer(top_n=TOP_N, camera_index=0, parent=None):
         print("  [INFO] Blendshape selectie geannuleerd.")
         return None
 
+    def _status(tekst, voortgang=None):
+        if laad_ui is not None:
+            try:
+                laad_ui.status(tekst, voortgang)
+            except Exception:
+                pass
+
+    def _sluit_laad_ui():
+        if laad_ui is not None:
+            try:
+                laad_ui.sluit()
+            except Exception:
+                pass
+
     withdrawn = False
-    if parent is not None:
+    if parent is not None and on_gereed is None:
         try:
             parent.withdraw()
             parent.update()
@@ -396,17 +414,21 @@ def start_explorer(top_n=TOP_N, camera_index=0, parent=None):
     try:
         from live_modus_explorer import _open_webcam_robuust
 
+        _status("Camera wordt gestart…", 0.35)
         cap, fout = _open_webcam_robuust(camera_index)
         if cap is None:
             melding = fout or "Kan de webcam niet openen. Controleer of geen andere app de camera gebruikt."
             print(f"  [!] {melding}")
+            _sluit_laad_ui()
             _toon_fout(parent, "Webcam Fout — MimiControl Studio", melding)
             return None
 
         try:
+            _status("Gezichtsmodel wordt geladen…", 0.7)
             landmarker = maak_blendshape_landmarker(modus="video")
         except Exception as exc:
             log_message(f"Landmarker kon niet starten:\n{traceback.format_exc()}")
+            _sluit_laad_ui()
             _toon_fout(
                 parent,
                 "Model Fout — MimiControl Studio",
@@ -434,7 +456,17 @@ def start_explorer(top_n=TOP_N, camera_index=0, parent=None):
         print("  R       = Reset filter naar selectie")
         print("  Q       = Terug zonder opslaan\n")
 
+        _status("Beeld wordt geopend…", 0.95)
         cv2.namedWindow("MimiExplorer (Q=sluiten)", cv2.WINDOW_NORMAL)
+
+        # Laadvenster sluiten en hoofdvenster verbergen zodra beeld start
+        _sluit_laad_ui()
+        if on_gereed is not None:
+            try:
+                on_gereed()
+            except Exception:
+                pass
+
         eerste_frame = True
 
         while True:
@@ -604,6 +636,7 @@ def start_explorer(top_n=TOP_N, camera_index=0, parent=None):
 
     except Exception as exc:
         log_message(f"Explorer crash:\n{traceback.format_exc()}")
+        _sluit_laad_ui()
         _toon_fout(
             parent,
             "Explorer Fout — MimiControl Studio",
@@ -611,6 +644,7 @@ def start_explorer(top_n=TOP_N, camera_index=0, parent=None):
         )
         return None
     finally:
+        _sluit_laad_ui()
         if cap is not None:
             try:
                 cap.release()

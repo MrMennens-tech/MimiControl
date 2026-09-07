@@ -14,6 +14,7 @@ from blendshape_labels import nl_label
 from config_explorer import (
     laad_explorer_config, sla_explorer_config_op, voeg_trigger_toe
 )
+from toets_keuze import ToetsKiezer
 
 # ---------------------------------------------------------------------------
 # Mennens.Tech kleurenpalet
@@ -62,7 +63,7 @@ class TriggerEditorDialog:
 
         breedte = 720
         rij_hoogte = 56
-        hoogte = 320 + len(self.gesorteerd) * rij_hoogte
+        hoogte = 400 + len(self.gesorteerd) * rij_hoogte
         self.v.geometry(f"{breedte}x{hoogte}")
         sx = parent.winfo_x() + max(0, (parent.winfo_width() - breedte) // 2)
         sy = parent.winfo_y() + max(0, (parent.winfo_height() - hoogte) // 2)
@@ -80,33 +81,39 @@ class TriggerEditorDialog:
         body = ctk.CTkFrame(self.v, fg_color="transparent")
         body.pack(fill="both", expand=True, padx=24, pady=16)
 
-        # --- Naam + Toets ---
-        invoer_rij = ctk.CTkFrame(body, fg_color="transparent")
-        invoer_rij.pack(fill="x", pady=(0, 14))
+        # --- Naam ---
+        naam_rij = ctk.CTkFrame(body, fg_color="transparent")
+        naam_rij.pack(fill="x", pady=(0, 12))
 
-        ctk.CTkLabel(invoer_rij, text="Naam:", font=(FONT, 12),
-                     text_color=TEKST).pack(side="left")
+        ctk.CTkLabel(naam_rij, text="Naam:", font=(FONT, 12),
+                     text_color=TEKST, width=52, anchor="w").pack(side="left")
 
         self.naam_entry = ctk.CTkEntry(
-            invoer_rij, font=(FONT, 13), width=200,
+            naam_rij, font=(FONT, 13), width=280,
             corner_radius=10, border_width=1, border_color=RAND
         )
-        self.naam_entry.pack(side="left", padx=(8, 24))
+        self.naam_entry.pack(side="left", padx=(8, 0))
         default_naam = (bewerk_data["naam"] if bewerk_data
                         else f"Trigger {len(laad_explorer_config()['triggers']) + 1}")
         self.naam_entry.insert(0, default_naam)
 
-        ctk.CTkLabel(invoer_rij, text="Toets:", font=(FONT, 12),
-                     text_color=TEKST).pack(side="left")
+        # --- Actie (toetskeuze met Nederlandse namen) ---
+        actie_rij = ctk.CTkFrame(body, fg_color="transparent")
+        actie_rij.pack(fill="x", pady=(0, 14))
 
-        self.toets_entry = ctk.CTkEntry(
-            invoer_rij, font=(FONT, 13), width=160,
-            corner_radius=10, border_width=1, border_color=RAND
+        ctk.CTkLabel(actie_rij, text="Actie:", font=(FONT, 12),
+                     text_color=TEKST, width=52, anchor="nw").pack(
+                         side="left", anchor="n", pady=(6, 0))
+
+        self.toets_kiezer = ToetsKiezer(
+            actie_rij,
+            toetsen=bewerk_data["toetsen"] if bewerk_data else ["space"],
+            kleuren={
+                "kaart": KAART, "tekst": TEKST, "tekst_licht": TEKST_LICHT,
+                "accent": TEAL_BTN, "accent_hover": TEAL_HOVER, "rand": RAND,
+            },
         )
-        self.toets_entry.pack(side="left", padx=(8, 0))
-        default_toets = (" + ".join(bewerk_data["toetsen"]) if bewerk_data
-                         else "space")
-        self.toets_entry.insert(0, default_toets)
+        self.toets_kiezer.pack(side="left", fill="x", expand=True, padx=(8, 0))
 
         # --- Instructie ---
         ctk.CTkLabel(body,
@@ -214,12 +221,12 @@ class TriggerEditorDialog:
                                    parent=self.v)
             return
 
-        toets_invoer = self.toets_entry.get().strip().lower()
-        toetsen = [t.strip() for t in toets_invoer.replace(" + ", "+").split("+")
-                   if t.strip()]
+        toetsen = self.toets_kiezer.haal_toetsen()
         if not toetsen:
-            messagebox.showwarning("Geen toets", "Voer een toets in.",
-                                   parent=self.v)
+            messagebox.showwarning(
+                "Geen actie",
+                "Kies een actie uit de lijst of neem een toets op.",
+                parent=self.v)
             return
 
         blendshapes = {}

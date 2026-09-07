@@ -54,7 +54,7 @@ echo [MimiControl Studio] PyInstaller wordt uitgevoerd...
 echo.
 
 if exist "app\face_landmarker.task" (
-    python -m PyInstaller --onefile --windowed --name "MimiControl Studio" ^
+    python -m PyInstaller --onefile --noconfirm --windowed --name "MimiControl Studio" ^
         --distpath "releases" ^
         --icon "app\assets\mimicontrol.ico" ^
         --add-data "app\face_landmarker.task;." ^
@@ -80,7 +80,7 @@ if exist "app\face_landmarker.task" (
 ) else (
     echo [Waarschuwing] face_landmarker.task niet gevonden in app\. Build zonder model.
     echo.
-    python -m PyInstaller --onefile --windowed --name "MimiControl Studio" ^
+    python -m PyInstaller --onefile --noconfirm --windowed --name "MimiControl Studio" ^
         --distpath "releases" ^
         --icon "app\assets\mimicontrol.ico" ^
         --add-data "app\assets\logo_mennens.png;assets" ^
