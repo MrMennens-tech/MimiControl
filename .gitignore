@@ -14,3 +14,8 @@ config_explorer.json
 app/profielen/
 
 *.mp4
+
+# Runtime logs
+app/crash.log
+app/startup.log
+debug-*.log
