@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="nl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta name="theme-color" content="#101828" />
+    <meta name="description" content="Testomgeving voor computerbediening met 1, 2 of 3 toetsaanslagen." />
+    <!--
+      Geen externe verbindingen: alles wordt lokaal geladen. Het
+      Content-Security-Policy wordt hier bij de productiebuild ingevoegd
+      (zie vite.config.ts); in de ontwikkelmodus zou het de hulpscripts van
+      Vite tegenhouden.
+    -->
+    <!--CSP-->
+    <link rel="manifest" href="./manifest.webmanifest" />
+    <link rel="icon" type="image/svg+xml" href="./icoon.svg" />
+    <title>Toetsentestomgeving</title>
+  </head>
+  <body>
+    <div id="root"></div>
+    <noscript>Deze app heeft JavaScript nodig.</noscript>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

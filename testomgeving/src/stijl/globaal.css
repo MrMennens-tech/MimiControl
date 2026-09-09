@@ -1,0 +1,799 @@
+/*
+ * Stijl van de testomgeving.
+ *
+ * Uitgangspunten voor de leerlingmodus: rustige effen achtergrond, zeer grote
+ * tegels, hoog contrast en een scanmarkering die niet knippert. Alle
+ * overgangen zijn traag en zacht; er beweegt niets uit zichzelf, behalve de
+ * eindacties die de leerling zelf gekozen heeft.
+ */
+
+:root {
+  --achtergrond: #0b1220;
+  --achtergrond-paneel: #16223a;
+  --achtergrond-veld: #0f1a2e;
+  --rand: #2c3e5c;
+  --tekst: #f1f5f9;
+  --tekst-zacht: #a8b6cc;
+  --markering: #fde047;
+  --accent: #38bdf8;
+  --goed: #22c55e;
+  --fout: #f87171;
+  --waarschuwing: #fbbf24;
+  --hoek: 20px;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+  margin: 0;
+}
+
+body {
+  background: var(--achtergrond);
+  color: var(--tekst);
+  font-family: 'Segoe UI', system-ui, -apple-system, 'Helvetica Neue', Arial, sans-serif;
+  font-size: 17px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+button {
+  font: inherit;
+  color: inherit;
+}
+
+/* ---------------------------------------------------------------- Startscherm */
+
+.start {
+  min-height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 32px;
+}
+
+.start-kaart {
+  width: min(760px, 100%);
+  background: var(--achtergrond-paneel);
+  border: 1px solid var(--rand);
+  border-radius: var(--hoek);
+  padding: 32px;
+}
+
+.start-kaart h1 {
+  margin: 0 0 8px;
+  font-size: 30px;
+}
+
+.start-kaart p {
+  color: var(--tekst-zacht);
+  margin: 0 0 20px;
+}
+
+.start-knoppen {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin: 24px 0 0;
+}
+
+.samenvatting-instellingen {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 12px;
+  margin-top: 8px;
+}
+
+.samenvatting-instellingen div {
+  background: var(--achtergrond-veld);
+  border: 1px solid var(--rand);
+  border-radius: 12px;
+  padding: 10px 14px;
+}
+
+.samenvatting-instellingen span {
+  display: block;
+  color: var(--tekst-zacht);
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+/* ------------------------------------------------------------------- Knoppen */
+
+.knop {
+  background: var(--achtergrond-veld);
+  border: 1px solid var(--rand);
+  border-radius: 12px;
+  padding: 10px 18px;
+  cursor: pointer;
+  transition: background 120ms ease, border-color 120ms ease;
+}
+
+.knop:hover {
+  background: #1c2a45;
+  border-color: var(--accent);
+}
+
+.knop:focus-visible {
+  outline: 3px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.knop.primair {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #04223a;
+  font-weight: 700;
+}
+
+.knop.primair:hover {
+  background: #7dd3fc;
+}
+
+.knop.gevaar {
+  border-color: #7f1d1d;
+  color: #fecaca;
+}
+
+.knop.gevaar:hover {
+  background: #4c1010;
+  border-color: var(--fout);
+}
+
+.knop.klein {
+  padding: 5px 10px;
+  font-size: 14px;
+  border-radius: 9px;
+}
+
+.knop:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+/* -------------------------------------------------------------- Leerlingmodus */
+
+.leerling {
+  height: 100%;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: var(--achtergrond);
+  /* Geen tekstselectie: een spasme mag geen tekst gaan slepen. */
+  user-select: none;
+  -webkit-user-select: none;
+  overflow: hidden;
+}
+
+.leerling-titel {
+  flex: 0 0 auto;
+  text-align: center;
+  font-size: clamp(24px, 3.6vh, 44px);
+  font-weight: 600;
+  padding: 2.2vh 24px 1vh;
+  margin: 0;
+  color: var(--tekst);
+}
+
+.tegelrooster {
+  flex: 1 1 auto;
+  display: grid;
+  gap: clamp(12px, 2vh, 28px);
+  padding: 0 clamp(14px, 2.4vw, 40px) clamp(16px, 3vh, 40px);
+  min-height: 0;
+}
+
+.tegelrooster.aantal-1 {
+  grid-template-columns: 1fr;
+}
+
+.tegelrooster.aantal-2 {
+  grid-template-columns: 1fr 1fr;
+}
+
+.tegelrooster.aantal-3 {
+  grid-template-columns: repeat(3, 1fr);
+}
+
+.tegelrooster.aantal-4 {
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 1fr 1fr;
+}
+
+/* Meer dan vier tegels is niet de bedoeling, maar mag de app niet slopen. */
+.tegelrooster.aantal-veel {
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+}
+
+.tegel {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(6px, 1.4vh, 18px);
+  min-height: 0;
+  padding: clamp(10px, 2vh, 26px);
+  border: 6px solid rgba(255, 255, 255, 0.14);
+  border-radius: 28px;
+  background: #1e293b;
+  color: #fff;
+  cursor: default;
+  /* Rustige overgang, geen knipperen. */
+  transition: transform 180ms ease, border-color 180ms ease, box-shadow 180ms ease;
+}
+
+.tegel.bedienbaar {
+  cursor: pointer;
+}
+
+.tegel-beeld {
+  font-size: clamp(48px, 13vh, 180px);
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 0;
+  flex: 1 1 auto;
+}
+
+.tegel-beeld img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  border-radius: 16px;
+}
+
+.tegel-label {
+  flex: 0 0 auto;
+  font-size: clamp(20px, 3.4vh, 44px);
+  font-weight: 700;
+  text-align: center;
+  text-shadow: 0 2px 6px rgba(0, 0, 0, 0.45);
+}
+
+/* Scanmarkering: dikke rand, hoog contrast, lichte vergroting. */
+.tegel.actief {
+  border-color: var(--markering);
+  box-shadow:
+    0 0 0 10px rgba(253, 224, 71, 0.28),
+    0 18px 42px rgba(0, 0, 0, 0.5);
+  transform: scale(1.05);
+  z-index: 2;
+}
+
+.tegel.gekozen {
+  border-color: #ffffff;
+  transform: scale(1.02);
+}
+
+.leerling-voet {
+  flex: 0 0 auto;
+  text-align: center;
+  padding: 0 24px 14px;
+  color: var(--tekst-zacht);
+  font-size: 15px;
+  min-height: 26px;
+}
+
+/* --------------------------------------------------------------- Eindacties */
+
+.actie-laag {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  background: var(--achtergrond);
+  z-index: 30;
+  overflow: hidden;
+}
+
+.actie-beeld {
+  font-size: clamp(90px, 34vh, 340px);
+  line-height: 1;
+  z-index: 2;
+}
+
+.actie-beeld img {
+  max-width: 70vw;
+  max-height: 60vh;
+  object-fit: contain;
+  border-radius: 24px;
+}
+
+.actie-tekst {
+  font-size: clamp(22px, 4vh, 52px);
+  font-weight: 700;
+  text-align: center;
+  padding: 0 24px;
+  z-index: 2;
+}
+
+/* Kleurgolf: één kleur die rustig over het scherm beweegt. */
+.kleurgolf {
+  position: absolute;
+  inset: -20%;
+  background: radial-gradient(circle at 30% 50%, var(--actiekleur), transparent 60%);
+  animation: kleurgolf-beweging 6s ease-in-out infinite;
+  opacity: 0.85;
+}
+
+@keyframes kleurgolf-beweging {
+  0% {
+    transform: translateX(-30%) scale(1);
+  }
+  50% {
+    transform: translateX(30%) scale(1.15);
+  }
+  100% {
+    transform: translateX(-30%) scale(1);
+  }
+}
+
+/* Confetti: langzaam zakkende stukjes, geen felle flitsen. */
+.confetti-stuk {
+  position: absolute;
+  top: -8vh;
+  width: 18px;
+  height: 26px;
+  border-radius: 5px;
+  opacity: 0.9;
+  animation: confetti-vallen linear forwards;
+}
+
+@keyframes confetti-vallen {
+  from {
+    transform: translateY(-10vh) rotate(0deg);
+  }
+  to {
+    transform: translateY(115vh) rotate(320deg);
+  }
+}
+
+/* Eenvoudige animatie: rustig heen en weer bewegend figuur. */
+.animatie-figuur {
+  animation: animatie-wiegen 2.4s ease-in-out infinite;
+}
+
+@keyframes animatie-wiegen {
+  0% {
+    transform: translateY(0) rotate(-7deg);
+  }
+  50% {
+    transform: translateY(-4vh) rotate(7deg);
+  }
+  100% {
+    transform: translateY(0) rotate(-7deg);
+  }
+}
+
+.actie-gloed {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 50% 55%, var(--actiekleur), transparent 65%);
+  opacity: 0.4;
+}
+
+/* ------------------------------------------------------------ Begeleidersmodus */
+
+.begeleider {
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.begeleider-kop {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+  padding: 14px clamp(16px, 3vw, 32px);
+  border-bottom: 1px solid var(--rand);
+  background: var(--achtergrond-paneel);
+}
+
+.begeleider-kop h1 {
+  font-size: 20px;
+  margin: 0;
+  margin-right: auto;
+}
+
+.tabbladen {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 12px clamp(16px, 3vw, 32px) 0;
+}
+
+.tabblad {
+  background: transparent;
+  border: 1px solid var(--rand);
+  border-bottom-color: transparent;
+  border-radius: 12px 12px 0 0;
+  padding: 9px 16px;
+  cursor: pointer;
+}
+
+.tabblad[aria-selected='true'] {
+  background: var(--achtergrond-paneel);
+  border-color: var(--accent);
+  color: var(--accent);
+  font-weight: 700;
+}
+
+.tabinhoud {
+  flex: 1 1 auto;
+  padding: 20px clamp(16px, 3vw, 32px) 48px;
+}
+
+.paneel {
+  background: var(--achtergrond-paneel);
+  border: 1px solid var(--rand);
+  border-radius: var(--hoek);
+  padding: 20px;
+  margin-bottom: 20px;
+}
+
+.paneel h2 {
+  margin: 0 0 4px;
+  font-size: 19px;
+}
+
+.paneel h3 {
+  margin: 20px 0 8px;
+  font-size: 16px;
+}
+
+.paneel > p {
+  margin: 0 0 16px;
+  color: var(--tekst-zacht);
+}
+
+.veldenrij {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 16px;
+}
+
+.veld {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.veld > label,
+.veld > span.veldnaam {
+  font-size: 14px;
+  color: var(--tekst-zacht);
+  font-weight: 600;
+}
+
+.veld input[type='text'],
+.veld input[type='number'],
+.veld input[type='password'],
+.veld select,
+.veld textarea {
+  background: var(--achtergrond-veld);
+  border: 1px solid var(--rand);
+  border-radius: 10px;
+  color: var(--tekst);
+  padding: 9px 12px;
+  font: inherit;
+  width: 100%;
+}
+
+.veld input[type='range'] {
+  width: 100%;
+}
+
+.veld textarea {
+  min-height: 110px;
+  resize: vertical;
+}
+
+.veld small {
+  color: var(--tekst-zacht);
+  font-size: 13px;
+}
+
+.aanvinken {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 0;
+}
+
+.aanvinken input {
+  width: 20px;
+  height: 20px;
+}
+
+.melding {
+  border-radius: 12px;
+  padding: 10px 14px;
+  margin: 12px 0;
+  border: 1px solid var(--rand);
+  background: var(--achtergrond-veld);
+}
+
+.melding.goed {
+  border-color: var(--goed);
+}
+
+.melding.fout {
+  border-color: var(--fout);
+}
+
+.melding.waarschuwing {
+  border-color: var(--waarschuwing);
+}
+
+.melding ul {
+  margin: 6px 0 0;
+  padding-left: 20px;
+}
+
+.knoppenrij {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 16px;
+}
+
+/* ------------------------------------------------------------- Toetsvastlegger */
+
+.toetsvak {
+  background: var(--achtergrond-veld);
+  border: 1px dashed var(--rand);
+  border-radius: 10px;
+  padding: 10px 12px;
+  font-family: 'Consolas', 'Courier New', monospace;
+  font-size: 14px;
+  word-break: break-all;
+}
+
+.toetsvak.wacht {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+/* ------------------------------------------------------------------- Tabellen */
+
+.tabel {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+
+.tabel th,
+.tabel td {
+  border-bottom: 1px solid var(--rand);
+  padding: 7px 10px;
+  text-align: left;
+  vertical-align: top;
+}
+
+.tabel th {
+  color: var(--tekst-zacht);
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.tabel tbody tr:hover {
+  background: rgba(56, 189, 248, 0.06);
+}
+
+.tabelomhulsel {
+  max-height: 460px;
+  overflow: auto;
+  border: 1px solid var(--rand);
+  border-radius: 12px;
+}
+
+.merk {
+  display: inline-block;
+  border-radius: 999px;
+  padding: 1px 9px;
+  font-size: 12px;
+  font-weight: 700;
+  border: 1px solid var(--rand);
+}
+
+.merk.goed {
+  border-color: var(--goed);
+  color: var(--goed);
+}
+
+.merk.fout {
+  border-color: var(--fout);
+  color: var(--fout);
+}
+
+.merk.let-op {
+  border-color: var(--waarschuwing);
+  color: var(--waarschuwing);
+}
+
+.eenregel {
+  font-family: 'Consolas', 'Courier New', monospace;
+}
+
+/* ------------------------------------------------------------ Inhoudseditor */
+
+.editor {
+  display: grid;
+  grid-template-columns: minmax(220px, 280px) 1fr;
+  gap: 20px;
+  align-items: start;
+}
+
+@media (max-width: 900px) {
+  .editor {
+    grid-template-columns: 1fr;
+  }
+}
+
+.schermlijst {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.schermlijst button {
+  width: 100%;
+  text-align: left;
+  background: var(--achtergrond-veld);
+  border: 1px solid var(--rand);
+  border-radius: 10px;
+  padding: 9px 12px;
+  cursor: pointer;
+}
+
+.schermlijst button[aria-current='true'] {
+  border-color: var(--accent);
+  color: var(--accent);
+  font-weight: 700;
+}
+
+.tegelkaart {
+  border: 1px solid var(--rand);
+  border-radius: 14px;
+  padding: 14px;
+  margin-bottom: 14px;
+  background: var(--achtergrond-veld);
+}
+
+.tegelkaart-kop {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.tegelkaart-kop strong {
+  margin-right: auto;
+}
+
+.kleurstip {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  border: 2px solid rgba(255, 255, 255, 0.35);
+  flex: 0 0 auto;
+}
+
+.voorbeeldtegel {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 150px;
+  height: 150px;
+  border-radius: 20px;
+  border: 4px solid rgba(255, 255, 255, 0.2);
+  color: #fff;
+  font-weight: 700;
+  text-align: center;
+  padding: 8px;
+}
+
+.voorbeeldtegel .beeld {
+  font-size: 46px;
+  line-height: 1;
+}
+
+.voorbeeldtegel img {
+  max-width: 84px;
+  max-height: 84px;
+  object-fit: contain;
+}
+
+/* ------------------------------------------------------------------- Pincode */
+
+.pin-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(4, 10, 22, 0.85);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 60;
+  padding: 24px;
+}
+
+.pin-kaart {
+  background: var(--achtergrond-paneel);
+  border: 1px solid var(--rand);
+  border-radius: var(--hoek);
+  padding: 24px;
+  width: min(420px, 100%);
+}
+
+.pin-kaart h2 {
+  margin: 0 0 6px;
+}
+
+.pin-kaart p {
+  color: var(--tekst-zacht);
+  margin: 0 0 16px;
+}
+
+/* -------------------------------------------------------------------- Diversen */
+
+.hoekknop {
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 56px;
+  height: 56px;
+  border: 0;
+  background: transparent;
+  cursor: default;
+  z-index: 40;
+  opacity: 0;
+}
+
+.hoekknop:focus-visible {
+  opacity: 1;
+  outline: 3px solid var(--accent);
+}
+
+.hulptekst {
+  color: var(--tekst-zacht);
+  font-size: 14px;
+  margin: 6px 0 0;
+}
+
+.lijst-net {
+  margin: 8px 0 0;
+  padding-left: 20px;
+  color: var(--tekst-zacht);
+}
+
+.lijst-net li {
+  margin-bottom: 4px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tegel,
+  .kleurgolf,
+  .confetti-stuk,
+  .animatie-figuur {
+    animation: none !important;
+    transition: none !important;
+  }
+}

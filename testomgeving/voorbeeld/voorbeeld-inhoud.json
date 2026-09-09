@@ -1,0 +1,464 @@
+{
+  "appVersion": "1.0",
+  "settings": {
+    "controlMode": 1,
+    "scanIntervalMs": 2500,
+    "selectionCooldownMs": 700,
+    "speakLabels": true,
+    "selectionSound": true,
+    "keys": {
+      "next": "Space",
+      "select": "Enter",
+      "back": "Escape"
+    },
+    "scanRondes": 3,
+    "startTegel": "eerste",
+    "terugNaActie": "beginscherm",
+    "volledigSchermStarten": false,
+    "spraakSnelheid": 0.9,
+    "muisBediening": true,
+    "pincode": "1234"
+  },
+  "screens": [
+    {
+      "id": "home",
+      "title": "Wat wil je doen?",
+      "items": [
+        {
+          "id": "muziek",
+          "label": "Muziek",
+          "emoji": "🎵",
+          "kleur": "#7c3aed",
+          "action": { "type": "navigate", "target": "muziek-menu" }
+        },
+        {
+          "id": "kapsalon",
+          "label": "Kapsalon",
+          "emoji": "💇",
+          "kleur": "#db2777",
+          "action": { "type": "navigate", "target": "kapsalon-menu" }
+        },
+        {
+          "id": "shoppen",
+          "label": "Shoppen en stijl",
+          "emoji": "👗",
+          "kleur": "#2563eb",
+          "action": { "type": "navigate", "target": "shoppen-menu" }
+        },
+        {
+          "id": "dieren",
+          "label": "Dieren",
+          "emoji": "🐶",
+          "kleur": "#15803d",
+          "action": { "type": "navigate", "target": "dieren-menu" }
+        }
+      ]
+    },
+    {
+      "id": "muziek-menu",
+      "title": "Welke muziek wil je?",
+      "items": [
+        {
+          "id": "muziek-rustig",
+          "label": "Rustig",
+          "emoji": "🌙",
+          "kleur": "#2563eb",
+          "action": {
+            "type": "audio",
+            "audio": "assets/muziek-rustig.mp3",
+            "tekst": "Rustige muziek",
+            "emoji": "🌙",
+            "duurMs": 8000
+          }
+        },
+        {
+          "id": "muziek-vrolijk",
+          "label": "Vrolijk",
+          "emoji": "☀️",
+          "kleur": "#a16207",
+          "action": {
+            "type": "audio",
+            "audio": "assets/muziek-vrolijk.mp3",
+            "tekst": "Vrolijke muziek",
+            "emoji": "☀️",
+            "duurMs": 8000
+          }
+        },
+        {
+          "id": "muziek-dansen",
+          "label": "Dansen",
+          "emoji": "💃",
+          "kleur": "#db2777",
+          "action": { "type": "navigate", "target": "muziek-dansen" }
+        },
+        {
+          "id": "muziek-boodschap",
+          "label": "Mooi liedje!",
+          "emoji": "💬",
+          "kleur": "#0f766e",
+          "action": {
+            "type": "speak",
+            "tekst": "Wat een mooi liedje!",
+            "emoji": "💬",
+            "duurMs": 4000
+          }
+        }
+      ]
+    },
+    {
+      "id": "muziek-dansen",
+      "title": "Dansen",
+      "items": [
+        {
+          "id": "dansen-confetti",
+          "label": "Confetti",
+          "emoji": "🎉",
+          "kleur": "#db2777",
+          "action": { "type": "confetti", "kleur": "#db2777", "duurMs": 6000 }
+        },
+        {
+          "id": "dansen-lichtjes",
+          "label": "Lichtjes",
+          "emoji": "✨",
+          "kleur": "#7c3aed",
+          "action": { "type": "colorSweep", "kleur": "#7c3aed", "duurMs": 6000 }
+        },
+        {
+          "id": "dansen-bewegen",
+          "label": "Bewegen",
+          "emoji": "🎈",
+          "kleur": "#0f766e",
+          "action": {
+            "type": "animation",
+            "emoji": "🎈",
+            "kleur": "#0f766e",
+            "tekst": "Alles beweegt!",
+            "duurMs": 6000
+          }
+        }
+      ]
+    },
+    {
+      "id": "kapsalon-menu",
+      "title": "Wat doen we in de kapsalon?",
+      "items": [
+        {
+          "id": "kapsalon-kapsel",
+          "label": "Kapsel kiezen",
+          "emoji": "✂️",
+          "kleur": "#db2777",
+          "action": { "type": "navigate", "target": "kapsalon-kapsel" }
+        },
+        {
+          "id": "kapsalon-kleur",
+          "label": "Haarkleur kiezen",
+          "emoji": "🎨",
+          "kleur": "#7c3aed",
+          "action": { "type": "navigate", "target": "kapsalon-kleur" }
+        },
+        {
+          "id": "kapsalon-geluid",
+          "label": "Haardroger",
+          "emoji": "💨",
+          "kleur": "#2563eb",
+          "action": {
+            "type": "audio",
+            "audio": "assets/haardroger.mp3",
+            "tekst": "De haardroger",
+            "emoji": "💨",
+            "duurMs": 6000
+          }
+        },
+        {
+          "id": "kapsalon-klaar",
+          "label": "Klaar!",
+          "emoji": "🪞",
+          "kleur": "#0f766e",
+          "action": {
+            "type": "speak",
+            "tekst": "Je haar is klaar!",
+            "emoji": "🪞",
+            "duurMs": 4000
+          }
+        }
+      ]
+    },
+    {
+      "id": "kapsalon-kapsel",
+      "title": "Welk kapsel?",
+      "items": [
+        {
+          "id": "kapsel-kort",
+          "label": "Kort",
+          "emoji": "💁",
+          "kleur": "#2563eb",
+          "action": { "type": "image", "emoji": "💁", "tekst": "Kort haar", "duurMs": 6000 }
+        },
+        {
+          "id": "kapsel-lang",
+          "label": "Lang",
+          "emoji": "👩",
+          "kleur": "#15803d",
+          "action": { "type": "image", "emoji": "👩", "tekst": "Lang haar", "duurMs": 6000 }
+        },
+        {
+          "id": "kapsel-krullen",
+          "label": "Krullen",
+          "emoji": "👩‍🦱",
+          "kleur": "#c2410c",
+          "action": { "type": "image", "emoji": "👩‍🦱", "tekst": "Krullen", "duurMs": 6000 }
+        }
+      ]
+    },
+    {
+      "id": "kapsalon-kleur",
+      "title": "Welke haarkleur?",
+      "items": [
+        {
+          "id": "kleur-blond",
+          "label": "Blond",
+          "emoji": "👱",
+          "kleur": "#a16207",
+          "action": { "type": "colorSweep", "kleur": "#eab308", "tekst": "Blond", "duurMs": 6000 }
+        },
+        {
+          "id": "kleur-roze",
+          "label": "Roze",
+          "emoji": "🌸",
+          "kleur": "#db2777",
+          "action": { "type": "colorSweep", "kleur": "#ec4899", "tekst": "Roze", "duurMs": 6000 }
+        },
+        {
+          "id": "kleur-blauw",
+          "label": "Blauw",
+          "emoji": "🦋",
+          "kleur": "#2563eb",
+          "action": { "type": "colorSweep", "kleur": "#3b82f6", "tekst": "Blauw", "duurMs": 6000 }
+        }
+      ]
+    },
+    {
+      "id": "shoppen-menu",
+      "title": "Wat gaan we shoppen?",
+      "items": [
+        {
+          "id": "shoppen-kleding",
+          "label": "Kleding",
+          "emoji": "👚",
+          "kleur": "#db2777",
+          "action": { "type": "navigate", "target": "shoppen-kleding" }
+        },
+        {
+          "id": "shoppen-schoenen",
+          "label": "Schoenen",
+          "emoji": "👟",
+          "kleur": "#2563eb",
+          "action": { "type": "image", "emoji": "👟", "tekst": "Sneakers", "duurMs": 6000 }
+        },
+        {
+          "id": "shoppen-tas",
+          "label": "Tas",
+          "emoji": "👛",
+          "kleur": "#c2410c",
+          "action": { "type": "image", "emoji": "👛", "tekst": "Een tas", "duurMs": 6000 }
+        },
+        {
+          "id": "shoppen-sieraden",
+          "label": "Sieraden",
+          "emoji": "💎",
+          "kleur": "#0f766e",
+          "action": { "type": "confetti", "kleur": "#22d3ee", "tekst": "Glitter!", "duurMs": 6000 }
+        }
+      ]
+    },
+    {
+      "id": "shoppen-kleding",
+      "title": "Welke kleding?",
+      "items": [
+        {
+          "id": "kleding-jurk",
+          "label": "Jurk",
+          "emoji": "👗",
+          "kleur": "#db2777",
+          "action": { "type": "image", "emoji": "👗", "tekst": "Een jurk", "duurMs": 6000 }
+        },
+        {
+          "id": "kleding-trui",
+          "label": "Trui",
+          "emoji": "🧥",
+          "kleur": "#2563eb",
+          "action": { "type": "image", "emoji": "🧥", "tekst": "Een trui", "duurMs": 6000 }
+        },
+        {
+          "id": "kleding-broek",
+          "label": "Broek",
+          "emoji": "👖",
+          "kleur": "#0f766e",
+          "action": { "type": "image", "emoji": "👖", "tekst": "Een broek", "duurMs": 6000 }
+        }
+      ]
+    },
+    {
+      "id": "dieren-menu",
+      "title": "Welke dieren wil je zien?",
+      "items": [
+        {
+          "id": "dieren-huis",
+          "label": "Huisdieren",
+          "emoji": "🐱",
+          "kleur": "#c2410c",
+          "action": { "type": "navigate", "target": "dieren-huis" }
+        },
+        {
+          "id": "dieren-boerderij",
+          "label": "Boerderijdieren",
+          "emoji": "🐄",
+          "kleur": "#15803d",
+          "action": { "type": "navigate", "target": "dieren-boerderij" }
+        },
+        {
+          "id": "dieren-wild",
+          "label": "Wilde dieren",
+          "emoji": "🦁",
+          "kleur": "#a16207",
+          "action": {
+            "type": "animalSound",
+            "audio": "assets/leeuw.mp3",
+            "emoji": "🦁",
+            "tekst": "De leeuw brult!",
+            "duurMs": 6000
+          }
+        },
+        {
+          "id": "dieren-grappig",
+          "label": "Grappige dieren",
+          "emoji": "🐒",
+          "kleur": "#7c3aed",
+          "action": {
+            "type": "animation",
+            "emoji": "🐒",
+            "kleur": "#7c3aed",
+            "tekst": "De aap danst!",
+            "duurMs": 6000
+          }
+        }
+      ]
+    },
+    {
+      "id": "dieren-huis",
+      "title": "Welk huisdier?",
+      "items": [
+        {
+          "id": "huis-hond",
+          "label": "Hond",
+          "emoji": "🐶",
+          "kleur": "#c2410c",
+          "action": {
+            "type": "animalSound",
+            "audio": "assets/hond.mp3",
+            "emoji": "🐶",
+            "tekst": "De hond blaft: woef woef!",
+            "duurMs": 6000
+          }
+        },
+        {
+          "id": "huis-kat",
+          "label": "Kat",
+          "emoji": "🐱",
+          "kleur": "#a16207",
+          "action": {
+            "type": "animalSound",
+            "audio": "assets/kat.mp3",
+            "emoji": "🐱",
+            "tekst": "De kat miauwt: miauw!",
+            "duurMs": 6000
+          }
+        },
+        {
+          "id": "huis-cavia",
+          "label": "Cavia",
+          "emoji": "🐹",
+          "kleur": "#db2777",
+          "action": {
+            "type": "animalSound",
+            "audio": "assets/cavia.mp3",
+            "emoji": "🐹",
+            "tekst": "De cavia piept.",
+            "duurMs": 6000
+          }
+        },
+        {
+          "id": "huis-vis",
+          "label": "Vis",
+          "emoji": "🐠",
+          "kleur": "#2563eb",
+          "action": {
+            "type": "animalSound",
+            "audio": "assets/vis.mp3",
+            "emoji": "🐠",
+            "tekst": "De vis zwemt stil rond.",
+            "duurMs": 6000
+          }
+        }
+      ]
+    },
+    {
+      "id": "dieren-boerderij",
+      "title": "Welk boerderijdier?",
+      "items": [
+        {
+          "id": "boerderij-koe",
+          "label": "Koe",
+          "emoji": "🐄",
+          "kleur": "#15803d",
+          "action": {
+            "type": "animalSound",
+            "audio": "assets/koe.mp3",
+            "emoji": "🐄",
+            "tekst": "De koe loeit: boeh!",
+            "duurMs": 6000
+          }
+        },
+        {
+          "id": "boerderij-schaap",
+          "label": "Schaap",
+          "emoji": "🐑",
+          "kleur": "#0f766e",
+          "action": {
+            "type": "animalSound",
+            "audio": "assets/schaap.mp3",
+            "emoji": "🐑",
+            "tekst": "Het schaap blaat: bèèè!",
+            "duurMs": 6000
+          }
+        },
+        {
+          "id": "boerderij-paard",
+          "label": "Paard",
+          "emoji": "🐴",
+          "kleur": "#c2410c",
+          "action": {
+            "type": "animalSound",
+            "audio": "assets/paard.mp3",
+            "emoji": "🐴",
+            "tekst": "Het paard hinnikt.",
+            "duurMs": 6000
+          }
+        },
+        {
+          "id": "boerderij-kip",
+          "label": "Kip",
+          "emoji": "🐔",
+          "kleur": "#a16207",
+          "action": {
+            "type": "animalSound",
+            "audio": "assets/kip.mp3",
+            "emoji": "🐔",
+            "tekst": "De kip tokt: tok tok!",
+            "duurMs": 6000
+          }
+        }
+      ]
+    }
+  ]
+}

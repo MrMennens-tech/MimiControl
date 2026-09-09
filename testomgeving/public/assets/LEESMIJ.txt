@@ -1,0 +1,35 @@
+Eigen geluiden en afbeeldingen
+==============================
+
+In deze map kunnen eigen bestanden gezet worden die de voorbeeldinhoud
+verwacht. De namen hieronder worden door de meegeleverde tegels gebruikt.
+Ontbreekt een bestand, dan slaat de app het geluid netjes over en benoemt hij
+de keuze met de spraakmodule van het systeem. De app loopt dus nooit vast op
+een ontbrekend bestand.
+
+Muziek
+  muziek-rustig.mp3
+  muziek-vrolijk.mp3
+  muziek-dansen.mp3
+  liedje-1.mp3
+  liedje-2.mp3
+  liedje-3.mp3
+
+Kapsalon
+  haardroger.mp3
+  schaar.mp3
+  water.mp3
+
+Dieren
+  hond.mp3   kat.mp3      cavia.mp3    vis.mp3
+  koe.mp3    schaap.mp3   paard.mp3    kip.mp3
+  leeuw.mp3  olifant.mp3  aap.mp3      pinguin.mp3
+
+Let op
+------
+- Gebruik alleen eigen opnames of geluid waarvan het gebruik is toegestaan.
+  Er wordt met opzet geen auteursrechtelijk materiaal meegeleverd.
+- Houd de fragmenten kort (een paar seconden) en niet te hard.
+- Eenvoudiger alternatief: gebruik in de begeleidersmodus, tabblad Inhoud, de
+  knop "Geluid kiezen" bij een tegel. Het bestand wordt dan in de app zelf
+  opgeslagen en hoeft niet in deze map te staan.

@@ -19,3 +19,7 @@ app/profielen/
 app/crash.log
 app/startup.log
 debug-*.log
+
+# Testomgeving (webapp)
+node_modules/
+testomgeving/dist/
