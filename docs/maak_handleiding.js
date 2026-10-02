@@ -126,13 +126,13 @@ const inhoud = [
 
   h1("2. Starten"),
   ...lijstStart(),
-  stap([vet("Dubbelklik "), t("op "), vet("Start MimiControl Studio v2.bat"), t(" in de map van Studio (niet alleen op het .exe-bestand).")]),
-  stap([t("Windows vraagt of Studio wijzigingen mag aanbrengen. Klik op "), vet("Ja"), t(". Dat is nodig: Communicator 5 draait met extra rechten, en alleen dan komen de toetsen van Studio daar binnen.")]),
+  stap([vet("Dubbelklik "), t("op "), vet("MimiControl Studio v2.exe"), t(" in de map van Studio.")]),
+  stap([t("Studio vraagt of het opnieuw mag starten als beheerder. Klik op "), vet("Ja"), t(" en daarna op "), vet("Ja"), t(" bij de Windows-melding. Dat is nodig: Communicator 5 draait met extra rechten, en alleen dan komen de toetsen van Studio daar binnen.")]),
   stap([t("Studio opent. Rechtsboven, onder "), vet("Communicator 5"), t(", moet staan: "), vet("✓ Beheerder: ja"), t(".")]),
   stap([t("Kies bij "), vet("Camera"), t(" de juiste webcam en klik op "), vet("Camera preview"), t(" om te controleren dat je jezelf ziet.")]),
   ...afbeelding("01-dashboard.png", 600, "Het hoofdscherm. Links staan je triggers, rechts de instellingen.", 400),
   kader("Lukt het starten niet?", [
-    "•  Staat er ✗ Beheerder: nee? Sluit Studio en start opnieuw. Kies bij de Windows-melding Ja.",
+    "•  Staat er ✗ Beheerder: nee? Sluit Studio en start opnieuw. Kies bij de vraag over beheerder Ja.",
     "•  Meldt Studio dat het al draait? Sluit de andere Studio af (Taakbeheer, zoek MimiControl of pythonw) en start opnieuw.",
   ], "FFF4E0"),
 
@@ -165,9 +165,8 @@ const inhoud = [
 
   h1("4. Live gebruiken met Communicator 5"),
   ...lijstStart(),
-  stap([t("Zet Communicator 5 op "), vet("Vensterweergave"), t(" (niet op volledig scherm). Dat voorkomt dat het camerabeeld blijft hangen.")]),
-  stap([t("Klik in Studio op "), vet("Live modus starten"), t(".")]),
-  stap([t("Klik op Communicator 5, zodat dat het "), vet("actieve venster"), t(" is. Studio drukt de toetsen altijd in het actieve venster in.")]),
+  stap([t("Klik in Studio op "), vet("Live modus starten"), t(". Er verschijnt een klein camerabeeld in de hoek van je scherm.")]),
+  stap([t("Klik op Communicator 5, zodat dat het "), vet("actieve venster"), t(" is. Studio drukt de toetsen altijd in het actieve venster in. Communicator 5 mag ook op volledig scherm staan.")]),
   stap([t("Maak je beweging. Studio drukt de toets in en toont dat linksonder in het camerabeeld.")]),
   ...afbeelding("07-live-toets-verstuurd.png", 380, "Het label laat zien welke toets Studio net heeft verstuurd.", 260),
   p([t("Staat het label op grijs en zegt het "), vet("Niet verstuurd"), t(", dan is de toets niet aangekomen. Zie hoofdstuk 6.")]),
@@ -196,7 +195,7 @@ const inhoud = [
       ["De toets gaat naar het verkeerde programma", "Het actieve venster is een ander venster.", "Klik eerst op Communicator 5. De toets gaat altijd naar het actieve venster."],
       ["De camera werkt niet of het beeld is zwart", "Een andere Studio of app gebruikt de camera.", "Sluit andere camera-apps en oude Studio's (Taakbeheer: MimiControl of pythonw) en start opnieuw."],
       ["Melding dat Studio al draait", "Er loopt al een Studio.", "Sluit de andere Studio of start de pc opnieuw."],
-      ["Het camerabeeld staat stil boven Communicator", "Communicator staat op volledig scherm.", "Zet Communicator 5 op Vensterweergave."],
+      ["Het camerabeeld staat stil boven Communicator", "Soms houdt een programma op volledig scherm het beeld tegen.", "Zet Communicator 5 op Vensterweergave."],
       ["Het rode label 'Geen gezicht'", "Studio ziet je gezicht niet.", "Zorg voor goed licht en ga recht voor de camera zitten."],
       ["De trigger gaat te snel of per ongeluk af", "De drempel is te laag of de vasthoudtijd te kort.", "Verhoog de drempel van de trigger of de vasthoudtijd."],
       ["De trigger gaat niet af", "De drempel is te hoog.", "Verlaag de drempel, of neem de beweging opnieuw op."],

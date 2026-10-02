@@ -907,11 +907,6 @@ def _live_status_banner(
     eigen_fg = bool(
         overlay_hwnd and _hwnd_norm(fg) == _hwnd_norm(overlay_hwnd)
     )
-    if fg and _hwnd_schermvullend(fg) and not eigen_fg:
-        regels.append(
-            "Het actieve venster staat op volledig scherm. Dat kan toetsen of "
-            "het camerabeeld blokkeren: zet Communicator 5 op Vensterweergave."
-        )
     if uipi:
         regels.append(uipi)
     if overlay_melding:
@@ -1877,7 +1872,7 @@ def start_live_explorer(camera_index=0, laad_ui=None, on_gereed=None):
 
         print("  [INFO] Live besturing gestart.")
         print("  Mimiek-toetsen gaan naar het programma vooraan (SendInput).")
-        print("  Studio-focus is niet nodig; Communicator 5 moet Vensterweergave zijn.")
+        print("  Studio-focus is niet nodig; Communicator 5 mag ook op volledig scherm.")
         print("  Studio en Communicator op hetzelfde administrator-niveau houden.")
         print("  Overlay-sneltoetsen (Q/P/…) alleen als de overlay is aangeklikt.")
         if overlay_zichtbaar:
@@ -2230,8 +2225,8 @@ def start_live_explorer(camera_index=0, laad_ui=None, on_gereed=None):
                 else:
                     overlay_melding = (
                         "Het camerabeeld wordt even niet ververst. Camera en "
-                        "toetsen lopen door. Volledig scherm kan het camerabeeld "
-                        "blokkeren: gebruik Vensterweergave."
+                        "toetsen lopen door. Blijft het beeld stil, probeer dan "
+                        "Vensterweergave."
                     )
                 try:
                     key = overlay_laag.pompen()

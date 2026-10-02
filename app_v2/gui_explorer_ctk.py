@@ -353,9 +353,9 @@ class MimiControlStudioApp:
             text_color="#2E9E5B" if admin else "#C2410C",
         ).pack(anchor="w", padx=16)
         uitleg = (
-            "Toetsen kunnen in Communicator 5 aankomen. Zet Communicator 5 "
-            "op Vensterweergave. Je toetsen gaan altijd naar het actieve "
-            "venster: klik dus op Communicator 5 voordat je begint."
+            "Toetsen kunnen in Communicator 5 aankomen, ook op volledig "
+            "scherm. Je toetsen gaan altijd naar het actieve venster: "
+            "klik dus op Communicator 5 voordat je begint."
             if admin else
             "Zonder beheerdersrechten blokkeert Windows de toetsen naar "
             "Communicator 5. Sluit Studio en start hem opnieuw als beheerder."
@@ -703,8 +703,8 @@ class MimiControlStudioApp:
         ctk.CTkLabel(
             kaart,
             text="Het kleine camerabeeld blijft boven Communicator 5 staan. "
-                 "Volledig scherm kan het beeld laten "
-                 "stokken: gebruik Vensterweergave.",
+                 "Dat werkt ook op volledig scherm. "
+                 "Staat het beeld stil, probeer dan Vensterweergave.",
             font=(FONT, 11), text_color=TEKST_LICHT, wraplength=300,
             anchor="w", justify="left"
         ).pack(fill="x", padx=16, pady=(0, 8))

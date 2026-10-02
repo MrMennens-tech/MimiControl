@@ -44,8 +44,8 @@ def passend(naam):
 # markering = (begin t.o.v. scène, einde, x1, y1, x2, y2) in fracties van het beeld
 SCENES = [
     dict(id="s2", start=22, dur=20, nr="1", titel="Starten", beeld="01-dashboard.png",
-         stappen=["Dubbelklik op “Start MimiControl Studio v2.bat”",
-                  "Klik op Ja bij de Windows-melding",
+         stappen=["Dubbelklik op “MimiControl Studio v2.exe”",
+                  "Klik Ja bij de vraag over beheerder en de Windows-melding",
                   "Controleer: Beheerder: ja"],
          marks=[(9.5, 19, 0.7175, 0.107, 0.9725, 0.269)]),
     dict(id="s3", start=42, dur=18, nr="2", titel="Kies je gezichtsbewegingen",
@@ -72,9 +72,9 @@ SCENES = [
                 (16, 19.5, 0.694, 0.927, 0.828, 0.98)]),
     dict(id="s6", start=100, dur=22, nr="5", titel="Live gebruiken",
          beeld="06-live-camerabeeld.png", beeld2="07-live-toets-verstuurd.png", wissel=14,
-         stappen=["Zet Communicator 5 op Vensterweergave",
+         stappen=["Klik op Live modus starten",
                   "Klik op Communicator 5: dat is het actieve venster",
-                  "Start Live en maak je beweging",
+                  "Maak je beweging (ook op volledig scherm)",
                   "Het label toont de verstuurde toets"],
          marks=[]),
     dict(id="s7", start=122, dur=16, nr="6", titel="Stoppen",
@@ -222,7 +222,7 @@ HTML = f'''<!doctype html>
           <div class="tips">
             <div class="tip" id="s8-t1"><div class="t1">De toets komt niet aan</div><div class="t2">Start Studio opnieuw en klik Ja bij de Windows-melding. Controleer: Beheerder: ja.</div></div>
             <div class="tip" id="s8-t2"><div class="t1">De camera werkt niet</div><div class="t2">Sluit andere camera-apps en een oude Studio. Start Studio daarna opnieuw.</div></div>
-            <div class="tip" id="s8-t3"><div class="t1">Het beeld staat stil</div><div class="t2">Zet Communicator 5 op Vensterweergave in plaats van volledig scherm.</div></div>
+            <div class="tip" id="s8-t3"><div class="t1">Het beeld staat stil</div><div class="t2">Probeer Communicator 5 op Vensterweergave.</div></div>
           </div>
         </div>
       </div>

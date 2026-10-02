@@ -150,3 +150,7 @@ Handleiding en afbeeldingen
 docs\Handleiding-MimiControl-Studio-v2.docx (en .pdf) is de gebruikershandleiding.
 Afbeeldingen maak je opnieuw met: python docs\maak_screenshots.py
 Handleiding opnieuw bouwen:       node docs\maak_handleiding.js
+
+Correctie 2 okt: Communicator 5 werkt ook op volledig scherm (getest). Vensterweergave is alleen
+nog een tip als het camerabeeld stilstaat. De onedir start je met MimiControl Studio v2.exe; Studio
+vraagt zelf om herstart als beheerder.
