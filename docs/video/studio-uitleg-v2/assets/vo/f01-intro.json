@@ -1,0 +1,37 @@
+{
+ "sleutel": "235ae7f96a65a199da7f3992414ae54b5eaa4705",
+ "tekst": "MimiControl: toetsen indrukken met je gezicht.",
+ "duur": 3.84,
+ "woorden": [
+  {
+   "end": 1.237,
+   "start": 0.256,
+   "word": "MimiControl:"
+  },
+  {
+   "end": 2.005,
+   "start": 1.493,
+   "word": "toetsen"
+  },
+  {
+   "end": 2.6027,
+   "start": 2.048,
+   "word": "indrukken"
+  },
+  {
+   "end": 2.944,
+   "start": 2.773,
+   "word": "met"
+  },
+  {
+   "end": 3.072,
+   "start": 2.987,
+   "word": "je"
+  },
+  {
+   "end": 3.612,
+   "start": 3.115,
+   "word": "gezicht."
+  }
+ ]
+}

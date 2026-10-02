@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="nl">
+  <head><meta charset="UTF-8" /></head>
+  <body>
+    <template id="f11-outro-template">
+      <style>
+        #f11-in .midden { position: absolute; left: 0; right: 0; text-align: center; color: #fff; }
+        #f11-logo { position: absolute; left: 860px; top: 190px; width: 200px; height: 191px; }
+        #f11-titel { top: 430px; font-size: 92px; font-weight: 700; }
+        #f11-sub { top: 562px; font-size: 52px; color: #68CCD1; }
+        #f11-merk { top: 700px; font-size: 40px; color: #CFE9EB; letter-spacing: .04em; }
+      </style>
+      <div id="f11-outro" data-composition-id="f11-outro" data-width="1920" data-height="1080">
+        <div class="sc-in" id="f11-in">
+          <img id="f11-logo" src="assets/Mennenstech_logo_wit.png" alt="Mennens.Tech" />
+          <div class="midden" id="f11-titel">MimiControl Studio v2</div>
+          <div class="midden" id="f11-sub">Meer uitleg: de handleiding</div>
+          <div class="midden" id="f11-merk">Mennens.Tech</div>
+        </div>
+      </div>
+      <script>
+        (function () {
+          var ID = "f11-outro";
+          var tl = UI.tijdlijn();
+          var root = document.getElementById("f11-in");
+          var T = UI.tijden(ID);
+          var R = new UI.Regie(tl, root);
+          R.in(document.getElementById("f11-logo"), 0.15, { y: 0, s: 0.86, dur: 0.9 });
+          R.in(document.getElementById("f11-titel"), 0.5, { y: 30, dur: 0.8 });
+          R.in(document.getElementById("f11-sub"), T.w("handleiding") - 0.3, { y: 20, dur: 0.7 });
+          R.in(document.getElementById("f11-merk"), T.w("handleiding") + 0.6, { y: 14, dur: 0.7 });
+          tl.fromTo(root, { opacity: 1 }, { opacity: 0, duration: 1.2, ease: "power1.in", immediateRender: false }, T.duur - 1.4);
+          window.__timelines[ID] = tl;
+        })();
+      </script>
+    </template>
+  </body>
+</html>

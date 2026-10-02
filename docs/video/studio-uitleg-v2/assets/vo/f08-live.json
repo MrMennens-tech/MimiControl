@@ -1,0 +1,237 @@
+{
+ "sleutel": "e6cf3afd682bc055ba0d8e3b3dee078fabac8614",
+ "tekst": "Klik op Live modus starten. <break time=\"0.6s\"/> Rechtsboven verschijnt een klein camerabeeld. Dat blijft boven je andere programma's staan. <break time=\"0.6s\"/> Klik nu op Communicator vijf: toetsen gaan altijd naar het actieve venster. <break time=\"0.3s\"/> Volledig scherm mag gewoon. <break time=\"0.8s\"/> Maak je beweging. <break time=\"1.0s\"/> Linksonder in het camerabeeld zie je welke toets is verstuurd.",
+ "duur": 20.819591836734695,
+ "woorden": [
+  {
+   "end": 0.512,
+   "start": 0.299,
+   "word": "Klik"
+  },
+  {
+   "end": 0.64,
+   "start": 0.555,
+   "word": "op"
+  },
+  {
+   "end": 1.237,
+   "start": 0.768,
+   "word": "Live"
+  },
+  {
+   "end": 1.621,
+   "start": 1.365,
+   "word": "modus"
+  },
+  {
+   "end": 2.398,
+   "start": 1.749,
+   "word": "starten."
+  },
+  {
+   "end": 3.456,
+   "start": 2.859,
+   "word": "Rechtsboven"
+  },
+  {
+   "end": 3.883,
+   "start": 3.584,
+   "word": "verschijnt"
+  },
+  {
+   "end": 4.011,
+   "start": 3.925,
+   "word": "een"
+  },
+  {
+   "end": 4.267,
+   "start": 4.053,
+   "word": "klein"
+  },
+  {
+   "end": 5.184,
+   "start": 4.352,
+   "word": "camerabeeld."
+  },
+  {
+   "end": 5.504,
+   "start": 5.419,
+   "word": "Dat"
+  },
+  {
+   "end": 5.803,
+   "start": 5.547,
+   "word": "blijft"
+  },
+  {
+   "end": 6.101,
+   "start": 5.845,
+   "word": "boven"
+  },
+  {
+   "end": 6.187,
+   "start": 6.144,
+   "word": "je"
+  },
+  {
+   "end": 6.443,
+   "start": 6.229,
+   "word": "andere"
+  },
+  {
+   "end": 6.955,
+   "start": 6.528,
+   "word": "programma's"
+  },
+  {
+   "end": 7.241,
+   "start": 6.997,
+   "word": "staan."
+  },
+  {
+   "end": 8.021,
+   "start": 7.893,
+   "word": "Klik"
+  },
+  {
+   "end": 8.235,
+   "start": 8.107,
+   "word": "nu"
+  },
+  {
+   "end": 8.448,
+   "start": 8.32,
+   "word": "op"
+  },
+  {
+   "end": 9.344,
+   "start": 8.661,
+   "word": "Communicator"
+  },
+  {
+   "end": 10.048,
+   "start": 9.472,
+   "word": "vijf:"
+  },
+  {
+   "end": 10.709,
+   "start": 10.368,
+   "word": "toetsen"
+  },
+  {
+   "end": 10.923,
+   "start": 10.752,
+   "word": "gaan"
+  },
+  {
+   "end": 11.264,
+   "start": 10.965,
+   "word": "altijd"
+  },
+  {
+   "end": 11.435,
+   "start": 11.307,
+   "word": "naar"
+  },
+  {
+   "end": 11.563,
+   "start": 11.477,
+   "word": "het"
+  },
+  {
+   "end": 11.819,
+   "start": 11.605,
+   "word": "actieve"
+  },
+  {
+   "end": 12.37,
+   "start": 11.947,
+   "word": "venster."
+  },
+  {
+   "end": 13.534,
+   "start": 13.107,
+   "word": "Volledig"
+  },
+  {
+   "end": 13.918,
+   "start": 13.577,
+   "word": "scherm"
+  },
+  {
+   "end": 14.558,
+   "start": 14.003,
+   "word": "mag"
+  },
+  {
+   "end": 14.951,
+   "start": 14.601,
+   "word": "gewoon."
+  },
+  {
+   "end": 15.922000000000002,
+   "start": 15.751000000000001,
+   "word": "Maak"
+  },
+  {
+   "end": 16.05,
+   "start": 15.965000000000002,
+   "word": "je"
+  },
+  {
+   "end": 16.532,
+   "start": 16.093,
+   "word": "beweging."
+  },
+  {
+   "end": 17.97,
+   "start": 17.415,
+   "word": "Linksonder"
+  },
+  {
+   "end": 18.055,
+   "start": 18.012999999999998,
+   "word": "in"
+  },
+  {
+   "end": 18.183,
+   "start": 18.098,
+   "word": "het"
+  },
+  {
+   "end": 18.823,
+   "start": 18.226,
+   "word": "camerabeeld"
+  },
+  {
+   "end": 19.207,
+   "start": 19.037,
+   "word": "zie"
+  },
+  {
+   "end": 19.293,
+   "start": 19.25,
+   "word": "je"
+  },
+  {
+   "end": 19.506,
+   "start": 19.335,
+   "word": "welke"
+  },
+  {
+   "end": 19.762,
+   "start": 19.591,
+   "word": "toets"
+  },
+  {
+   "end": 19.89,
+   "start": 19.805,
+   "word": "is"
+  },
+  {
+   "end": 20.591,
+   "start": 19.933,
+   "word": "verstuurd."
+  }
+ ]
+}

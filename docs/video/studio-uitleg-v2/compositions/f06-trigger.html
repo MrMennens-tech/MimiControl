@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="nl">
+  <head><meta charset="UTF-8" /></head>
+  <body>
+    <template id="f06-trigger-template">
+      <style>
+        #f06-laag { position: absolute; inset: 0; }
+        #f06-in .waarde { position: absolute; right: 0; top: 0; }
+        #f06-in .letter { opacity: 0; }
+        #f06-piek { position: absolute; width: 0; height: 64px; border-left: 3px dashed #062D36; }
+      </style>
+      <div id="f06-trigger" data-composition-id="f06-trigger" data-width="1920" data-height="1080">
+        <div class="sc-in" id="f06-in">
+          <div id="f06-laag" data-layout-allow-occlusion><div class="cam" id="f06-cam"></div></div>
+          <div class="hfd-groot" id="f06-hg"><div class="kick">Stap 3</div><div class="tit">Toets en drempel</div></div>
+          <div class="hfd-klein" id="f06-hk"><span class="kick">Stap 3</span><span>Toets en drempel</span></div>
+        </div>
+      </div>
+      <script>
+        (function () {
+          var ID = "f06-trigger";
+          var tl = UI.tijdlijn();
+          var root = document.getElementById("f06-in");
+          var T = UI.tijden(ID);
+          var $ = function (s) { return root.querySelector(s); };
+          var cam = $("#f06-cam");
+          var e = Studio.editor("f06");
+          cam.appendChild(e.el);
+          var k50 = e.r.knop(0.50), k60 = e.r.knop(0.60), k71 = e.r.knop(0.71);
+          var piek = UI.h('<div id="f06-piek" style="left:' + (k71[0] - 1) + 'px;top:' + (k71[1] - 32) + 'px"></div>');
+          var noot = UI.h('<div class="noot" style="left:' + (k71[0] - 70) + 'px;top:' + (k71[1] - 84) + 'px;font-size:21px;padding:5px 14px">piek 0.71</div>');
+          cam.appendChild(piek); cam.appendChild(UI.boven(noot)); UI.boven(document.getElementById("f06-lijst"));
+          var R = new UI.Regie(tl, root, { cursor: [700, 330] });
+
+          var kn = T.c("klikNaam"), tn = T.c("typNaam"), ka = T.c("klikActie"), ksp = T.c("klikSpatie"),
+            s0 = T.c("sleepStart"), s1 = T.c("sleepEind"), ko = T.c("klikOpslaan");
+
+          R.hoofdstuk($("#f06-hg"), $("#f06-hk"), 0.1, 1.2);
+          tl.set("#f06-laag", { opacity: 0 }, 0);
+          tl.fromTo("#f06-laag", { opacity: 0 }, { opacity: 1, duration: 0.45, ease: "none", immediateRender: false }, 1.3);
+          R.camDirect([280, 196, 660, 150, 1300, 700], 0);
+
+          // naam
+          R.naar(606, 240, kn - 0.1, 0.8);
+          R.klik(kn);
+          tl.set("#f06-naamsel", { opacity: 0 }, 0);
+          tl.set("#f06-naamsel", { opacity: 0.9 }, kn + 0.05);
+          tl.set(["#f06-naamsel", "#f06-naam1"], { opacity: 0 }, tn);
+          var naam2 = $("#f06-naam2"), tekst = "Spatie met kaak";
+          naam2.innerHTML = tekst.split("").map(function (c) { return '<span class="letter">' + (c === " " ? "&nbsp;" : c) + '</span>'; }).join("");
+          naam2.querySelectorAll(".letter").forEach(function (l, i) {
+            tl.set(l, { opacity: 0 }, 0);
+            tl.set(l, { opacity: 1 }, tn + 0.05 + i * 0.05);
+          });
+
+          // actie: lijst openen en Spatie kiezen
+          R.camera([280, 220, 700, 420, 1400, 760], ka - 0.45, 0.8);
+          R.naar(536, 306, ka - 0.1, 0.7);
+          R.klik(ka, $("#f06-actie"));
+          tl.set("#f06-lijst", { opacity: 0, scaleY: 0.6, transformOrigin: "50% 0%" }, 0);
+          tl.fromTo("#f06-lijst", { opacity: 0, scaleY: 0.6 }, { opacity: 1, scaleY: 1, duration: 0.3, ease: "power3.out", immediateRender: false }, ka + 0.08);
+          R.naar(536, 357, ksp - 0.1, 0.7);
+          R.klik(ksp);
+          tl.fromTo("#f06-lijst", { opacity: 1, scaleY: 1 }, { opacity: 0, scaleY: 0.85, duration: 0.2, ease: "power2.in", immediateRender: false }, ksp + 0.15);
+
+          // drempel
+          R.toonCursor(ksp + 0.5, false);
+          R.camera([640, 500, 990, 110, 1840, 760], T.w("drempel") - 0.35, 1.1);
+          tl.set([piek, noot], { opacity: 0 }, 0);
+          var onder = T.w("onder");
+          tl.fromTo(piek, { opacity: 0, scaleY: 0.3 }, { opacity: 1, scaleY: 1, duration: 0.35, ease: "power3.out", immediateRender: false }, s0 - 0.6);
+          tl.fromTo(noot, { opacity: 0, y: 10 }, { opacity: 1, y: 0, duration: 0.4, ease: "power3.out", immediateRender: false }, s0 - 0.45);
+          R.naar(k50[0], k50[1] + 4, s0 - 0.1, 0.8);
+          R.klik(s0);
+          var sleepDuur = s1 - s0 - 0.2;
+          R.naar(k60[0], k60[1] + 4, s1 - 0.1, sleepDuur);
+          var dx = k60[0] - k50[0];
+          tl.set("#f06-sk0", { x: 0 }, 0);
+          tl.fromTo("#f06-sk0", { x: 0 }, { x: dx, duration: sleepDuur, ease: "power2.inOut", immediateRender: false }, s0 + 0.1);
+          tl.set("#f06-sp0", { scaleX: 0.5 }, 0);
+          tl.fromTo("#f06-sp0", { scaleX: 0.5 }, { scaleX: 0.6, duration: sleepDuur, ease: "power2.inOut", immediateRender: false }, s0 + 0.1);
+          var sw = $("#f06-sw0");
+          var reeks = ["0.50", "0.52", "0.54", "0.56", "0.58", "0.60"];
+          sw.innerHTML = reeks.map(function (r) { return '<span class="waarde">' + r + '</span>'; }).join("");
+          var stappen = [[0, 0]];
+          for (var i = 1; i < reeks.length; i++) stappen.push([s0 + 0.1 + sleepDuur * (i / (reeks.length - 1)) * 0.92, i]);
+          UI.wissel(tl, sw.querySelectorAll(".waarde"), stappen);
+
+          // opslaan
+          R.camera([1150, 760, 560, 180, 1200, 760], T.w("opslaan") - 0.95, 0.8);
+          tl.fromTo([piek, noot], { opacity: 1 }, { opacity: 0, duration: 0.3, ease: "none", immediateRender: false }, T.w("opslaan") - 0.9);
+          R.naar(1345, 875, ko - 0.1, 0.8);
+          R.klik(ko, $("#f06-opslaan"));
+          R.toonCursor(ko + 0.5, false);
+          tl.fromTo("#f06-ed", { opacity: 1, scale: 1 }, { opacity: 0, scale: 0.97, duration: 0.4, ease: "power2.in", immediateRender: false }, ko + 0.4);
+
+          R.fade(root, T.duur);
+          window.__timelines[ID] = tl;
+        })();
+      </script>
+    </template>
+  </body>
+</html>

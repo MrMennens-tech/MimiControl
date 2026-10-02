@@ -1,0 +1,172 @@
+{
+ "sleutel": "9187d5d7f76f1e6267713eb7e86934b8a342a53c",
+ "tekst": "Stap drie: geef de trigger een naam <break time=\"0.4s\"/> en kies de toets, bijvoorbeeld Spatie. <break time=\"0.8s\"/> De drempel is hoe sterk je de beweging moet maken. Zet hem iets onder de gemeten waarde. <break time=\"0.8s\"/> Klik op Opslaan.",
+ "duur": 12.146938775510204,
+ "woorden": [
+  {
+   "end": 0.512,
+   "start": 0.299,
+   "word": "Stap"
+  },
+  {
+   "end": 1.045,
+   "start": 0.597,
+   "word": "drie:"
+  },
+  {
+   "end": 1.5787,
+   "start": 1.323,
+   "word": "geef"
+  },
+  {
+   "end": 1.7067,
+   "start": 1.621,
+   "word": "de"
+  },
+  {
+   "end": 2.048,
+   "start": 1.749,
+   "word": "trigger"
+  },
+  {
+   "end": 2.176,
+   "start": 2.091,
+   "word": "een"
+  },
+  {
+   "end": 2.389,
+   "start": 2.219,
+   "word": "naam"
+  },
+  {
+   "end": 2.987,
+   "start": 2.773,
+   "word": "en"
+  },
+  {
+   "end": 3.243,
+   "start": 3.029,
+   "word": "kies"
+  },
+  {
+   "end": 3.456,
+   "start": 3.328,
+   "word": "de"
+  },
+  {
+   "end": 3.904,
+   "start": 3.499,
+   "word": "toets,"
+  },
+  {
+   "end": 4.523,
+   "start": 4.096,
+   "word": "bijvoorbeeld"
+  },
+  {
+   "end": 5.099,
+   "start": 4.608,
+   "word": "Spatie."
+  },
+  {
+   "end": 5.984,
+   "start": 5.899,
+   "word": "De"
+  },
+  {
+   "end": 6.4110000000000005,
+   "start": 6.027,
+   "word": "drempel"
+  },
+  {
+   "end": 6.496,
+   "start": 6.453,
+   "word": "is"
+  },
+  {
+   "end": 6.667,
+   "start": 6.539000000000001,
+   "word": "hoe"
+  },
+  {
+   "end": 7.008,
+   "start": 6.7090000000000005,
+   "word": "sterk"
+  },
+  {
+   "end": 7.136,
+   "start": 7.051,
+   "word": "je"
+  },
+  {
+   "end": 7.221,
+   "start": 7.179,
+   "word": "de"
+  },
+  {
+   "end": 7.605,
+   "start": 7.264,
+   "word": "beweging"
+  },
+  {
+   "end": 7.7330000000000005,
+   "start": 7.648000000000001,
+   "word": "moet"
+  },
+  {
+   "end": 8.352,
+   "start": 7.819,
+   "word": "maken."
+  },
+  {
+   "end": 8.8,
+   "start": 8.587,
+   "word": "Zet"
+  },
+  {
+   "end": 8.928,
+   "start": 8.843,
+   "word": "hem"
+  },
+  {
+   "end": 9.099,
+   "start": 8.971,
+   "word": "iets"
+  },
+  {
+   "end": 9.397,
+   "start": 9.141,
+   "word": "onder"
+  },
+  {
+   "end": 9.483,
+   "start": 9.44,
+   "word": "de"
+  },
+  {
+   "end": 9.909,
+   "start": 9.525,
+   "word": "gemeten"
+  },
+  {
+   "end": 10.293000000000001,
+   "start": 9.952,
+   "word": "waarde."
+  },
+  {
+   "end": 11.307000000000002,
+   "start": 11.093000000000002,
+   "word": "Klik"
+  },
+  {
+   "end": 11.435000000000002,
+   "start": 11.349000000000002,
+   "word": "op"
+  },
+  {
+   "end": 11.907709750566896,
+   "start": 11.477000000000002,
+   "word": "Opslaan."
+  }
+ ]
+}

@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="nl">
+  <head><meta charset="UTF-8" /></head>
+  <body>
+    <template id="f10-hulp-template">
+      <style>
+        #f10-lijst { position: absolute; left: 160px; top: 168px; width: 1600px; height: 720px; }
+        #f10-lijst .rij { position: absolute; left: 0; width: 1600px; height: 158px; border-radius: 24px; }
+        #f10-lijst .plaat { position: absolute; inset: 0; border-radius: 24px; background: #FFFFFF; }
+        #f10-lijst .grond { position: absolute; inset: 0; border-radius: 24px; background: rgba(255, 255, 255, .08); }
+        #f10-lijst .ico { position: absolute; left: 34px; top: 31px; width: 96px; height: 96px; border-radius: 48px; background: #4DB8BE; }
+        #f10-lijst .ico svg { position: absolute; left: 18px; top: 18px; width: 60px; height: 60px; }
+        #f10-lijst .v { position: absolute; left: 168px; top: 22px; font-size: 46px; font-weight: 700; white-space: nowrap; }
+        #f10-lijst .a { position: absolute; left: 168px; top: 86px; font-size: 40px; font-weight: 400; white-space: nowrap; }
+      </style>
+      <div id="f10-hulp" data-composition-id="f10-hulp" data-width="1920" data-height="1080">
+        <div class="sc-in" id="f10-in">
+          <div id="f10-lijst"></div>
+          <div class="hfd-groot" id="f10-hg"><div class="kick">Hulp</div><div class="tit">Werkt het niet?</div></div>
+          <div class="hfd-klein" id="f10-hk"><span class="kick">Hulp</span><span>Werkt het niet?</span></div>
+        </div>
+      </div>
+      <script>
+        (function () {
+          var ID = "f10-hulp";
+          var tl = UI.tijdlijn();
+          var root = document.getElementById("f10-in");
+          var T = UI.tijden(ID);
+          var $ = function (s) { return root.querySelector(s); };
+          var R = new UI.Regie(tl, root);
+          var ICO = [
+            '<rect x="8" y="16" width="44" height="30" rx="6" fill="none" stroke="#fff" stroke-width="4"/><path d="M16 26 H20 M26 26 H30 M36 26 H40 M18 36 H42" stroke="#fff" stroke-width="4" stroke-linecap="round"/>',
+            '<rect x="6" y="18" width="36" height="26" rx="5" fill="none" stroke="#fff" stroke-width="4"/><path d="M42 26 L54 19 V43 L42 36 Z" fill="none" stroke="#fff" stroke-width="4" stroke-linejoin="round"/>',
+            '<rect x="6" y="10" width="32" height="26" rx="4" fill="none" stroke="#fff" stroke-width="4"/><rect x="22" y="24" width="32" height="26" rx="4" fill="#4DB8BE" stroke="#fff" stroke-width="4"/>',
+            '<rect x="6" y="10" width="48" height="32" rx="4" fill="none" stroke="#fff" stroke-width="4"/><path d="M22 52 H38 M30 42 V52" stroke="#fff" stroke-width="4" stroke-linecap="round"/><path d="M25 19 V33 M35 19 V33" stroke="#fff" stroke-width="5" stroke-linecap="round"/>'
+          ];
+          var RIJEN = [
+            ["Komt de toets niet aan?", "Start het programma opnieuw en kies Ja (beheerder).", "komt"],
+            ["Werkt de camera niet?", "Sluit andere camera-apps of een oude MimiControl.", "camera"],
+            ["Melding “draait al”?", "Sluit de andere MimiControl.", "draait"],
+            ["Staat het beeld stil?", "Probeer Vensterweergave in Communicator 5.", "beeld"]
+          ];
+          var lijst = $("#f10-lijst");
+          var rijen = RIJEN.map(function (r, i) {
+            var el = UI.h('<div class="rij" style="top:' + (i * 180) + 'px"><div class="grond"></div><div class="plaat"></div>' +
+              '<div class="ico"><svg viewBox="0 0 60 60">' + ICO[i] + '</svg></div>' +
+              '<div class="v">' + r[0] + '</div><div class="a">' + r[1] + '</div></div>');
+            lijst.appendChild(el);
+            return el;
+          });
+
+          R.hoofdstuk($("#f10-hg"), $("#f10-hk"), 0.1, 1.15);
+          rijen.forEach(function (el, i) {
+            R.in(el, 1.35 + i * 0.1, { y: 30, dur: 0.6 });
+            tl.set(el.querySelector(".plaat"), { opacity: 0 }, 0);
+            tl.set([el.querySelector(".v"), el.querySelector(".a")], { color: "#9FC3C7" }, 0);
+          });
+          // de besproken rij licht op
+          var vorige = null;
+          RIJEN.forEach(function (r, i) {
+            var t = T.w(r[2]) - 0.15;
+            var el = rijen[i];
+            tl.fromTo(el.querySelector(".plaat"), { opacity: 0 }, { opacity: 1, duration: 0.35, ease: "power2.out", immediateRender: false }, t);
+            tl.fromTo(el.querySelector(".v"), { color: "#9FC3C7" }, { color: "#062D36", duration: 0.35, ease: "power2.out", immediateRender: false }, t);
+            tl.fromTo(el.querySelector(".a"), { color: "#9FC3C7" }, { color: "#1C1C1E", duration: 0.35, ease: "power2.out", immediateRender: false }, t);
+            tl.fromTo(el, { scale: 1 }, { scale: 1.015, duration: 0.35, ease: "power2.out", immediateRender: false }, t);
+            if (vorige) {
+              tl.fromTo(vorige.querySelector(".plaat"), { opacity: 1 }, { opacity: 0, duration: 0.35, ease: "power2.out", immediateRender: false }, t);
+              tl.fromTo(vorige.querySelector(".v"), { color: "#062D36" }, { color: "#E6F5F6", duration: 0.35, ease: "power2.out", immediateRender: false }, t);
+              tl.fromTo(vorige.querySelector(".a"), { color: "#1C1C1E" }, { color: "#B9D8DB", duration: 0.35, ease: "power2.out", immediateRender: false }, t);
+              tl.fromTo(vorige, { scale: 1.015 }, { scale: 1, duration: 0.35, ease: "power2.out", immediateRender: false }, t);
+            }
+            vorige = el;
+          });
+
+          R.fade(root, T.duur);
+          window.__timelines[ID] = tl;
+        })();
+      </script>
+    </template>
+  </body>
+</html>

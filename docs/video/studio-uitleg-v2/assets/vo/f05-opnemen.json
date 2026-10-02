@@ -1,0 +1,152 @@
+{
+ "sleutel": "ec8fc0e0508a228242d5445142ca05a0b67780e3",
+ "tekst": "Stap twee: klik op Opname starten en maak je beweging een paar keer. <break time=\"1.6s\"/> De sterkste beweging krijgt een gele balk. <break time=\"0.6s\"/> Klik op Opname stoppen, <break time=\"0.4s\"/> en daarna op Trigger maken.",
+ "duur": 11.859591836734694,
+ "woorden": [
+  {
+   "end": 0.5547,
+   "start": 0.299,
+   "word": "Stap"
+  },
+  {
+   "end": 1.195,
+   "start": 0.64,
+   "word": "twee:"
+  },
+  {
+   "end": 1.7067,
+   "start": 1.536,
+   "word": "klik"
+  },
+  {
+   "end": 1.8347,
+   "start": 1.749,
+   "word": "op"
+  },
+  {
+   "end": 2.261,
+   "start": 1.877,
+   "word": "Opname"
+  },
+  {
+   "end": 2.773,
+   "start": 2.389,
+   "word": "starten"
+  },
+  {
+   "end": 3.157,
+   "start": 2.901,
+   "word": "en"
+  },
+  {
+   "end": 3.3707,
+   "start": 3.2,
+   "word": "maak"
+  },
+  {
+   "end": 3.4987,
+   "start": 3.456,
+   "word": "je"
+  },
+  {
+   "end": 3.8827,
+   "start": 3.541,
+   "word": "beweging"
+  },
+  {
+   "end": 4.0107,
+   "start": 3.925,
+   "word": "een"
+  },
+  {
+   "end": 4.224,
+   "start": 4.053,
+   "word": "paar"
+  },
+  {
+   "end": 4.496,
+   "start": 4.267,
+   "word": "keer."
+  },
+  {
+   "end": 6.224,
+   "start": 6.096,
+   "word": "De"
+  },
+  {
+   "end": 6.6080000000000005,
+   "start": 6.267000000000001,
+   "word": "sterkste"
+  },
+  {
+   "end": 6.992000000000001,
+   "start": 6.651000000000002,
+   "word": "beweging"
+  },
+  {
+   "end": 7.291,
+   "start": 7.035,
+   "word": "krijgt"
+  },
+  {
+   "end": 7.4190000000000005,
+   "start": 7.334000000000001,
+   "word": "een"
+  },
+  {
+   "end": 7.590000000000002,
+   "start": 7.4620000000000015,
+   "word": "gele"
+  },
+  {
+   "end": 7.986000000000001,
+   "start": 7.718,
+   "word": "balk."
+  },
+  {
+   "end": 8.656,
+   "start": 8.486,
+   "word": "Klik"
+  },
+  {
+   "end": 8.784,
+   "start": 8.699000000000002,
+   "word": "op"
+  },
+  {
+   "end": 9.168000000000001,
+   "start": 8.827000000000002,
+   "word": "Opname"
+  },
+  {
+   "end": 9.638000000000002,
+   "start": 9.296000000000001,
+   "word": "stoppen,"
+  },
+  {
+   "end": 10.15,
+   "start": 10.022000000000002,
+   "word": "en"
+  },
+  {
+   "end": 10.406,
+   "start": 10.192000000000002,
+   "word": "daarna"
+  },
+  {
+   "end": 10.918000000000001,
+   "start": 10.576,
+   "word": "op"
+  },
+  {
+   "end": 11.259,
+   "start": 11.003000000000002,
+   "word": "Trigger"
+  },
+  {
+   "end": 11.609956916099774,
+   "start": 11.302000000000001,
+   "word": "maken."
+  }
+ ]
+}

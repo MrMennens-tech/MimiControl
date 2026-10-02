@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="nl">
+  <head><meta charset="UTF-8"></head>
+  <body>
+    <template id="f01-intro-template">
+      <style>
+        #f01-intro { position: absolute; inset: 0; }
+        #f01-in .midden { position: absolute; left: 0; right: 0; text-align: center; color: #fff; }
+        #f01-logo { position: absolute; left: 850px; top: 196px; width: 220px; height: 210px; }
+        #f01-ring { position: absolute; left: 800px; top: 141px; width: 320px; height: 320px; }
+        #f01-titel { top: 470px; font-size: 104px; font-weight: 700; letter-spacing: -0.01em; }
+        #f01-sub { top: 610px; font-size: 52px; font-weight: 400; color: #68CCD1; }
+        #f01-lijn { position: absolute; left: 860px; top: 720px; width: 200px; height: 4px; border-radius: 2px; background: #4DB8BE; }
+      </style>
+      <div data-hf-id="hf-gr87" id="f01-intro" data-composition-id="f01-intro" data-width="1920" data-height="1080">
+        <div data-hf-id="hf-8uyh" class="sc-in" id="f01-in">
+          <svg data-hf-id="hf-wb3l" id="f01-ring" viewBox="0 0 320 320">
+            <circle data-hf-id="hf-c7y7" id="f01-cirkel" cx="160" cy="160" r="150" fill="none" stroke="#4DB8BE" stroke-width="3" stroke-dasharray="942.5" stroke-dashoffset="942.5" opacity="0.7" />
+          </svg>
+          <img data-hf-id="hf-iu41" id="f01-logo" src="assets/Mennenstech_logo_wit.png" alt="Mennens.Tech">
+          <div data-hf-id="hf-b5pq" class="midden" id="f01-titel">MimiControl Studio v2</div>
+          <div data-hf-id="hf-15jx" class="midden" id="f01-sub">Toetsen indrukken met je gezicht</div>
+          <div data-hf-id="hf-5tv4" id="f01-lijn"></div>
+        </div>
+      </div>
+      <script>
+        (function () {
+          var ID = "f01-intro";
+          var tl = UI.tijdlijn();
+          var T = UI.tijden(ID), R = new UI.Regie(tl, document.getElementById(ID));
+          var duur = T.duur;
+          tl.set("#f01-cirkel", { attr: { "stroke-dashoffset": 942.5 } }, 0);
+          tl.fromTo("#f01-cirkel", { attr: { "stroke-dashoffset": 942.5 } },
+            { attr: { "stroke-dashoffset": 0 }, duration: 1.4, ease: "power2.inOut", immediateRender: false }, 0.2);
+          R.in(document.getElementById("f01-logo"), 0.45, { y: 0, s: 0.86, dur: 0.9 });
+          R.in(document.getElementById("f01-titel"), 1.05, { y: 36, dur: 0.8 });
+          R.in(document.getElementById("f01-sub"), 1.5, { y: 24, dur: 0.7 });
+          tl.set("#f01-lijn", { scaleX: 0 }, 0);
+          tl.fromTo("#f01-lijn", { scaleX: 0 }, { scaleX: 1, duration: 0.8, ease: "power3.out", immediateRender: false }, 1.9);
+          // langzaam ademen tijdens het vasthouden
+          tl.fromTo("#f01-logo", { scale: 1 }, { scale: 1.03, duration: 3.2, ease: "sine.inOut", immediateRender: false }, 2.6);
+          // uitgang: alles schuift naar links weg
+          tl.fromTo("#f01-in", { x: 0, opacity: 1 }, { x: -80, opacity: 0, duration: 0.55, ease: "power2.in", immediateRender: false }, duur - 0.6);
+          window.__timelines[ID] = tl;
+        })();
+      </script>
+    </template>
+  </body>
+</html>

@@ -1,0 +1,118 @@
+{
+ "sleutel": "9302dbaf06c661eb773898d27db24bc282363a6f",
+ "tekst": "Stap één: klik op Mimiek verkennen en kies je gezichtsbewegingen. <break time=\"0.6s\"/> Vink aan wat je wilt gebruiken, bijvoorbeeld de kaak. <break time=\"1.4s\"/> Klik op Toepassen.",
+ "duur": 9.166,
+ "woorden": [
+  {
+   "end": 0.469,
+   "start": 0.299,
+   "word": "Stap"
+  },
+  {
+   "end": 1.003,
+   "start": 0.555,
+   "word": "één:"
+  },
+  {
+   "end": 1.493,
+   "start": 1.28,
+   "word": "klik"
+  },
+  {
+   "end": 1.621,
+   "start": 1.536,
+   "word": "op"
+  },
+  {
+   "end": 1.9627,
+   "start": 1.664,
+   "word": "Mimiek"
+  },
+  {
+   "end": 2.389,
+   "start": 2.005,
+   "word": "verkennen"
+  },
+  {
+   "end": 2.7307,
+   "start": 2.517,
+   "word": "en"
+  },
+  {
+   "end": 2.944,
+   "start": 2.773,
+   "word": "kies"
+  },
+  {
+   "end": 3.029,
+   "start": 2.987,
+   "word": "je"
+  },
+  {
+   "end": 3.938,
+   "start": 3.072,
+   "word": "gezichtsbewegingen."
+  },
+  {
+   "end": 4.608,
+   "start": 4.437,
+   "word": "Vink"
+  },
+  {
+   "end": 4.821,
+   "start": 4.651,
+   "word": "aan"
+  },
+  {
+   "end": 4.992,
+   "start": 4.907,
+   "word": "wat"
+  },
+  {
+   "end": 5.077,
+   "start": 5.035,
+   "word": "je"
+  },
+  {
+   "end": 5.205,
+   "start": 5.12,
+   "word": "wilt"
+  },
+  {
+   "end": 5.867,
+   "start": 5.291,
+   "word": "gebruiken,"
+  },
+  {
+   "end": 6.315,
+   "start": 5.973,
+   "word": "bijvoorbeeld"
+  },
+  {
+   "end": 6.4,
+   "start": 6.357,
+   "word": "de"
+  },
+  {
+   "end": 6.676,
+   "start": 6.443,
+   "word": "kaak."
+  },
+  {
+   "end": 8.288,
+   "start": 8.117,
+   "word": "Klik"
+  },
+  {
+   "end": 8.416,
+   "start": 8.331,
+   "word": "op"
+  },
+  {
+   "end": 8.9163,
+   "start": 8.501,
+   "word": "Toepassen."
+  }
+ ],
+ "bewerkt": "Zinnen over de tong eruit geknipt (2026-10-02); origineel: 13.17 s"
+}

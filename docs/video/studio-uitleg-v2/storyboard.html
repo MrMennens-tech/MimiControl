@@ -1,0 +1,319 @@
+<!doctype html>
+<html lang="nl">
+<head>
+<meta charset="utf-8">
+<title>Storyboard v1 · Uitleg MimiControl Studio v2</title>
+<style>
+  :root{
+    --podium:#062D36; --podium2:#0A4050; --accent:#4DB8BE; --licht:#68CCD1;
+    --bg:#F2F2F7; --kaart:#FFFFFF; --tekst:#1C1C1E; --grijs:#5A5A5E; --rand:#E5E5EA;
+    --rood:#E05A50; --geel:#FFD60A; --groen:#2E9E5B;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:"Segoe UI",system-ui,sans-serif;background:#E9EEF0;color:var(--tekst);padding:40px 48px 80px}
+  header{display:flex;align-items:flex-end;justify-content:space-between;gap:24px;margin-bottom:28px}
+  h1{font-size:30px;font-weight:700;color:var(--podium)}
+  h1 small{font-size:15px;font-weight:600;color:#fff;background:var(--accent);border-radius:999px;padding:3px 10px;margin-left:10px;vertical-align:middle}
+  .dek{font-size:16px;color:var(--grijs);margin-top:6px;max-width:900px}
+  .tag{font-size:14px;color:var(--podium);background:#fff;border:1px solid var(--rand);border-radius:999px;padding:6px 14px;white-space:nowrap}
+  .act{grid-column:1/-1;font-size:13px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--podium);border-bottom:2px solid var(--accent);padding:14px 0 6px}
+  .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:26px 22px}
+  figure{background:#fff;border-radius:14px;padding:10px;box-shadow:0 1px 2px rgba(6,45,54,.08),0 8px 24px rgba(6,45,54,.07)}
+  .cell{position:relative;aspect-ratio:16/9;container-type:inline-size;overflow:hidden;border-radius:8px;background:radial-gradient(120% 90% at 30% 20%,#0B4452 0%,var(--podium) 55%,#041F26 100%);color:#fff}
+  .lbl{display:flex;justify-content:space-between;font-size:13px;font-weight:700;color:var(--podium);margin:10px 4px 4px}
+  .lbl span:last-child{font-weight:400;color:var(--grijs)}
+  .note{font-size:13.5px;line-height:1.45;color:#33383A;margin:0 4px}
+  .chip{display:inline-block;margin:8px 4px 2px;font-size:12px;color:var(--podium);background:#E3F3F4;border-radius:999px;padding:2px 9px}
+  /* gedeelde onderdelen, maten in cqw (1px@1080p = .0521cqw) */
+  .cap{position:absolute;left:50%;bottom:3.4cqw;transform:translateX(-50%);font-size:2.4cqw;font-weight:600;line-height:1.25;color:#fff;background:rgba(2,22,28,.84);padding:.55cqw 1.5cqw;border-radius:.8cqw;white-space:nowrap}
+  .hoofd{position:absolute;left:3.6cqw;top:3cqw;display:flex;align-items:center;gap:.8cqw;font-size:2.1cqw;font-weight:600;color:#fff}
+  .hoofd b{font-size:1.6cqw;letter-spacing:.12em;color:var(--podium);background:var(--licht);border-radius:.5cqw;padding:.15cqw .6cqw}
+  .win{position:absolute;background:var(--bg);border-radius:.9cqw;overflow:hidden;color:var(--tekst);box-shadow:0 2cqw 4cqw rgba(0,0,0,.35),0 .3cqw .8cqw rgba(0,0,0,.2)}
+  .kop{background:var(--podium);color:#fff;font-weight:700;display:flex;align-items:center;justify-content:center}
+  .btn{display:flex;align-items:center;justify-content:center;border-radius:.65cqw;font-weight:700;color:#fff;background:var(--accent)}
+  .cursor{position:absolute;width:2.2cqw;height:2.2cqw}
+  .rimpel{position:absolute;width:4cqw;height:4cqw;border-radius:50%;border:.25cqw solid var(--licht);transform:translate(-50%,-50%);opacity:.8}
+  .cb{width:1.8cqw;height:1.8cqw;border-radius:.4cqw;background:var(--accent);display:inline-flex;align-items:center;justify-content:center;color:#fff;font-size:1.3cqw;font-weight:700;flex:none}
+  .cb.uit{background:#fff;border:.18cqw solid #3A3A3C}
+</style>
+</head>
+<body>
+<header>
+  <div>
+    <h1>Uitleg MimiControl Studio v2 <small>storyboard v1</small></h1>
+    <p class="dek">Nagebouwde Studio die leeft: cursor, zoom, vinkjes, balkjes, schuifbalken. Rode draad: de toets <b>Spatie</b>, van concept tot "Verstuurd: Spatie". Elke cel toont het kernmoment van de scène met de echte tekst; ondertitel = de regel die op dat moment loopt.</p>
+  </div>
+  <span class="tag">1920×1080 · 30 fps · ±3:05 · 11 scènes · VO + ondertitels</span>
+</header>
+
+<svg width="0" height="0" style="position:absolute">
+  <defs>
+    <symbol id="pijl" viewBox="0 0 24 24"><path d="M3 2 L3 19 L7.6 14.8 L10.6 21.6 L13.6 20.3 L10.7 13.6 L17 13.6 Z" fill="#fff" stroke="#111" stroke-width="1.4" stroke-linejoin="round"/></symbol>
+    <symbol id="gezicht" viewBox="0 0 200 240"><ellipse cx="100" cy="120" rx="78" ry="102" fill="#B9C4C7" stroke="#E6ECEE" stroke-width="5"/><ellipse cx="70" cy="100" rx="14" ry="8" fill="#2F3B3F"/><ellipse cx="130" cy="100" rx="14" ry="8" fill="#2F3B3F"/><ellipse cx="100" cy="170" rx="24" ry="20" fill="#2F3B3F"/></symbol>
+  </defs>
+</svg>
+
+<div class="grid">
+  <div class="act">Opening</div>
+
+  <!-- F01 -->
+  <figure>
+    <div class="cell" id="frame-01">
+      <img src="assets/Mennenstech_logo_wit.png" alt="" style="position:absolute;left:50%;top:15cqw;width:11cqw;transform:translateX(-50%)">
+      <div style="position:absolute;left:0;right:0;top:28cqw;text-align:center;font-size:4.6cqw;font-weight:700">MimiControl Studio v2</div>
+      <div style="position:absolute;left:0;right:0;top:35cqw;text-align:center;font-size:2.4cqw;color:var(--licht)">Toetsen indrukken met je gezicht</div>
+    </div>
+    <div class="lbl"><span>01 · INTRO</span><span>f01 · 0:00–0:06</span></div>
+    <p class="note"><b>Logo-cirkel tekent zich eerst</b>, dan titel en regel 24 px omhoog in. Gaat over in F02 door de titel naar links te schuiven.</p>
+    <span class="chip">seam: push-left</span>
+  </figure>
+
+  <!-- F02 -->
+  <figure>
+    <div class="cell" id="frame-02">
+      <svg style="position:absolute;left:8cqw;top:9cqw;width:20cqw;height:24cqw"><use href="#gezicht"/></svg>
+      <div style="position:absolute;left:31cqw;top:20cqw;font-size:3cqw;color:var(--licht)">→</div>
+      <div style="position:absolute;left:39cqw;top:8cqw;width:16cqw;height:26cqw;background:rgba(255,255,255,.06);border-radius:1cqw">
+        <div style="position:absolute;left:5.5cqw;bottom:3.5cqw;width:5cqw;height:18cqw;background:rgba(255,255,255,.12);border-radius:.6cqw;overflow:hidden"><div style="position:absolute;bottom:0;left:0;right:0;height:78%;background:var(--geel)"></div></div>
+        <div style="position:absolute;left:3.5cqw;right:3.5cqw;bottom:13.8cqw;border-top:.25cqw dashed #fff"></div>
+        <div style="position:absolute;left:0;right:0;bottom:.8cqw;text-align:center;font-size:2.1cqw;font-weight:600">Kaak open</div>
+      </div>
+      <div style="position:absolute;left:58cqw;top:20cqw;font-size:3cqw;color:var(--licht)">→</div>
+      <div style="position:absolute;left:66cqw;top:14cqw;width:24cqw;height:9cqw;background:#F4F7F8;color:var(--podium);border-radius:1.2cqw;display:flex;align-items:center;justify-content:center;font-size:3.6cqw;font-weight:700;box-shadow:0 .5cqw 0 #9FB4BA;transform:translateY(.4cqw)">Spatie</div>
+      <div style="position:absolute;left:62cqw;top:26.5cqw;display:grid;grid-template-columns:repeat(4,7cqw);gap:.6cqw">
+        <div style="height:4.5cqw;border-radius:.5cqw;background:#2A6C78"></div><div style="height:4.5cqw;border-radius:.5cqw;background:#2A6C78;outline:.35cqw solid var(--geel)"></div><div style="height:4.5cqw;border-radius:.5cqw;background:#2A6C78"></div><div style="height:4.5cqw;border-radius:.5cqw;background:#2A6C78"></div>
+      </div>
+      <div class="cap">Maak je een beweging, dan drukt Studio een toets in.</div>
+    </div>
+    <div class="lbl"><span>02 · ZO WERKT HET</span><span>f02 · 0:06–0:24</span></div>
+    <p class="note"><b>De kaak opent eerst</b>; de gele balk stijgt over de stippellijn (drempel), de toets duikt in, het gemarkeerde vakje springt één plek op. Daarna nog één keer, sneller.</p>
+    <span class="chip">seam: crossfade</span>
+  </figure>
+
+  <!-- F03 -->
+  <figure>
+    <div class="cell" id="frame-03">
+      <div class="hoofd"><b>START</b>Studio openen</div>
+      <div class="win" style="left:6cqw;top:12cqw;width:38cqw;height:24cqw;opacity:.35;background:#fff">
+        <div style="height:3cqw;background:#E8ECEE"></div>
+        <div style="padding:2cqw;font-size:1.6cqw;color:var(--grijs)">MimiControl Studio v2.exe</div>
+      </div>
+      <div class="win" style="left:22cqw;top:9.5cqw;width:56cqw;height:31cqw;background:#fff">
+        <div style="height:4.2cqw;display:flex;align-items:center;padding:0 2cqw;font-size:1.7cqw;color:var(--grijs);border-bottom:1px solid var(--rand)">MimiControl Studio — beheerdersrechten</div>
+        <div style="padding:2.2cqw 2.4cqw;font-size:2.15cqw;line-height:1.35">Studio werkt met Communicator 5 alleen als het als beheerder draait.<br><br><b>Nu opnieuw starten als beheerder?</b></div>
+        <div style="position:absolute;right:2.4cqw;bottom:2.2cqw;display:flex;gap:1.2cqw">
+          <div class="btn" style="width:11cqw;height:4.2cqw;font-size:2.1cqw">Ja</div>
+          <div class="btn" style="width:11cqw;height:4.2cqw;font-size:2.1cqw;background:#E5E5EA;color:var(--tekst)">Nee</div>
+        </div>
+      </div>
+      <div class="rimpel" style="left:61cqw;top:36.2cqw"></div>
+      <svg class="cursor" style="left:60.5cqw;top:35.6cqw"><use href="#pijl"/></svg>
+      <div class="cap">Klik op Ja, en daarna ook op Ja bij de melding van Windows.</div>
+    </div>
+    <div class="lbl"><span>03 · STARTEN</span><span>f03 · 0:24–0:46</span></div>
+    <p class="note"><b>Dubbelklik op het .exe-bestand eerst</b> (twee rimpels), dan schuift de vraag erin. De Windows-melding wordt een neutrale kaart. Eindigt met een zoom op "✓ Beheerder: ja".</p>
+    <span class="chip">seam: zoom-through (knop)</span>
+  </figure>
+
+  <div class="act">Trigger maken in vier stappen</div>
+
+  <!-- F04 -->
+  <figure>
+    <div class="cell" id="frame-04">
+      <div class="hoofd"><b>STAP 1</b>Kies je gezichtsbewegingen</div>
+      <div class="win" style="left:8cqw;top:9cqw;width:84cqw;height:34cqw">
+        <div class="kop" style="height:4.4cqw;font-size:2.3cqw">Kies je gezichtsbewegingen</div>
+        <div style="position:absolute;left:2cqw;top:6cqw;width:48cqw;height:20cqw;background:#fff;border-radius:.8cqw;border:1px solid var(--rand);padding:1.4cqw 1.8cqw">
+          <div style="display:flex;justify-content:space-between;align-items:center"><b style="font-size:2.3cqw">Kaak</b><span style="display:flex;gap:.6cqw"><span class="btn" style="padding:.4cqw 1.4cqw;font-size:1.7cqw;font-weight:400">Alles</span><span class="btn" style="padding:.4cqw 1.4cqw;font-size:1.7cqw;font-weight:400;background:#E5E5EA;color:var(--tekst)">Geen</span></span></div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.1cqw 2cqw;margin-top:1.4cqw;font-size:2.1cqw">
+            <span style="display:flex;gap:.8cqw;align-items:center"><span class="cb">✓</span>Kaak open</span>
+            <span style="display:flex;gap:.8cqw;align-items:center"><span class="cb">✓</span>Kaak vooruit</span>
+            <span style="display:flex;gap:.8cqw;align-items:center"><span class="cb">✓</span>Kaak links</span>
+            <span style="display:flex;gap:.8cqw;align-items:center"><span class="cb">✓</span>Kaak rechts</span>
+          </div>
+        </div>
+        <div style="position:absolute;left:52cqw;top:6cqw;right:2cqw;font-size:1.8cqw;color:var(--grijs)">Snelle keuze:</div>
+        <div style="position:absolute;left:52cqw;top:9.4cqw;width:30cqw;height:4.2cqw;border-radius:.7cqw;background:#FDE9A6;display:flex;align-items:center;justify-content:center;font-size:2cqw">Bolle mond / tuiten</div>
+        <div style="position:absolute;left:52cqw;top:14.6cqw;width:30cqw;height:4.2cqw;border-radius:.7cqw;background:#F3D26B;display:flex;align-items:center;justify-content:center;font-size:2cqw;outline:.3cqw solid var(--accent);outline-offset:.3cqw">Tong uitsteken (benadering)</div>
+        <div class="btn" style="position:absolute;left:52cqw;top:21.6cqw;width:30cqw;height:4.4cqw;font-size:2.3cqw">Toepassen</div>
+      </div>
+      <svg class="cursor" style="left:38.5cqw;top:17.6cqw"><use href="#pijl"/></svg>
+      <div class="cap">Vink aan wat je wilt gebruiken, bijvoorbeeld de kaak.</div>
+    </div>
+    <div class="lbl"><span>04 · STAP 1 · KIEZEN</span><span>f04 · 0:46–1:08</span></div>
+    <p class="note"><b>De cursor drukt op "Mimiek verkennen" eerst</b>; de camera duikt door de knop. "Alles uitvinken", lijst scrolt naar Kaak, klik "Alles": vier vinkjes tikken één voor één aan. Dan omlijning op "Tong uitsteken (benadering)" en Toepassen. (Cel is ingezoomd; de groepen Mond/Ogen/… zie je eerst in een overzicht.)</p>
+    <span class="chip">seam: crossfade</span>
+  </figure>
+
+  <!-- F05 -->
+  <figure>
+    <div class="cell" id="frame-05">
+      <div class="hoofd"><b>STAP 2</b>Neem je beweging op</div>
+      <div class="win" style="left:6cqw;top:9cqw;width:88cqw;height:34cqw;background:#1F1D1C;border-radius:.6cqw">
+        <div style="position:absolute;left:0;top:0;width:44cqw;height:27cqw;background:#3C4246"><svg style="position:absolute;left:14cqw;top:2.5cqw;width:16cqw;height:21cqw"><use href="#gezicht"/></svg></div>
+        <div style="position:absolute;left:46cqw;top:1.4cqw;font-size:2.1cqw;color:#FFF000">Stap 2: klik Trigger maken</div>
+        <div style="position:absolute;left:46cqw;top:6cqw;right:2cqw;display:grid;grid-template-columns:13cqw 1fr 4cqw;gap:1.1cqw .8cqw;align-items:center;font-size:1.8cqw">
+          <span style="color:#FFF000">Kaak open</span><span style="height:1.5cqw;background:#2C2C2C"><span style="display:block;width:72%;height:100%;background:#FFF000"></span></span><span>0.71</span>
+          <span style="color:#8A8A8A">Kaak vooruit</span><span style="height:1.5cqw;background:#2C2C2C"><span style="display:block;width:3%;height:100%;background:#666"></span></span><span style="color:#8A8A8A">0.02</span>
+          <span style="color:#8A8A8A">Kaak links</span><span style="height:1.5cqw;background:#2C2C2C"><span style="display:block;width:5%;height:100%;background:#666"></span></span><span style="color:#8A8A8A">0.05</span>
+          <span style="color:#8A8A8A">Kaak rechts</span><span style="height:1.5cqw;background:#2C2C2C"><span style="display:block;width:4%;height:100%;background:#666"></span></span><span style="color:#8A8A8A">0.04</span>
+        </div>
+        <div style="position:absolute;left:0;right:0;bottom:0;height:7cqw;display:flex;gap:1cqw;padding:1.2cqw;background:#2A2826">
+          <div class="btn" style="flex:1;font-size:1.75cqw;border-radius:.2cqw">Trigger maken [enter]</div>
+          <div class="btn" style="flex:1;font-size:1.75cqw;border-radius:.2cqw;background:#696C6E">Opnieuw opnemen [spatie]</div>
+          <div class="btn" style="flex:1;font-size:1.75cqw;border-radius:.2cqw;background:#696C6E">Beweging kiezen [f]</div>
+          <div class="btn" style="flex:1;font-size:1.75cqw;border-radius:.2cqw;background:#696C6E">Sluiten [q]</div>
+        </div>
+      </div>
+      <svg class="cursor" style="left:20cqw;top:39cqw"><use href="#pijl"/></svg>
+      <div class="cap">De sterkste beweging krijgt een gele balk.</div>
+    </div>
+    <div class="lbl"><span>05 · STAP 2 · OPNEMEN</span><span>f05 · 1:08–1:30</span></div>
+    <p class="note"><b>"Opname starten [spatie]" wordt eerst ingedrukt</b>; bovenin "Opname loopt: maak je beweging". Mond gaat drie keer open, balkjes slaan mee uit, Kaak open wordt geel. Knoppen wisselen exact zoals in Studio.</p>
+    <span class="chip">seam: crossfade</span>
+  </figure>
+
+  <!-- F06 -->
+  <figure>
+    <div class="cell" id="frame-06">
+      <div class="hoofd"><b>STAP 3</b>Toets en drempel</div>
+      <div class="win" style="left:6cqw;top:9cqw;width:88cqw;height:34cqw">
+        <div style="position:absolute;left:2cqw;top:1.6cqw;font-size:2.1cqw;display:flex;gap:1.4cqw;align-items:center">Naam: <span style="background:#fff;border:1px solid var(--rand);border-radius:.6cqw;padding:.4cqw 1.2cqw;width:24cqw">Spatie met kaak</span></div>
+        <div style="position:absolute;left:2cqw;top:6.2cqw;font-size:2.1cqw;display:flex;gap:1.6cqw;align-items:center">Actie: <span style="background:#fff;border-radius:.6cqw;padding:.4cqw 1.2cqw;width:16cqw">Spatie</span><span class="btn" style="padding:.5cqw 1.4cqw;font-size:1.8cqw">Toets opnemen</span></div>
+        <div style="position:absolute;left:2cqw;right:2cqw;top:12.4cqw;display:flex;font-size:1.7cqw;color:var(--grijs)"><span style="width:28cqw">Beweging</span><span style="width:14cqw">Gemeten</span><span style="flex:1;text-align:center">Drempel</span><span style="width:8cqw;text-align:right">Waarde</span></div>
+        <div style="position:absolute;left:2cqw;right:2cqw;top:15.6cqw;height:5.2cqw;background:#fff;border-radius:.7cqw;border:1px solid var(--rand);display:flex;align-items:center;padding:0 1.4cqw;font-size:2.15cqw">
+          <span class="cb">✓</span><span style="width:25cqw;margin-left:1.2cqw">Kaak open</span><span style="width:14cqw;color:var(--grijs)">piek 0.62</span>
+          <span style="flex:1;position:relative;height:.6cqw;background:#9AA3A8;border-radius:1cqw;margin:0 2cqw"><span style="position:absolute;left:0;top:0;bottom:0;width:50%;background:var(--accent);border-radius:1cqw"></span><span style="position:absolute;left:62%;top:-1.6cqw;bottom:-1.6cqw;border-left:.2cqw dashed var(--podium)"></span><span style="position:absolute;left:50%;top:50%;width:2.2cqw;height:2.2cqw;margin:-1.1cqw;border-radius:50%;background:var(--accent)"></span></span>
+          <b style="width:6cqw;text-align:right">0.50</b>
+        </div>
+        <div class="btn" style="position:absolute;right:2cqw;bottom:2cqw;width:14cqw;height:4.4cqw;font-size:2.2cqw">Opslaan</div>
+      </div>
+      <svg class="cursor" style="left:63.5cqw;top:28cqw"><use href="#pijl"/></svg>
+      <div class="cap">Zet de drempel iets onder de gemeten waarde.</div>
+    </div>
+    <div class="lbl"><span>06 · STAP 3 · INSTELLEN</span><span>f06 · 1:30–1:52</span></div>
+    <p class="note"><b>De naam typt zich eerst in</b>, dan klapt Actie open en wordt "Spatie" gekozen. Camera schuift naar de rij; stippellijn op "piek 0.62", knop zakt naar 0.50 terwijl de waarde meetelt. Opslaan.</p>
+    <span class="chip">seam: crossfade</span>
+  </figure>
+
+  <!-- F07 -->
+  <figure>
+    <div class="cell" id="frame-07">
+      <div class="hoofd"><b>STAP 4</b>Je trigger staat klaar</div>
+      <div class="win" style="left:6cqw;top:9cqw;width:88cqw;height:34cqw">
+        <div style="position:absolute;left:2.4cqw;top:2cqw;font-size:2.5cqw;font-weight:700"><span style="color:var(--accent)">•</span> Geconfigureerde triggers</div>
+        <div style="position:absolute;left:2.4cqw;top:7cqw;width:44cqw;height:23cqw;background:#fff;border-radius:1cqw;border:1px solid var(--rand);box-shadow:0 1cqw 2.4cqw rgba(6,45,54,.14)">
+          <div style="margin:1.4cqw 2cqw 0;height:.45cqw;background:var(--geel)"></div>
+          <div style="display:flex;justify-content:space-between;align-items:center;margin:1.4cqw 2cqw"><b style="font-size:2.5cqw">1. Spatie met kaak</b><span style="background:var(--geel);border-radius:.8cqw;padding:.5cqw 1.6cqw;font-size:2cqw;font-weight:700;color:var(--tekst)">Spatie</span></div>
+          <div style="margin:0 2cqw;background:var(--bg);border-radius:.7cqw;padding:1.1cqw 1.4cqw;display:flex;justify-content:space-between;font-size:2.1cqw"><span>▸ Kaak open</span><b>&gt; 0.50</b></div>
+          <div style="display:flex;gap:1cqw;margin:1.6cqw 2cqw"><span class="btn" style="padding:.7cqw 2.2cqw;font-size:1.8cqw;font-weight:400;border-radius:2cqw">Bewerken</span><span class="btn" style="padding:.7cqw 2.2cqw;font-size:1.8cqw;font-weight:400;border-radius:2cqw;background:var(--rood)">Verwijderen</span></div>
+        </div>
+      </div>
+      <div class="cap">Je trigger staat nu als kaart op het dashboard.</div>
+    </div>
+    <div class="lbl"><span>07 · STAP 4 · KLAAR</span><span>f07 · 1:52–2:00</span></div>
+    <p class="note"><b>De kaart zakt eerst in de lege plek</b>, gele bovenrand tekent zich van links naar rechts. Daarna 1,5 s stilstand: het rustmoment van de film.</p>
+    <span class="chip">seam: zoom-out</span>
+  </figure>
+
+  <div class="act">Gebruiken</div>
+
+  <!-- F08 -->
+  <figure>
+    <div class="cell" id="frame-08" style="background:#DCE6E8">
+      <div style="position:absolute;inset:0;padding:3cqw 3cqw 9cqw;display:grid;grid-template-columns:repeat(4,1fr);grid-template-rows:repeat(3,1fr);gap:1.2cqw;width:62cqw">
+        <div style="background:#fff;border-radius:1cqw;color:var(--tekst);font-size:2.4cqw;font-weight:600;display:flex;align-items:flex-end;justify-content:center;padding-bottom:1cqw">ja</div>
+        <div style="background:#fff;border-radius:1cqw;color:var(--tekst);font-size:2.4cqw;font-weight:600;display:flex;align-items:flex-end;justify-content:center;padding-bottom:1cqw">nee</div>
+        <div style="background:#fff;border-radius:1cqw;color:var(--tekst);font-size:2.4cqw;font-weight:600;display:flex;align-items:flex-end;justify-content:center;padding-bottom:1cqw;outline:.6cqw solid var(--geel)">eten</div>
+        <div style="background:#fff;border-radius:1cqw;color:var(--tekst);font-size:2.4cqw;font-weight:600;display:flex;align-items:flex-end;justify-content:center;padding-bottom:1cqw">drinken</div>
+        <div style="background:#fff;border-radius:1cqw"></div><div style="background:#fff;border-radius:1cqw"></div><div style="background:#fff;border-radius:1cqw"></div><div style="background:#fff;border-radius:1cqw"></div>
+        <div style="background:#fff;border-radius:1cqw"></div><div style="background:#fff;border-radius:1cqw"></div><div style="background:#fff;border-radius:1cqw"></div><div style="background:#fff;border-radius:1cqw"></div>
+      </div>
+      <div class="win" style="right:3cqw;top:3cqw;width:30cqw;height:17cqw;background:#3C4246;border:.25cqw solid var(--geel);border-radius:.3cqw">
+        <svg style="position:absolute;left:10cqw;top:1.4cqw;width:10cqw;height:13cqw"><use href="#gezicht"/></svg>
+        <div style="position:absolute;right:.6cqw;top:.6cqw;width:1.8cqw;height:1.6cqw;border:1px solid #fff;color:#fff;font-size:1.1cqw;display:flex;align-items:center;justify-content:center;background:#464646">X</div>
+        <div style="position:absolute;left:.8cqw;bottom:2.2cqw;background:var(--geel);border:1px solid #fff;color:#141414;font-size:1.9cqw;font-weight:700;padding:.2cqw .9cqw">Verstuurd: Spatie</div>
+      </div>
+      <div class="win" style="right:3cqw;top:21.5cqw;width:30cqw;height:13cqw">
+        <div class="kop" style="height:3.4cqw;font-size:1.7cqw">Live Drempels &amp; Filter</div>
+        <div style="margin:1cqw;background:#E8F6F7;border-radius:.6cqw;padding:.8cqw 1cqw;font-size:1.7cqw;color:var(--podium)">Actief venster: Communicator 5</div>
+      </div>
+      <div class="cap">Linksonder in het camerabeeld zie je welke toets is verstuurd.</div>
+    </div>
+    <div class="lbl"><span>08 · LIVE</span><span>f08 · 2:00–2:26</span></div>
+    <p class="note"><b>"Live modus starten" wordt eerst ingedrukt</b>; het bord vult het scherm, camerabeeld en paneel schuiven rechtsboven in. Klik op het bord → banner wisselt. Zoom op het camerabeeld voor "Verstuurd: Spatie", het vakje springt verder (callback F02).</p>
+    <span class="chip">seam: push-up</span>
+  </figure>
+
+  <!-- F09 -->
+  <figure>
+    <div class="cell" id="frame-09">
+      <div class="hoofd"><b>STOPPEN</b>Twee keer klikken</div>
+      <div class="win" style="left:14cqw;top:9cqw;width:72cqw;height:34cqw;background:#3C4246;border-radius:.4cqw">
+        <svg style="position:absolute;left:26cqw;top:4cqw;width:20cqw;height:27cqw"><use href="#gezicht"/></svg>
+        <div style="position:absolute;right:1.2cqw;top:1.2cqw;background:#DC3C3C;border:1px solid #fff;color:#fff;font-size:2.4cqw;padding:.4cqw 1.4cqw">Stoppen? Klik nogmaals</div>
+      </div>
+      <div class="rimpel" style="left:72cqw;top:13.2cqw"></div>
+      <svg class="cursor" style="left:71.5cqw;top:12.6cqw"><use href="#pijl"/></svg>
+      <div class="cap">De knop wordt rood: klik nog een keer.</div>
+    </div>
+    <div class="lbl"><span>09 · STOPPEN</span><span>f09 · 2:26–2:41</span></div>
+    <p class="note"><b>De kleine X wordt eerst geklikt</b> en groeit uit tot de rode knop; een dun balkje telt 3 s af. Tweede klik: beeld klapt dicht. Tot slot "Stop live" en toetskap "Q" naast elkaar.</p>
+    <span class="chip">seam: crossfade</span>
+  </figure>
+
+  <!-- F10 -->
+  <figure>
+    <div class="cell" id="frame-10">
+      <div class="hoofd"><b>HULP</b>Werkt het niet?</div>
+      <div style="position:absolute;left:8cqw;right:8cqw;top:10cqw;display:grid;gap:1.3cqw;font-size:2.15cqw">
+        <div style="background:#fff;color:var(--tekst);border-radius:1cqw;padding:1.1cqw 1.8cqw;display:flex;gap:1.6cqw"><b style="width:30cqw">Toets komt niet aan?</b><span>Studio opnieuw starten, Ja kiezen</span></div>
+        <div style="background:rgba(255,255,255,.14);border-radius:1cqw;padding:1.1cqw 1.8cqw;display:flex;gap:1.6cqw"><b style="width:30cqw">Camera werkt niet?</b><span>Andere camera-apps sluiten</span></div>
+        <div style="background:rgba(255,255,255,.14);border-radius:1cqw;padding:1.1cqw 1.8cqw;display:flex;gap:1.6cqw"><b style="width:30cqw">Melding "draait al"?</b><span>De andere Studio sluiten</span></div>
+        <div style="background:rgba(255,255,255,.14);border-radius:1cqw;padding:1.1cqw 1.8cqw;display:flex;gap:1.6cqw"><b style="width:30cqw">Beeld staat stil?</b><span>Probeer Vensterweergave</span></div>
+      </div>
+      <div class="cap">Komt de toets niet aan? Start Studio opnieuw en kies Ja.</div>
+    </div>
+    <div class="lbl"><span>10 · WERKT HET NIET?</span><span>f10 · 2:41–2:59</span></div>
+    <p class="note"><b>De eerste rij licht eerst op</b> (wit), de rest gedimd; per gesproken zin schuift het licht een rij omlaag.</p>
+    <span class="chip">seam: crossfade</span>
+  </figure>
+
+  <!-- F11 -->
+  <figure>
+    <div class="cell" id="frame-11">
+      <img src="assets/Mennenstech_logo_wit.png" alt="" style="position:absolute;left:50%;top:12cqw;width:11cqw;transform:translateX(-50%)">
+      <div style="position:absolute;left:0;right:0;top:25cqw;text-align:center;font-size:4cqw;font-weight:700">MimiControl Studio v2</div>
+      <div style="position:absolute;left:0;right:0;top:31.5cqw;text-align:center;font-size:2.4cqw;color:var(--licht)">Meer uitleg: de handleiding</div>
+    </div>
+    <div class="lbl"><span>11 · OUTRO</span><span>f11 · 2:59–3:06</span></div>
+    <p class="note"><b>Spiegel van de intro</b>: logo blijft staan, tekst komt in, muziek dooft uit in 2 s.</p>
+    <span class="chip">einde</span>
+  </figure>
+
+  <!-- seam map -->
+  <figure>
+    <div class="cell" style="background:#fff;color:var(--tekst);padding:3cqw">
+      <div style="font-size:2.6cqw;font-weight:700;color:var(--podium);margin-bottom:2cqw">Overgangen</div>
+      <div style="display:flex;flex-wrap:wrap;gap:1cqw;font-size:2.6cqw;align-items:center">
+        <span>01</span>→<i>push-left</i>→<span>02</span>→<i>crossfade</i>→<span>03</span>→<i>zoom door knop</i>→<span>04</span>→<i>crossfade</i>→<span>05</span>→<i>crossfade</i>→<span>06</span>→<i>crossfade</i>→<span>07</span>→<i>zoom-out</i>→<span>08</span>→<i>push-up</i>→<span>09</span>→<i>crossfade</i>→<span>10</span>→<i>crossfade</i>→<span>11</span>
+      </div>
+      <p style="font-size:2.4cqw;color:var(--grijs);margin-top:2.4cqw;line-height:1.4">Eén richting: nieuwe inhoud komt van rechts of van onder. Hoofdstuklabel linksboven blijft staan en wisselt alleen van tekst.</p>
+    </div>
+    <div class="lbl"><span>OVERGANGEN</span><span></span></div>
+  </figure>
+
+  <!-- tokens -->
+  <figure>
+    <div class="cell" style="background:#fff;color:var(--tekst);padding:3cqw">
+      <div style="font-size:2.6cqw;font-weight:700;color:var(--podium);margin-bottom:1.6cqw">Huisstijl</div>
+      <div style="display:flex;gap:1cqw;margin-bottom:1.8cqw">
+        <span style="width:6cqw;height:6cqw;border-radius:.8cqw;background:#062D36"></span><span style="width:6cqw;height:6cqw;border-radius:.8cqw;background:#4DB8BE"></span><span style="width:6cqw;height:6cqw;border-radius:.8cqw;background:#68CCD1"></span><span style="width:6cqw;height:6cqw;border-radius:.8cqw;background:#F2F2F7;border:1px solid #ddd"></span><span style="width:6cqw;height:6cqw;border-radius:.8cqw;background:#E05A50"></span><span style="width:6cqw;height:6cqw;border-radius:.8cqw;background:#FFD60A"></span>
+      </div>
+      <p style="font-size:2.4cqw;line-height:1.45">Segoe UI 400 / 600 / 700 (zoals Studio). Ondertitel 46 px semibold op donkere band. Hoofdstuk 40 px.<br>Easing: power3.out in · power2.inOut camera/cursor · power2.in uit.<br><span style="color:var(--grijs)">Niet: screenshots in kader, gloed, flitsen, merklogo's, echt gezicht, 2 regels ondertitel.</span></p>
+    </div>
+    <div class="lbl"><span>TOKENS</span><span></span></div>
+  </figure>
+</div>
+</body>
+</html>

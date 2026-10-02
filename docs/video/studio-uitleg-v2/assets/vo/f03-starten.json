@@ -1,0 +1,222 @@
+{
+ "sleutel": "0251c462c24a7385a2dcf769ca9f038df84cd48e",
+ "tekst": "Start het programma met een dubbelklik op het bestand MimiControl Studio versie twee. <break time=\"0.6s\"/> Het programma vraagt of het opnieuw mag starten als beheerder. <break time=\"0.4s\"/> Klik op Ja, <break time=\"0.6s\"/> en daarna ook op Ja bij de melding van Windows. <break time=\"0.8s\"/> Bovenaan het dashboard staat dan: Beheerder: ja.",
+ "duur": 16.692244897959185,
+ "woorden": [
+  {
+   "end": 0.512,
+   "start": 0.299,
+   "word": "Start"
+  },
+  {
+   "end": 0.64,
+   "start": 0.555,
+   "word": "het"
+  },
+  {
+   "end": 0.981,
+   "start": 0.683,
+   "word": "programma"
+  },
+  {
+   "end": 1.493,
+   "start": 1.195,
+   "word": "met"
+  },
+  {
+   "end": 1.621,
+   "start": 1.536,
+   "word": "een"
+  },
+  {
+   "end": 2.176,
+   "start": 1.664,
+   "word": "dubbelklik"
+  },
+  {
+   "end": 2.56,
+   "start": 2.347,
+   "word": "op"
+  },
+  {
+   "end": 2.688,
+   "start": 2.603,
+   "word": "het"
+  },
+  {
+   "end": 2.9867,
+   "start": 2.731,
+   "word": "bestand"
+  },
+  {
+   "end": 3.6267,
+   "start": 3.072,
+   "word": "MimiControl"
+  },
+  {
+   "end": 4.0107,
+   "start": 3.712,
+   "word": "Studio"
+  },
+  {
+   "end": 4.437,
+   "start": 4.096,
+   "word": "versie"
+  },
+  {
+   "end": 4.698,
+   "start": 4.48,
+   "word": "twee."
+  },
+  {
+   "end": 5.333,
+   "start": 5.12,
+   "word": "Het"
+  },
+  {
+   "end": 5.632,
+   "start": 5.376,
+   "word": "programma"
+  },
+  {
+   "end": 6.144,
+   "start": 5.803,
+   "word": "vraagt"
+  },
+  {
+   "end": 6.528,
+   "start": 6.229,
+   "word": "of"
+  },
+  {
+   "end": 6.656,
+   "start": 6.571,
+   "word": "het"
+  },
+  {
+   "end": 7.04,
+   "start": 6.699,
+   "word": "opnieuw"
+  },
+  {
+   "end": 7.168,
+   "start": 7.083,
+   "word": "mag"
+  },
+  {
+   "end": 7.595,
+   "start": 7.253,
+   "word": "starten"
+  },
+  {
+   "end": 7.851,
+   "start": 7.723,
+   "word": "als"
+  },
+  {
+   "end": 8.422,
+   "start": 7.893,
+   "word": "beheerder."
+  },
+  {
+   "end": 9.55,
+   "start": 9.337,
+   "word": "Klik"
+  },
+  {
+   "end": 9.678,
+   "start": 9.593,
+   "word": "op"
+  },
+  {
+   "end": 9.981,
+   "start": 9.763,
+   "word": "Ja,"
+  },
+  {
+   "end": 10.531,
+   "start": 10.403,
+   "word": "en"
+  },
+  {
+   "end": 10.787,
+   "start": 10.574,
+   "word": "daarna"
+  },
+  {
+   "end": 11.001,
+   "start": 10.83,
+   "word": "ook"
+  },
+  {
+   "end": 11.129,
+   "start": 11.086,
+   "word": "op"
+  },
+  {
+   "end": 11.342,
+   "start": 11.171,
+   "word": "Ja"
+  },
+  {
+   "end": 11.939,
+   "start": 11.726,
+   "word": "bij"
+  },
+  {
+   "end": 12.025,
+   "start": 11.982,
+   "word": "de"
+  },
+  {
+   "end": 12.281,
+   "start": 12.067,
+   "word": "melding"
+  },
+  {
+   "end": 12.409,
+   "start": 12.323,
+   "word": "van"
+  },
+  {
+   "end": 12.818,
+   "start": 12.451,
+   "word": "Windows."
+  },
+  {
+   "end": 13.859,
+   "start": 13.433,
+   "word": "Bovenaan"
+  },
+  {
+   "end": 13.987,
+   "start": 13.902,
+   "word": "het"
+  },
+  {
+   "end": 14.371,
+   "start": 14.03,
+   "word": "dashboard"
+  },
+  {
+   "end": 14.67,
+   "start": 14.457,
+   "word": "staat"
+  },
+  {
+   "end": 15.097,
+   "start": 14.755,
+   "word": "dan:"
+  },
+  {
+   "end": 15.95,
+   "start": 15.31,
+   "word": "Beheerder:"
+  },
+  {
+   "end": 16.6418820861678,
+   "start": 16.121,
+   "word": "ja."
+  }
+ ]
+}

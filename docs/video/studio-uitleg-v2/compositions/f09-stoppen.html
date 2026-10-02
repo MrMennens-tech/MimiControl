@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="nl">
+  <head><meta charset="UTF-8" /></head>
+  <body>
+    <template id="f09-stoppen-template">
+      <style>
+        #f09-laag { position: absolute; inset: 0; }
+        #f09-anders { position: absolute; inset: 0; }
+        #f09-groter { position: absolute; inset: 0; transform: scale(1.3); transform-origin: 960px 450px; }
+        #f09-stoplive { position: absolute; left: 585px; top: 360px; width: 420px; height: 112px; border-radius: 24px; background: #E05A50;
+          color: #fff; font-size: 52px; font-weight: 700; display: flex; align-items: center; justify-content: center;
+          box-shadow: 0 16px 40px rgba(0, 0, 0, .3); }
+        #f09-stoplabel { position: absolute; left: 545px; top: 496px; width: 500px; text-align: center; font-size: 40px; color: #CFE9EB; }
+        #f09-of { position: absolute; left: 1065px; top: 380px; width: 60px; text-align: center; font-size: 48px; color: #fff; }
+        #f09-qvoet { position: absolute; left: 1185px; top: 356px; width: 150px; height: 150px; border-radius: 26px; background: #8FA6AC; }
+        #f09-q { position: absolute; left: 1185px; top: 342px; width: 150px; height: 150px; border-radius: 26px; background: #F4F7F8;
+          color: #062D36; font-size: 84px; font-weight: 700; display: flex; align-items: center; justify-content: center; }
+        #f09-qlabel { position: absolute; left: 1110px; top: 530px; width: 300px; text-align: center; font-size: 40px; color: #CFE9EB; }
+      </style>
+      <div id="f09-stoppen" data-composition-id="f09-stoppen" data-width="1920" data-height="1080">
+        <div class="sc-in" id="f09-in">
+          <div id="f09-laag" data-layout-allow-occlusion><div class="cam" id="f09-cam"></div></div>
+          <div class="hfd-dim" id="f09-dim"></div>
+          <div id="f09-anders"><div id="f09-groter">
+            <div id="f09-stoplive">Stop live</div>
+            <div id="f09-stoplabel">in het drempelpaneel</div>
+            <div id="f09-of">of</div>
+            <div id="f09-qgroep"><div id="f09-qvoet"></div><div id="f09-q">Q</div></div>
+            <div id="f09-qlabel">toets Q</div>
+          </div></div>
+          <div class="hfd-groot" id="f09-hg"><div class="kick">Gebruiken</div><div class="tit">Stoppen</div></div>
+          <div class="hfd-klein" id="f09-hk"><span class="kick">Gebruiken</span><span>Stoppen</span></div>
+        </div>
+      </div>
+      <script>
+        (function () {
+          var ID = "f09-stoppen";
+          var tl = UI.tijdlijn();
+          var root = document.getElementById("f09-in");
+          var T = UI.tijden(ID);
+          var $ = function (s) { return root.querySelector(s); };
+          var cam = $("#f09-cam");
+          var bo = Studio.bord("f09"), ov = Studio.overlay("f09");
+          cam.appendChild(bo.el); cam.appendChild(ov.el);
+          UI.boven(ov.el); UI.boven(document.getElementById("f09-anders"));
+          var R = new UI.Regie(tl, root, { cursor: [1640, 230] });
+          var gez = $("#f09-ovgez");
+          Gezicht.maak(gez);
+          Gezicht.reeks(tl, gez, { open: 0, lach: 0.3 }, [[2.3, { knip: 1, lach: 0.3 }, 0.09], [2.39, { open: 0, lach: 0.3 }, 0.12]]);
+          var c2 = bo.cel(2);
+          tl.set("#f09-scan", { x: c2[0], y: c2[1] }, 0);
+
+          var kx = T.c("klikX"), kx2 = T.c("klikX2"), tq = T.c("toetsQ");
+
+          // titel op een donkere laag boven het bord
+          R.hoofdstuk($("#f09-hg"), $("#f09-hk"), 0.1, 1.0);
+          tl.set("#f09-dim", { opacity: 1 }, 0);
+          tl.fromTo("#f09-dim", { opacity: 1 }, { opacity: 0, duration: 0.5, ease: "none", immediateRender: false }, 1.0);
+          R.camDirect([1416, 24, 480, 270, 1200, 680], 0);
+
+          // eerste klik op de X; daarna dichtbij zodat de rode knop goed leesbaar is
+          R.naar(1876, 43, T.w("x") + 0.05, 1.0);
+          R.camera([1560, 16, 344, 150, 1300, 640], kx - 0.75, 0.7);
+          R.klik(kx);
+          tl.set("#f09-ovstop", { opacity: 0, scaleX: 0.14, transformOrigin: "100% 50%" }, 0);
+          tl.set("#f09-ovx", { opacity: 1 }, 0);
+          tl.set("#f09-ovx", { opacity: 0 }, kx + 0.03);
+          tl.fromTo("#f09-ovstop", { opacity: 1, scaleX: 0.14 }, { opacity: 1, scaleX: 1, duration: 0.25, ease: "power3.out", immediateRender: false }, kx + 0.03);
+          // dun balkje: binnen 3 seconden nog eens klikken
+          tl.set("#f09-ovtel", { opacity: 0, scaleX: 1 }, 0);
+          tl.set("#f09-ovtel", { opacity: 1 }, kx + 0.1);
+          tl.fromTo("#f09-ovtel", { scaleX: 1 }, { scaleX: 0, duration: 3.0, ease: "none", immediateRender: false }, kx + 0.1);
+          // tweede klik: het camerabeeld sluit
+          R.klik(kx2);
+          tl.set("#f09-ovtel", { opacity: 0 }, kx2 + 0.05);
+          tl.fromTo(ov.el, { opacity: 1, scale: 1 }, { opacity: 0, scale: 0.9, duration: 0.35, ease: "power2.in", immediateRender: false, transformOrigin: "100% 0%" }, kx2 + 0.15);
+          R.toonCursor(kx2 + 0.35, false);
+          R.camera({ x: 0, y: 0, s: 1 }, kx2 + 0.45, 1.2);
+
+          // andere manieren: Stop live of Q
+          var kunt = T.w("kunt");
+          tl.set("#f09-anders", { opacity: 0 }, 0);
+          tl.fromTo("#f09-dim", { opacity: 0 }, { opacity: 1, duration: 0.45, ease: "none", immediateRender: false }, kunt - 0.4);
+          tl.set("#f09-anders", { opacity: 1 }, kunt - 0.4);
+          R.in($("#f09-stoplive"), T.w("stop") - 0.25, { y: 24, s: 0.95, dur: 0.5 });
+          R.in($("#f09-stoplabel"), T.w("stop") - 0.05, { y: 12 });
+          R.in($("#f09-of"), T.w("of") - 0.1, { y: 12, dur: 0.4 });
+          R.in($("#f09-qgroep"), T.w("q") - 0.3, { y: 24, s: 0.95, dur: 0.5 });
+          R.in($("#f09-qlabel"), T.w("q") - 0.1, { y: 12 });
+          tl.fromTo("#f09-q", { y: 0 }, { y: 12, duration: 0.09, ease: "power1.out", immediateRender: false }, tq - 0.04);
+          tl.fromTo("#f09-q", { y: 12 }, { y: 0, duration: 0.3, ease: "power2.out", immediateRender: false }, tq + 0.1);
+
+          R.fade(root, T.duur);
+          window.__timelines[ID] = tl;
+        })();
+      </script>
+    </template>
+  </body>
+</html>

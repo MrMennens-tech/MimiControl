@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="nl">
+  <head><meta charset="UTF-8" /></head>
+  <body>
+    <template id="f04-kiezen-template">
+      <style>
+        #f04-laag { position: absolute; inset: 0; }
+      </style>
+      <div id="f04-kiezen" data-composition-id="f04-kiezen" data-width="1920" data-height="1080">
+        <div class="sc-in" id="f04-in">
+          <div id="f04-laag" data-layout-allow-occlusion><div class="cam" id="f04-cam"></div></div>
+          <div class="hfd-groot" id="f04-hg"><div class="kick">Stap 1</div><div class="tit">Kies je gezichtsbewegingen</div></div>
+          <div class="hfd-klein" id="f04-hk"><span class="kick">Stap 1</span><span>Kies je gezichtsbewegingen</span></div>
+        </div>
+      </div>
+      <script>
+        (function () {
+          var ID = "f04-kiezen";
+          var tl = UI.tijdlijn();
+          var root = document.getElementById("f04-in");
+          var T = UI.tijden(ID);
+          var $ = function (s) { return root.querySelector(s); };
+          var cam = $("#f04-cam");
+          var da = Studio.dashboard("f04", { welkom: true }), kz = Studio.kiezer("f04");
+          cam.appendChild(da.el); cam.appendChild(kz.el);
+          UI.boven(kz.el);
+          var R = new UI.Regie(tl, root, { cursor: [1380, 760] });
+
+          var kv = T.c("klikVerkennen"), ku = T.c("klikUitvinken"), kk = T.c("klikKaakAlles"),
+            kt = T.c("klikToepassen");
+
+          R.hoofdstuk($("#f04-hg"), $("#f04-hk"), 0.1, 1.35);
+          tl.set("#f04-laag", { opacity: 0 }, 0);
+          tl.fromTo("#f04-laag", { opacity: 0 }, { opacity: 1, duration: 0.45, ease: "none", immediateRender: false }, 1.45);
+
+          // dashboard, ingezoomd op Acties
+          R.camDirect([1270, 608, 416, 296, 1000, 700], 0);
+          tl.set(kz.el, { opacity: 0 }, 0);
+          R.naar(1478, 678, kv - 0.1, 0.8);
+          R.klik(kv, $("#f04-verkenknop"));
+
+          // door de knop heen naar het keuzescherm
+          R.camera([1428, 663, 100, 30, 1720, 760], kv + 0.12, 0.6, "power2.in");
+          tl.fromTo(da.el, { opacity: 1 }, { opacity: 0, duration: 0.3, ease: "none", immediateRender: false }, kv + 0.4);
+          R.toonCursor(kv + 0.3, false);
+          R.camDirect([210, 100, 1500, 820], kv + 0.72);
+          tl.fromTo(kz.el, { opacity: 0, scale: 1.05 }, { opacity: 1, scale: 1, duration: 0.6, ease: "power3.out", immediateRender: false }, kv + 0.72);
+
+          // lijst in beeld
+          R.camera(kz.view.concat([1720, 760]), T.w("gezichtsbewegingen") - 0.1, 1.0);
+
+          // Alles uitvinken
+          R.camera([530, 820, 640, 100, 1400, 760], ku - 1.1, 0.8);
+          R.toonCursor(ku - 1.0);
+          R.naar(848, 870, ku - 0.1, 0.8);
+          R.klik(ku, $("#f04-uitvinken"));
+          R.camera(kz.view.concat([1720, 760]), ku + 0.25, 0.8);
+          var aan = kz.vinkjes.filter(function (v) { return v.aan; });
+          aan.forEach(function (v, i) {
+            var a = document.getElementById(v.id).querySelector(".aan");
+            tl.fromTo(a, { opacity: 1 }, { opacity: 0, duration: 0.12, ease: "none", immediateRender: false }, ku + 0.35 + i * 0.012);
+          });
+
+          // naar de groep Kaak scrollen en "Alles" aanklikken
+          tl.set("#f04-lijst", { y: 0 }, 0);
+          tl.fromTo("#f04-lijst", { y: 0 }, { y: -1006, duration: 0.9, ease: "power2.inOut", immediateRender: false }, ku + 0.85);
+          R.camera([960, 306, 710, 280, 1500, 700], ku + 1.25, 0.9);
+          R.naar(1522, 338, kk - 0.1, 0.8);
+          R.klik(kk, document.getElementById("f04-alles-Kaak"));
+          kz.vinkjes.filter(function (v) { return v.groep === "Kaak"; }).forEach(function (v, i) {
+            var a = document.getElementById(v.id).querySelector(".aan");
+            var t = kk + 0.12 + i * 0.09;
+            if (!v.aan) tl.set(a, { opacity: 0 }, 0);
+            tl.fromTo(a, { opacity: 0, scale: 0.4 }, { opacity: 1, scale: 1, duration: 0.25, ease: "back.out(2.2)", immediateRender: false }, t);
+          });
+
+          // Toepassen
+          R.camera([340, 760, 980, 140, 1720, 760], T.w("klik", 2) - 0.55, 0.8);
+          R.naar(1052, 870, kt - 0.1, 0.8);
+          R.klik(kt, $("#f04-toepassen"));
+          R.toonCursor(kt + 0.5, false);
+          R.camera([210, 100, 1500, 820], kt + 0.35, 1.1);
+
+          R.fade(root, T.duur);
+          window.__timelines[ID] = tl;
+        })();
+      </script>
+    </template>
+  </body>
+</html>

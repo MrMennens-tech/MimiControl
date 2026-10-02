@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="nl">
+  <head><meta charset="UTF-8"></head>
+  <body>
+    <template id="f02-concept-template">
+      <style>
+        #f02-in { color: #fff; }
+        #f02-in .kaartd { position: absolute; border-radius: 28px; background: #3C4246;
+          box-shadow: 0 30px 70px rgba(0, 0, 0, .35); }
+        #f02-in .onder { position: absolute; text-align: center; font-size: 42px; font-weight: 600; color: #E6F5F6; }
+        #f02-cam { left: 120px; top: 150px; width: 500px; height: 560px; }
+        #f02-gez { position: absolute; left: 70px; top: 60px; width: 360px; height: 423px; }
+        #f02-camlabel { left: 120px; top: 736px; width: 500px; }
+        #f02-camdot { position: absolute; left: 26px; top: 24px; width: 18px; height: 18px; border-radius: 9px; background: #E05A50; }
+        #f02-meter { left: 760px; top: 150px; width: 400px; height: 560px; background: rgba(255, 255, 255, .07); }
+        #f02-baan { position: absolute; left: 150px; top: 56px; width: 100px; height: 400px; border-radius: 18px; background: rgba(255, 255, 255, .12); overflow: hidden; }
+        #f02-vul { position: absolute; left: 0; bottom: 0; width: 100px; height: 400px; background: #FFDC00; transform-origin: 50% 100%; }
+        #f02-drempel { position: absolute; left: 110px; top: 236px; width: 180px; height: 0; border-top: 5px dashed #FFFFFF; }
+        #f02-drempeltxt { position: absolute; left: 0; width: 400px; top: 482px; text-align: center; font-size: 40px; font-weight: 600; }
+        #f02-meterlabel { left: 760px; top: 736px; width: 400px; }
+        #f02-toetsvoet { position: absolute; left: 1300px; top: 188px; width: 500px; height: 170px; border-radius: 30px; background: #8FA6AC; }
+        #f02-toets { position: absolute; left: 1300px; top: 172px; width: 500px; height: 170px; border-radius: 30px; background: #F4F7F8;
+          color: #062D36; font-size: 76px; font-weight: 700; display: flex; align-items: center; justify-content: center; }
+        #f02-bord { position: absolute; left: 1300px; top: 420px; width: 500px; height: 290px; border-radius: 24px; background: #E8EEF0; }
+        #f02-bord .c { position: absolute; width: 146px; height: 118px; border-radius: 14px; background: #fff; color: #1C1C1E;
+          font-size: 40px; font-weight: 700; display: flex; align-items: flex-end; justify-content: center; padding-bottom: 12px; }
+        #f02-scan { position: absolute; left: 0; top: 0; width: 162px; height: 134px; border: 8px solid #FFD60A; border-radius: 20px; }
+        #f02-bordlabel { left: 1300px; top: 736px; width: 500px; }
+        #f02-in .pijl { position: absolute; top: 380px; width: 90px; height: 90px; }
+        #f02-in .stip { position: absolute; width: 11px; height: 11px; margin: -5.5px 0 0 -5.5px; border-radius: 6px;
+          background: #68CCD1; box-shadow: 0 0 0 3px rgba(104, 204, 209, .28); }
+      </style>
+      <div data-hf-id="hf-ou17" id="f02-concept" data-composition-id="f02-concept" data-width="1920" data-height="1080">
+        <div data-hf-id="hf-8nmk" class="sc-in" id="f02-in">
+          <div data-hf-id="hf-xvtz" class="kaartd" id="f02-cam"><div data-hf-id="hf-eqg2" id="f02-camdot"></div><div data-hf-id="hf-qoiu" id="f02-gez"></div><div data-hf-id="hf-p3v3" id="f02-stippen"></div></div>
+          <div data-hf-id="hf-zfyb" class="onder" id="f02-camlabel">Webcam</div>
+          <svg data-hf-id="hf-dynz" class="pijl" id="f02-p1" style="left:647px" viewBox="0 0 90 90"><path data-hf-id="hf-lb3b" d="M30 18 L58 45 L30 72" stroke="#68CCD1" stroke-width="9" fill="none" stroke-linecap="round" stroke-linejoin="round" /></svg>
+          <div data-hf-id="hf-x58t" class="kaartd" id="f02-meter">
+            <div data-hf-id="hf-6m4e" id="f02-baan"><div data-hf-id="hf-xzdh" id="f02-vul"></div></div>
+            <div data-hf-id="hf-pbyn" id="f02-drempel"></div>
+            <div data-hf-id="hf-v5qm" id="f02-drempeltxt">drempel</div>
+          </div>
+          <div data-hf-id="hf-d218" class="onder" id="f02-meterlabel">Kaak open</div>
+          <svg data-hf-id="hf-syia" class="pijl" id="f02-p2" style="left:1187px" viewBox="0 0 90 90"><path data-hf-id="hf-qrd3" d="M30 18 L58 45 L30 72" stroke="#68CCD1" stroke-width="9" fill="none" stroke-linecap="round" stroke-linejoin="round" /></svg>
+          <div data-hf-id="hf-73es" id="f02-toetsgroep">
+            <div data-hf-id="hf-272p" id="f02-toetsvoet"></div>
+            <div data-hf-id="hf-segf" id="f02-toets">Spatie</div>
+          </div>
+          <div data-hf-id="hf-8qur" id="f02-bord">
+            <div data-hf-id="hf-gmjr" class="c" style="left:16px;top:18px">ja</div>
+            <div data-hf-id="hf-50oc" class="c" style="left:177px;top:18px">nee</div>
+            <div data-hf-id="hf-cvzh" class="c" style="left:338px;top:18px">eten</div>
+            <div data-hf-id="hf-gh4e" class="c" style="left:16px;top:154px">drinken</div>
+            <div data-hf-id="hf-4hoi" class="c" style="left:177px;top:154px">spelen</div>
+            <div data-hf-id="hf-dn0n" class="c" style="left:338px;top:154px">klaar</div>
+            <div data-hf-id="hf-kban" id="f02-scan"></div>
+          </div>
+          <div data-hf-id="hf-0vd2" class="onder" id="f02-bordlabel">Communicator 5</div>
+        </div>
+      </div>
+      <script>
+        (function () {
+          var ID = "f02-concept";
+          var tl = UI.tijdlijn();
+          var root = document.getElementById("f02-in");
+          var T = UI.tijden(ID), R = new UI.Regie(tl, root);
+          var $ = function (s) { return root.querySelector(s); };
+          var gez = $("#f02-gez");
+          Gezicht.maak(gez);
+
+          // volgpunten op het gezicht (gezicht 400x470 geschaald naar 360x423 → factor 0.9)
+          var punten = [[132, 238, 0], [268, 238, 0], [136, 205, 0], [264, 205, 0], [200, 296, 0], [160, 330, 0.4], [240, 330, 0.4],
+            [200, 316, 0.3], [200, 402, 1], [126, 300, 0.35], [274, 300, 0.35]];
+          var stippen = punten.map(function (p) {
+            var d = document.createElement("div");
+            d.className = "stip";
+            d.style.left = (70 + p[0] * 0.9) + "px";
+            d.style.top = (60 + p[1] * 0.9) + "px";
+            $("#f02-stippen").appendChild(d);
+            return { el: d, mee: p[2] };
+          });
+
+          var K = { open1: T.c("open1"), t1: T.c("toets1"), dicht1: T.c("dicht1"), open2: T.c("open2"), t2: T.c("toets2") };
+
+          // stations verschijnen
+          R.in($("#f02-cam"), 0.2, { y: 30, s: 0.96, dur: 0.7 });
+          R.in($("#f02-camlabel"), 0.45, { y: 16 });
+          var kijkt = T.w("kijkt");
+          stippen.forEach(function (s, i) {
+            tl.set(s.el, { opacity: 0, scale: 0 }, 0);
+            tl.fromTo(s.el, { opacity: 0, scale: 0 }, { opacity: 1, scale: 1, duration: 0.3, ease: "back.out(2.4)", immediateRender: false }, kijkt + i * 0.05);
+          });
+          var maak = T.w("maak");
+          R.in($("#f02-p1"), maak - 0.2, { y: 0, s: 0.6, dur: 0.4 });
+          R.in($("#f02-meter"), maak, { y: 30, s: 0.96, dur: 0.7 });
+          R.in($("#f02-meterlabel"), maak + 0.2, { y: 16 });
+          var drukt = T.w("drukt");
+          R.in($("#f02-p2"), drukt - 0.5, { y: 0, s: 0.6, dur: 0.4 });
+          R.in($("#f02-toetsgroep"), drukt - 0.3, { y: 30, s: 0.96, dur: 0.7 });
+          R.in($("#f02-bord"), drukt + 0.05, { y: 30, dur: 0.7 });
+          R.in($("#f02-bordlabel"), T.w("communicator") - 0.25, { y: 16 });
+
+          // gezicht: knipperen, mond open/dicht (twee keer)
+          var N = { open: 0, lach: 0.3 }, O = { open: 1, lach: 0 }, K1 = { knip: 1, lach: 0.3 };
+          Gezicht.reeks(tl, gez, N, [
+            [2.6, K1, 0.09], [2.69, N, 0.12],
+            [K.open1, O, 0.45], [K.dicht1, N, 0.5],
+            [K.open2 - 0.1, O, 0.3], [K.t2 + 0.55, N, 0.4]
+          ]);
+          // stippen bewegen mee met de kaak (alleen y)
+          stippen.forEach(function (s) {
+            if (!s.mee) return;
+            var dy = 27 * s.mee;
+            tl.fromTo(s.el, { y: 0 }, { y: dy, duration: 0.45, ease: "power2.inOut", immediateRender: false }, K.open1);
+            tl.fromTo(s.el, { y: dy }, { y: 0, duration: 0.5, ease: "power2.inOut", immediateRender: false }, K.dicht1);
+            tl.fromTo(s.el, { y: 0 }, { y: dy, duration: 0.3, ease: "power2.inOut", immediateRender: false }, K.open2 - 0.1);
+            tl.fromTo(s.el, { y: dy }, { y: 0, duration: 0.4, ease: "power2.inOut", immediateRender: false }, K.t2 + 0.55);
+          });
+
+          // meter
+          var vul = $("#f02-vul"), lijn = $("#f02-drempel");
+          tl.set(vul, { scaleY: 0.05 }, 0);
+          tl.fromTo(vul, { scaleY: 0.05 }, { scaleY: 0.86, duration: 0.7, ease: "power2.out", immediateRender: false }, K.open1);
+          tl.fromTo(vul, { scaleY: 0.86 }, { scaleY: 0.05, duration: 0.6, ease: "power2.inOut", immediateRender: false }, K.dicht1);
+          tl.fromTo(vul, { scaleY: 0.05 }, { scaleY: 0.82, duration: 0.45, ease: "power2.out", immediateRender: false }, K.open2 - 0.1);
+          tl.fromTo(vul, { scaleY: 0.82 }, { scaleY: 0.05, duration: 0.45, ease: "power2.inOut", immediateRender: false }, K.t2 + 0.55);
+          tl.set(lijn, { borderTopColor: "#FFFFFF" }, 0);
+          tl.set(lijn, { borderTopColor: "#FFDC00" }, K.open1 + 0.3);
+          tl.set(lijn, { borderTopColor: "#FFFFFF" }, K.dicht1 + 0.3);
+          tl.set(lijn, { borderTopColor: "#FFDC00" }, K.open2 + 0.12);
+          tl.set(lijn, { borderTopColor: "#FFFFFF" }, K.t2 + 0.8);
+
+          // toets drukt in, bord springt verder
+          var toets = $("#f02-toets"), scan = $("#f02-scan");
+          [K.t1, K.t2].forEach(function (t) {
+            tl.fromTo(toets, { y: 0, backgroundColor: "#F4F7F8" }, { y: 14, backgroundColor: "#FFF3B0", duration: 0.09, ease: "power1.out", immediateRender: false }, t - 0.04);
+            tl.fromTo(toets, { y: 14, backgroundColor: "#FFF3B0" }, { y: 0, backgroundColor: "#F4F7F8", duration: 0.35, ease: "power2.out", immediateRender: false }, t + 0.12);
+          });
+          var cel = [[8, 10], [169, 10], [330, 10]];
+          tl.set(scan, { x: cel[0][0], y: cel[0][1] }, 0);
+          tl.fromTo(scan, { x: cel[0][0] }, { x: cel[1][0], duration: 0.3, ease: "power2.inOut", immediateRender: false }, K.t1 + 0.06);
+          tl.fromTo(scan, { x: cel[1][0] }, { x: cel[2][0], duration: 0.3, ease: "power2.inOut", immediateRender: false }, K.t2 + 0.06);
+
+          R.fade($("#f02-in"), T.duur);
+          window.__timelines[ID] = tl;
+        })();
+      </script>
+    </template>
+  </body>
+</html>

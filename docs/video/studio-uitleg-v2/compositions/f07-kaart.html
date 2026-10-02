@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="nl">
+  <head><meta charset="UTF-8" /></head>
+  <body>
+    <template id="f07-kaart-template">
+      <style>
+        #f07-laag { position: absolute; inset: 0; }
+      </style>
+      <div id="f07-kaart" data-composition-id="f07-kaart" data-width="1920" data-height="1080">
+        <div class="sc-in" id="f07-in">
+          <div id="f07-laag" data-layout-allow-occlusion><div class="cam" id="f07-cam"></div></div>
+          <div class="hfd-groot" id="f07-hg"><div class="kick">Stap 4</div><div class="tit">Je trigger staat klaar</div></div>
+          <div class="hfd-klein" id="f07-hk" style="display:none"><span class="kick">Stap 4</span><span>Je trigger staat klaar</span></div>
+        </div>
+      </div>
+      <script>
+        (function () {
+          var ID = "f07-kaart";
+          var tl = UI.tijdlijn();
+          var root = document.getElementById("f07-in");
+          var T = UI.tijden(ID);
+          var $ = function (s) { return root.querySelector(s); };
+          var da = Studio.dashboard("f07", { kaart: true, drempel: "0.60" });
+          $("#f07-cam").appendChild(da.el);
+          var R = new UI.Regie(tl, root);
+          var plof = T.c("plofKaart");
+
+          R.hoofdstuk($("#f07-hg"), $("#f07-hk"), 0.05, 0.95);
+          tl.set("#f07-laag", { opacity: 0 }, 0);
+          tl.fromTo("#f07-laag", { opacity: 0 }, { opacity: 1, duration: 0.45, ease: "none", immediateRender: false }, 1.0);
+          R.camDirect({ x: 0, y: 0, s: 1 }, 0);
+          R.camera([238, 286, 600, 236, 1440, 760], 1.25, 1.3);
+
+          // de kaart landt in de lege plek
+          var kaart = $("#f07-tkaart"), balk = $("#f07-kaartbalk");
+          tl.set(kaart, { opacity: 0, y: -60, scale: 0.96 }, 0);
+          tl.fromTo(kaart, { opacity: 0, y: -60, scale: 0.96 }, { opacity: 1, y: 0, scale: 1, duration: 0.6, ease: "back.out(1.4)", immediateRender: false }, plof - 0.15);
+          tl.set(balk, { scaleX: 0 }, 0);
+          tl.fromTo(balk, { scaleX: 0 }, { scaleX: 1, duration: 0.7, ease: "power3.out", immediateRender: false }, plof + 0.2);
+
+          R.fade(root, T.duur);
+          window.__timelines[ID] = tl;
+        })();
+      </script>
+    </template>
+  </body>
+</html>

@@ -1,0 +1,42 @@
+{
+ "sleutel": "36725d96fb9dab5f0b498927150af41d763d3b73",
+ "tekst": "Meer uitleg vind je in de handleiding.",
+ "duur": 3.1346938775510202,
+ "woorden": [
+  {
+   "end": 0.597,
+   "start": 0.341,
+   "word": "Meer"
+  },
+  {
+   "end": 1.237,
+   "start": 0.725,
+   "word": "uitleg"
+  },
+  {
+   "end": 1.792,
+   "start": 1.579,
+   "word": "vind"
+  },
+  {
+   "end": 2.005,
+   "start": 1.877,
+   "word": "je"
+  },
+  {
+   "end": 2.304,
+   "start": 2.048,
+   "word": "in"
+  },
+  {
+   "end": 2.389,
+   "start": 2.347,
+   "word": "de"
+  },
+  {
+   "end": 2.8936507936507936,
+   "start": 2.432,
+   "word": "handleiding."
+  }
+ ]
+}

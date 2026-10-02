@@ -1,0 +1,62 @@
+{
+ "sleutel": "d55ca4b9844a6d876f370c073865b11807ffc153",
+ "tekst": "Stap vier: je trigger staat nu als kaart op het dashboard.",
+ "duur": 3.996734693877551,
+ "woorden": [
+  {
+   "end": 0.469,
+   "start": 0.299,
+   "word": "Stap"
+  },
+  {
+   "end": 1.003,
+   "start": 0.555,
+   "word": "vier:"
+  },
+  {
+   "end": 1.365,
+   "start": 1.237,
+   "word": "je"
+  },
+  {
+   "end": 1.7067,
+   "start": 1.408,
+   "word": "trigger"
+  },
+  {
+   "end": 2.133,
+   "start": 1.92,
+   "word": "staat"
+  },
+  {
+   "end": 2.3467,
+   "start": 2.219,
+   "word": "nu"
+  },
+  {
+   "end": 2.6027,
+   "start": 2.475,
+   "word": "als"
+  },
+  {
+   "end": 2.901,
+   "start": 2.688,
+   "word": "kaart"
+  },
+  {
+   "end": 3.2,
+   "start": 3.029,
+   "word": "op"
+  },
+  {
+   "end": 3.328,
+   "start": 3.243,
+   "word": "het"
+  },
+  {
+   "end": 3.7676643990929706,
+   "start": 3.328,
+   "word": "dashboard."
+  }
+ ]
+}

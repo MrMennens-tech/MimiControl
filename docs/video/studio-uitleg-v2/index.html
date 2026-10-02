@@ -1,0 +1,163 @@
+<!doctype html>
+<html lang="nl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1920, height=1080" />
+    <!-- Sjabloon voor index.html: maak_video.py vult de {{...}}-velden in. -->
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <link rel="stylesheet" href="lib/ui.css" />
+    <script src="lib/tijden.js"></script>
+    <script src="lib/gezicht.js"></script>
+    <script src="lib/ui.js"></script>
+    <script src="lib/studio.js"></script>
+    <style>
+      @font-face { font-family: "Mimi Sans"; src: url("assets/fonts/open-sans-400.woff2") format("woff2"); font-weight: 400; }
+      @font-face { font-family: "Mimi Sans"; src: url("assets/fonts/open-sans-600.woff2") format("woff2"); font-weight: 600; }
+      @font-face { font-family: "Mimi Sans"; src: url("assets/fonts/open-sans-700.woff2") format("woff2"); font-weight: 700; }
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      html, body { margin: 0; width: 1920px; height: 1080px; overflow: hidden; background: #062D36; }
+      #root { position: relative; width: 100%; height: 100%; overflow: hidden; font-family: "Mimi Sans", sans-serif;
+        background: #062D36; }
+      #root > div[data-composition-src] { position: absolute; inset: 0; }
+      #achter { position: absolute; inset: 0; overflow: hidden; }
+      #achter .gloed { position: absolute; left: -400px; top: -500px; width: 2000px; height: 1700px; border-radius: 50%;
+        background: radial-gradient(closest-side, rgba(77, 184, 190, 0.20), rgba(77, 184, 190, 0.05) 60%, rgba(6, 45, 54, 0) 100%); }
+      #achter .gloed2 { position: absolute; right: -500px; bottom: -700px; width: 1600px; height: 1400px; border-radius: 50%;
+        background: radial-gradient(closest-side, rgba(10, 64, 80, 0.9), rgba(6, 45, 54, 0) 100%); }
+      #achter .raster { position: absolute; inset: -60px; opacity: 0.07;
+        background-image: radial-gradient(circle, #68CCD1 1.6px, rgba(0, 0, 0, 0) 2px); background-size: 44px 44px; }
+      #achter .merk { position: absolute; right: -160px; bottom: -200px; width: 900px; height: 858px; opacity: 0.045; }
+      .cap { position: absolute; left: 0; right: 0; bottom: 58px; display: flex; justify-content: center; z-index: 90; }
+      .cap-tekst { display: block; max-width: 1760px; font-size: 48px; font-weight: 600; line-height: 1.25; color: #FFFFFF;
+        background: rgba(2, 22, 28, 0.88); padding: 12px 34px 14px; border-radius: 16px; white-space: nowrap;
+        box-shadow: 0 6px 18px rgba(0, 0, 0, 0.25); }
+    </style>
+  </head>
+  <body>
+    <div id="root" data-composition-id="main" data-width="1920" data-height="1080" data-duration="159.95">
+      <div id="achter">
+        <div class="gloed"></div>
+        <div class="gloed2"></div>
+        <div class="raster"></div>
+        <img class="merk" src="assets/Mennenstech_logo_wit.png" alt="" />
+      </div>
+
+      <div id="el-f01-intro" data-composition-id="f01-intro" data-composition-src="compositions/f01-intro.html" data-start="0.000" data-duration="7.040" data-track-index="1" data-width="1920" data-height="1080"></div>
+      <div id="el-f02-concept" data-composition-id="f02-concept" data-composition-src="compositions/f02-concept.html" data-start="7.040" data-duration="16.550" data-track-index="1" data-width="1920" data-height="1080"></div>
+      <div id="el-f03-starten" data-composition-id="f03-starten" data-composition-src="compositions/f03-starten.html" data-start="23.590" data-duration="20.090" data-track-index="1" data-width="1920" data-height="1080"></div>
+      <div id="el-f04-kiezen" data-composition-id="f04-kiezen" data-composition-src="compositions/f04-kiezen.html" data-start="43.680" data-duration="12.370" data-track-index="1" data-width="1920" data-height="1080"></div>
+      <div id="el-f05-opnemen" data-composition-id="f05-opnemen" data-composition-src="compositions/f05-opnemen.html" data-start="56.050" data-duration="15.060" data-track-index="1" data-width="1920" data-height="1080"></div>
+      <div id="el-f06-trigger" data-composition-id="f06-trigger" data-composition-src="compositions/f06-trigger.html" data-start="71.110" data-duration="15.350" data-track-index="1" data-width="1920" data-height="1080"></div>
+      <div id="el-f07-kaart" data-composition-id="f07-kaart" data-composition-src="compositions/f07-kaart.html" data-start="86.460" data-duration="7.400" data-track-index="1" data-width="1920" data-height="1080"></div>
+      <div id="el-f08-live" data-composition-id="f08-live" data-composition-src="compositions/f08-live.html" data-start="93.860" data-duration="24.420" data-track-index="1" data-width="1920" data-height="1080"></div>
+      <div id="el-f09-stoppen" data-composition-id="f09-stoppen" data-composition-src="compositions/f09-stoppen.html" data-start="118.280" data-duration="16.560" data-track-index="1" data-width="1920" data-height="1080"></div>
+      <div id="el-f10-hulp" data-composition-id="f10-hulp" data-composition-src="compositions/f10-hulp.html" data-start="134.840" data-duration="17.780" data-track-index="1" data-width="1920" data-height="1080"></div>
+      <div id="el-f11-outro" data-composition-id="f11-outro" data-composition-src="compositions/f11-outro.html" data-start="152.620" data-duration="7.330" data-track-index="1" data-width="1920" data-height="1080"></div>
+
+      <div id="cap-00" class="clip cap" data-start="1.736" data-duration="4.676" data-track-index="10"><span class="cap-tekst" data-layout-allow-overlap>MimiControl: toetsen indrukken met je gezicht.</span></div>
+      <div id="cap-01" class="clip cap" data-start="7.976" data-duration="2.987" data-track-index="10"><span class="cap-tekst" data-layout-allow-overlap>MimiControl kijkt via de webcam naar je gezicht.</span></div>
+      <div id="cap-02" class="clip cap" data-start="10.963" data-duration="1.408" data-track-index="10"><span class="cap-tekst" data-layout-allow-overlap>Maak je een bepaalde beweging,</span></div>
+      <div id="cap-03" class="clip cap" data-start="12.371" data-duration="1.834" data-track-index="10"><span class="cap-tekst" data-layout-allow-overlap>bijvoorbeeld je mond open,</span></div>
+      <div id="cap-04" class="clip cap" data-start="14.205" data-duration="2.134" data-track-index="10"><span class="cap-tekst" data-layout-allow-overlap>dan drukt het programma een toets in,</span></div>
+      <div id="cap-05" class="clip cap" data-start="16.339" data-duration="1.845" data-track-index="10"><span class="cap-tekst" data-layout-allow-overlap>zoals de spatiebalk.</span></div>
+      <div id="cap-06" class="clip cap" data-start="18.184" data-duration="3.969" data-track-index="10"><span class="cap-tekst" data-layout-allow-overlap>Zo bedien je Communicator 5 zonder toetsenbord.</span></div>
+      <div id="cap-07" class="clip cap" data-start="25.369" data-duration="2.773" data-track-index="10"><span class="cap-tekst" data-layout-allow-overlap>Start het programma met een dubbelklik op het bestand</span></div>
+      <div id="cap-08" class="clip cap" data-start="28.142" data-duration="2.048" data-track-index="10"><span class="cap-tekst" data-layout-allow-overlap>MimiControl Studio v2.exe.</span></div>
+      <div id="cap-09" class="clip cap" data-start="30.190" data-duration="4.217" data-track-index="10"><span class="cap-tekst" data-layout-allow-overlap>Het programma vraagt of het opnieuw mag starten als beheerder.</span></div>
+      <div id="cap-10" class="clip cap" data-start="34.407" data-duration="1.066" data-track-index="10"><span class="cap-tekst" data-layout-allow-overlap>Klik op Ja,</span></div>
+      <div id="cap-11" class="clip cap" data-start="35.473" data-duration="3.030" data-track-index="10"><span class="cap-tekst" data-layout-allow-overlap>en daarna ook op Ja bij de melding van Windows.</span></div>
+      <div id="cap-12" class="clip cap" data-start="38.503" data-duration="4.529" data-track-index="10"><span class="cap-tekst" data-layout-allow-overlap>Bovenaan het dashboard staat dan: Beheerder: ja.</span></div>
+      <div id="cap-13" class="clip cap" data-start="45.659" data-duration="2.218" data-track-index="10"><span class="cap-tekst" data-layout-allow-overlap>Stap één: klik op Mimiek verkennen</span></div>
+      <div id="cap-14" class="clip cap" data-start="47.877" data-duration="1.920" data-track-index="10"><span class="cap-tekst" data-layout-allow-overlap>en kies je gezichtsbewegingen.</span></div>
+      <div id="cap-15" class="clip cap" data-start="49.797" data-duration="3.680" data-track-index="10"><span class="cap-tekst" data-layout-allow-overlap>Vink aan wat je wilt gebruiken, bijvoorbeeld de kaak.</span></div>
+      <div id="cap-16" class="clip cap" data-start="53.477" data-duration="2.119" data-track-index="10"><span class="cap-tekst" data-layout-allow-overlap>Klik op Toepassen.</span></div>
+      <div id="cap-17" class="clip cap" data-start="57.829" data-duration="2.602" data-track-index="10"><span class="cap-tekst" data-layout-allow-overlap>Stap twee: klik op Opname starten</span></div>
+      <div id="cap-18" class="clip cap" data-start="60.431" data-duration="3.115" data-track-index="10"><span class="cap-tekst" data-layout-allow-overlap>en maak je beweging een paar keer.</span></div>
+      <div id="cap-19" class="clip cap" data-start="63.626" data-duration="2.390" data-track-index="10"><span class="cap-tekst" data-layout-allow-overlap>De sterkste beweging krijgt een gele balk.</span></div>
+      <div id="cap-20" class="clip cap" data-start="66.016" data-duration="1.536" data-track-index="10"><span class="cap-tekst" data-layout-allow-overlap>Klik op Opname stoppen,</span></div>
+      <div id="cap-21" class="clip cap" data-start="67.552" data-duration="2.908" data-track-index="10"><span class="cap-tekst" data-layout-allow-overlap>en daarna op Trigger maken.</span></div>
+      <div id="cap-22" class="clip cap" data-start="72.889" data-duration="2.474" data-track-index="10"><span class="cap-tekst" data-layout-allow-overlap>Stap drie: geef de trigger een naam</span></div>
+      <div id="cap-23" class="clip cap" data-start="75.363" data-duration="3.126" data-track-index="10"><span class="cap-tekst" data-layout-allow-overlap>en kies de toets, bijvoorbeeld Spatie.</span></div>
+      <div id="cap-24" class="clip cap" data-start="78.489" data-duration="2.688" data-track-index="10"><span class="cap-tekst" data-layout-allow-overlap>De drempel is hoe sterk je de beweging moet maken.</span></div>
+      <div id="cap-25" class="clip cap" data-start="81.177" data-duration="2.506" data-track-index="10"><span class="cap-tekst" data-layout-allow-overlap>Zet hem iets onder de gemeten waarde.</span></div>
+      <div id="cap-26" class="clip cap" data-start="83.683" data-duration="2.135" data-track-index="10"><span class="cap-tekst" data-layout-allow-overlap>Klik op Opslaan.</span></div>
+      <div id="cap-27" class="clip cap" data-start="87.839" data-duration="4.789" data-track-index="10"><span class="cap-tekst" data-layout-allow-overlap>Stap vier: je trigger staat nu als kaart op het dashboard.</span></div>
+      <div id="cap-28" class="clip cap" data-start="95.039" data-duration="2.560" data-track-index="10"><span class="cap-tekst" data-layout-allow-overlap>Klik op Live modus starten.</span></div>
+      <div id="cap-29" class="clip cap" data-start="97.599" data-duration="2.560" data-track-index="10"><span class="cap-tekst" data-layout-allow-overlap>Rechtsboven verschijnt een klein camerabeeld.</span></div>
+      <div id="cap-30" class="clip cap" data-start="100.159" data-duration="2.474" data-track-index="10"><span class="cap-tekst" data-layout-allow-overlap>Dat blijft boven je andere programma's staan.</span></div>
+      <div id="cap-31" class="clip cap" data-start="102.633" data-duration="2.475" data-track-index="10"><span class="cap-tekst" data-layout-allow-overlap>Klik nu op Communicator 5:</span></div>
+      <div id="cap-32" class="clip cap" data-start="105.108" data-duration="2.739" data-track-index="10"><span class="cap-tekst" data-layout-allow-overlap>toetsen gaan altijd naar het actieve venster.</span></div>
+      <div id="cap-33" class="clip cap" data-start="107.847" data-duration="2.644" data-track-index="10"><span class="cap-tekst" data-layout-allow-overlap>Volledig scherm mag gewoon.</span></div>
+      <div id="cap-34" class="clip cap" data-start="110.491" data-duration="1.664" data-track-index="10"><span class="cap-tekst" data-layout-allow-overlap>Maak je beweging.</span></div>
+      <div id="cap-35" class="clip cap" data-start="112.155" data-duration="4.496" data-track-index="10"><span class="cap-tekst" data-layout-allow-overlap>Linksonder in het camerabeeld zie je welke toets is verstuurd.</span></div>
+      <div id="cap-36" class="clip cap" data-start="119.859" data-duration="4.138" data-track-index="10"><span class="cap-tekst" data-layout-allow-overlap>Stoppen? Klik op de X rechtsboven in het camerabeeld.</span></div>
+      <div id="cap-37" class="clip cap" data-start="123.997" data-duration="2.774" data-track-index="10"><span class="cap-tekst" data-layout-allow-overlap>De knop wordt rood: klik nog een keer.</span></div>
+      <div id="cap-38" class="clip cap" data-start="126.771" data-duration="2.261" data-track-index="10"><span class="cap-tekst" data-layout-allow-overlap>Zo stopt het programma niet per ongeluk.</span></div>
+      <div id="cap-39" class="clip cap" data-start="129.032" data-duration="5.166" data-track-index="10"><span class="cap-tekst" data-layout-allow-overlap>Je kunt ook op Stop live klikken, of op Q drukken.</span></div>
+      <div id="cap-40" class="clip cap" data-start="136.376" data-duration="4.437" data-track-index="10"><span class="cap-tekst" data-layout-allow-overlap>Komt de toets niet aan? Start opnieuw en kies Ja.</span></div>
+      <div id="cap-41" class="clip cap" data-start="140.813" data-duration="2.731" data-track-index="10"><span class="cap-tekst" data-layout-allow-overlap>Camera werkt niet? Sluit andere camera-apps</span></div>
+      <div id="cap-42" class="clip cap" data-start="143.544" data-duration="2.005" data-track-index="10"><span class="cap-tekst" data-layout-allow-overlap>of een oude MimiControl.</span></div>
+      <div id="cap-43" class="clip cap" data-start="145.549" data-duration="2.262" data-track-index="10"><span class="cap-tekst" data-layout-allow-overlap>Draait het al? Sluit de andere.</span></div>
+      <div id="cap-44" class="clip cap" data-start="147.811" data-duration="3.358" data-track-index="10"><span class="cap-tekst" data-layout-allow-overlap>Beeld stil? Probeer Vensterweergave.</span></div>
+      <div id="cap-45" class="clip cap" data-start="153.641" data-duration="3.873" data-track-index="10"><span class="cap-tekst" data-layout-allow-overlap>Meer uitleg vind je in de handleiding.</span></div>
+
+      <audio id="vo-f01-intro" src="assets/vo/f01-intro.mp3" data-start="1.600" data-duration="3.840" data-track-index="20" data-volume="1"></audio>
+      <audio id="vo-f02-concept" src="assets/vo/f02-concept.mp3" data-start="7.840" data-duration="13.349" data-track-index="20" data-volume="1"></audio>
+      <audio id="vo-f03-starten" src="assets/vo/f03-starten.mp3" data-start="25.190" data-duration="16.692" data-track-index="20" data-volume="1"></audio>
+      <audio id="vo-f04-kiezen" src="assets/vo/f04-kiezen.mp3" data-start="45.480" data-duration="9.166" data-track-index="20" data-volume="1"></audio>
+      <audio id="vo-f05-opnemen" src="assets/vo/f05-opnemen.mp3" data-start="57.650" data-duration="11.860" data-track-index="20" data-volume="1"></audio>
+      <audio id="vo-f06-trigger" src="assets/vo/f06-trigger.mp3" data-start="72.710" data-duration="12.147" data-track-index="20" data-volume="1"></audio>
+      <audio id="vo-f07-kaart" src="assets/vo/f07-kaart.mp3" data-start="87.660" data-duration="3.997" data-track-index="20" data-volume="1"></audio>
+      <audio id="vo-f08-live" src="assets/vo/f08-live.mp3" data-start="94.860" data-duration="20.820" data-track-index="20" data-volume="1"></audio>
+      <audio id="vo-f09-stoppen" src="assets/vo/f09-stoppen.mp3" data-start="119.680" data-duration="13.558" data-track-index="20" data-volume="1"></audio>
+      <audio id="vo-f10-hulp" src="assets/vo/f10-hulp.mp3" data-start="136.240" data-duration="13.976" data-track-index="20" data-volume="1"></audio>
+      <audio id="vo-f11-outro" src="assets/vo/f11-outro.mp3" data-start="153.420" data-duration="3.135" data-track-index="20" data-volume="1"></audio>
+      <audio id="sfx-00" src="assets/sfx/key-press.mp3" data-start="15.563" data-duration="0.400" data-track-index="21" data-volume="0.35"></audio>
+      <audio id="sfx-01" src="assets/sfx/key-press.mp3" data-start="19.549" data-duration="0.400" data-track-index="23" data-volume="0.35"></audio>
+      <audio id="sfx-02" src="assets/sfx/click-soft.mp3" data-start="26.904" data-duration="0.366" data-track-index="21" data-volume="0.55"></audio>
+      <audio id="sfx-03" src="assets/sfx/click-soft.mp3" data-start="27.124" data-duration="0.366" data-track-index="23" data-volume="0.55"></audio>
+      <audio id="sfx-04" src="assets/sfx/click-soft.mp3" data-start="34.903" data-duration="0.366" data-track-index="21" data-volume="0.55"></audio>
+      <audio id="sfx-05" src="assets/sfx/click-soft.mp3" data-start="36.311" data-duration="0.366" data-track-index="23" data-volume="0.55"></audio>
+      <audio id="sfx-06" src="assets/sfx/click-soft.mp3" data-start="47.144" data-duration="0.366" data-track-index="21" data-volume="0.55"></audio>
+      <audio id="sfx-07" src="assets/sfx/click-soft.mp3" data-start="49.917" data-duration="0.366" data-track-index="23" data-volume="0.55"></audio>
+      <audio id="sfx-08" src="assets/sfx/click-soft.mp3" data-start="52.273" data-duration="0.366" data-track-index="21" data-volume="0.55"></audio>
+      <audio id="sfx-09" src="assets/sfx/click-soft.mp3" data-start="53.981" data-duration="0.366" data-track-index="23" data-volume="0.55"></audio>
+      <audio id="sfx-10" src="assets/sfx/click-soft.mp3" data-start="59.677" data-duration="0.366" data-track-index="21" data-volume="0.55"></audio>
+      <audio id="sfx-11" src="assets/sfx/click-soft.mp3" data-start="66.946" data-duration="0.366" data-track-index="23" data-volume="0.55"></audio>
+      <audio id="sfx-12" src="assets/sfx/click-soft.mp3" data-start="68.803" data-duration="0.366" data-track-index="21" data-volume="0.55"></audio>
+      <audio id="sfx-13" src="assets/sfx/click-soft.mp3" data-start="74.133" data-duration="0.366" data-track-index="23" data-volume="0.55"></audio>
+      <audio id="sfx-14" src="assets/sfx/typing.mp3" data-start="74.829" data-duration="1.500" data-track-index="21" data-volume="0.30"></audio>
+      <audio id="sfx-15" src="assets/sfx/click-soft.mp3" data-start="75.839" data-duration="0.366" data-track-index="23" data-volume="0.55"></audio>
+      <audio id="sfx-16" src="assets/sfx/click-soft.mp3" data-start="77.318" data-duration="0.366" data-track-index="21" data-volume="0.55"></audio>
+      <audio id="sfx-17" src="assets/sfx/click-soft.mp3" data-start="84.187" data-duration="0.366" data-track-index="23" data-volume="0.55"></audio>
+      <audio id="sfx-18" src="assets/sfx/pop.mp3" data-start="88.968" data-duration="0.720" data-track-index="21" data-volume="0.25"></audio>
+      <audio id="sfx-19" src="assets/sfx/click-soft.mp3" data-start="95.528" data-duration="0.366" data-track-index="23" data-volume="0.55"></audio>
+      <audio id="sfx-20" src="assets/sfx/click-soft.mp3" data-start="103.521" data-duration="0.366" data-track-index="21" data-volume="0.55"></audio>
+      <audio id="sfx-21" src="assets/sfx/key-press.mp3" data-start="111.503" data-duration="0.400" data-track-index="23" data-volume="0.35"></audio>
+      <audio id="sfx-22" src="assets/sfx/key-press.mp3" data-start="114.893" data-duration="0.400" data-track-index="21" data-volume="0.35"></audio>
+      <audio id="sfx-23" src="assets/sfx/click-soft.mp3" data-start="123.308" data-duration="0.366" data-track-index="23" data-volume="0.55"></audio>
+      <audio id="sfx-24" src="assets/sfx/click-soft.mp3" data-start="125.824" data-duration="0.366" data-track-index="21" data-volume="0.55"></audio>
+      <audio id="sfx-25" src="assets/sfx/key-press.mp3" data-start="132.508" data-duration="0.400" data-track-index="23" data-volume="0.35"></audio>
+      <audio id="bgm" src="assets/audio/bgm-training.wav" data-start="0" data-duration="159.950" data-track-index="25" data-volume="0.11" data-automation='{"version": 1, "lanes": [{"target": "volume", "points": [{"t": 0, "v": 0}, {"t": 1.5, "v": 1}, {"t": 155.95, "v": 1}, {"t": 159.95, "v": 0}]}]}'></audio>
+    </div>
+
+    <script>
+      (function () {
+        var tl = gsap.timeline({ paused: true });
+        var duur = 159.95;
+        // achtergrond: trage, eindige drift (geen oneindige herhaling)
+        tl.fromTo("#achter .gloed", { x: 0, y: 0, scale: 1 }, { x: 260, y: 120, scale: 1.12, duration: duur, ease: "sine.inOut" }, 0);
+        tl.fromTo("#achter .raster", { x: 0, y: 0 }, { x: -44, y: -44, duration: duur, ease: "none" }, 0);
+        tl.fromTo("#achter .merk", { rotation: -4, y: 0 }, { rotation: 4, y: -40, duration: duur, ease: "sine.inOut" }, 0);
+        // ondertitels: zachte in/uit-fade binnen het eigen tijdvenster
+        document.querySelectorAll(".cap").forEach(function (cap) {
+          var s = parseFloat(cap.getAttribute("data-start")), d = parseFloat(cap.getAttribute("data-duration"));
+          var tx = cap.querySelector(".cap-tekst");
+          tl.fromTo(tx, { opacity: 0, y: 10 }, { opacity: 1, y: 0, duration: 0.22, ease: "power2.out", immediateRender: false }, s);
+          tl.fromTo(tx, { opacity: 1 }, { opacity: 0, duration: 0.18, ease: "power1.in", immediateRender: false }, s + d - 0.18);
+        });
+        window.__timelines["main"] = tl;
+      })();
+    </script>
+  </body>
+</html>

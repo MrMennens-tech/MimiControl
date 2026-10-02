@@ -1,0 +1,177 @@
+{
+ "sleutel": "3c65010f2c7a2c81c6428cacc4949bca8d844f5a",
+ "tekst": "MimiControl kijkt via de webcam naar je gezicht. <break time=\"0.5s\"/> Maak je een bepaalde beweging, bijvoorbeeld je mond open, dan drukt het programma een toets in, zoals de spatiebalk. <break time=\"0.8s\"/> Zo bedien je Communicator vijf zonder toetsenbord.",
+ "duur": 13.348571428571429,
+ "woorden": [
+  {
+   "end": 0.896,
+   "start": 0.256,
+   "word": "MimiControl"
+  },
+  {
+   "end": 1.3227,
+   "start": 1.067,
+   "word": "kijkt"
+  },
+  {
+   "end": 1.536,
+   "start": 1.365,
+   "word": "via"
+  },
+  {
+   "end": 1.664,
+   "start": 1.579,
+   "word": "de"
+  },
+  {
+   "end": 2.048,
+   "start": 1.707,
+   "word": "webcam"
+  },
+  {
+   "end": 2.219,
+   "start": 2.133,
+   "word": "naar"
+  },
+  {
+   "end": 2.3467,
+   "start": 2.261,
+   "word": "je"
+  },
+  {
+   "end": 2.782,
+   "start": 2.389,
+   "word": "gezicht."
+  },
+  {
+   "end": 3.456,
+   "start": 3.243,
+   "word": "Maak"
+  },
+  {
+   "end": 3.584,
+   "start": 3.499,
+   "word": "je"
+  },
+  {
+   "end": 3.712,
+   "start": 3.627,
+   "word": "een"
+  },
+  {
+   "end": 4.011,
+   "start": 3.755,
+   "word": "bepaalde"
+  },
+  {
+   "end": 4.587,
+   "start": 4.053,
+   "word": "beweging,"
+  },
+  {
+   "end": 5.035,
+   "start": 4.651,
+   "word": "bijvoorbeeld"
+  },
+  {
+   "end": 5.291,
+   "start": 5.163,
+   "word": "je"
+  },
+  {
+   "end": 5.504,
+   "start": 5.333,
+   "word": "mond"
+  },
+  {
+   "end": 6.123,
+   "start": 5.589,
+   "word": "open,"
+  },
+  {
+   "end": 6.699,
+   "start": 6.485,
+   "word": "dan"
+  },
+  {
+   "end": 6.955,
+   "start": 6.784,
+   "word": "drukt"
+  },
+  {
+   "end": 7.083,
+   "start": 6.997,
+   "word": "het"
+  },
+  {
+   "end": 7.467,
+   "start": 7.125,
+   "word": "programma"
+  },
+  {
+   "end": 7.68,
+   "start": 7.595,
+   "word": "een"
+  },
+  {
+   "end": 7.936,
+   "start": 7.723,
+   "word": "toets"
+  },
+  {
+   "end": 8.341,
+   "start": 8.021,
+   "word": "in,"
+  },
+  {
+   "end": 8.832,
+   "start": 8.619,
+   "word": "zoals"
+  },
+  {
+   "end": 8.96,
+   "start": 8.875,
+   "word": "de"
+  },
+  {
+   "end": 9.664,
+   "start": 9.003,
+   "word": "spatiebalk."
+  },
+  {
+   "end": 10.635,
+   "start": 10.464,
+   "word": "Zo"
+  },
+  {
+   "end": 10.891,
+   "start": 10.677,
+   "word": "bedien"
+  },
+  {
+   "end": 11.019,
+   "start": 10.933,
+   "word": "je"
+  },
+  {
+   "end": 11.531,
+   "start": 11.061,
+   "word": "Communicator"
+  },
+  {
+   "end": 11.915000000000001,
+   "start": 11.659,
+   "word": "vijf"
+  },
+  {
+   "end": 12.512,
+   "start": 12.171,
+   "word": "zonder"
+  },
+  {
+   "end": 13.112616780045352,
+   "start": 12.555,
+   "word": "toetsenbord."
+  }
+ ]
+}
