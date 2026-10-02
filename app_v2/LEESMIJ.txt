@@ -1,0 +1,152 @@
+MimiControl Studio v2 — experimentele layout
+=============================================
+
+Dit is een NIEUWE versie naast de bestaande Studio. De oude app in `app/`
+is niet vervangen.
+
+Starten
+-------
+- Ontwikkeling (Python nodig, in de repo-root):
+    Start MimiControl Studio.bat
+    → python app\mimiexplorer_ctk.py
+    Start MimiControl Studio v2.bat
+    → python app_v2\mimiexplorer_ctk.py
+
+- Portable v2 (geen Python op de doel-pc):
+    Bouw met scripts\build_onedir_v2.bat
+    Kopieer de HELE map releases\MimiControl Studio v2\
+    of pak releases\MimiControl-Studio-v2-onedir.zip uit.
+    Start daarna Start MimiControl Studio v2.bat in die map
+    (niet de .bat in de repo-root). Alleen de .exe kopiëren werkt niet.
+
+Profielen, triggers en camera-keuze deelt v2 met de originele app
+(map `app/`). SendInput/scancodes zijn niet gewijzigd.
+
+Wat is nieuw in de layout
+-------------------------
+1. Studio start gemaximaliseerd op het scherm (HD, circa 1920×1080).
+2. Triggers staan in 2 of 3 kolommen (afhankelijk van de breedte).
+   Er is geen nested mini-scrollvak meer; hoogstens het grote
+   inhoudsvak scrollt. Camera, profiel, Live/Explorer en timing
+   staan in een rechterrail en blijven zichtbaar.
+3. Live: klein overlay-venster rechtsboven, always-on-top (default aan).
+   Triggerbalk naast de camera is default uit (aanzetten in Live-weergave).
+   Drempelpaneel blijft een apart venster links.
+4. Drempelpaneel dockt als tweede venster; de overlay zweeft over
+   Communicator 5 / fullscreen en steelt niet elke frame de focus.
+5. Explorer-dialogen (blendshape-keuze, filter, trigger-editor)
+   schalen mee met het scherm.
+
+Snelheid (alleen v2)
+--------------------
+Doel: merkbare soepelheid zonder detectie of toetsverzending te
+veranderen.
+
+- MediaPipe krijgt max. 640 px breedte (landmarks blijven genormaliseerd;
+  nauwkeurigheid van blendshapes blijft).
+- Camera-capture begrensd tot 1280×720, buffer 1 frame (minder lag).
+- Geen volledige face-tesselatie meer; oval + lippen (optioneel v1-mesh
+  in Live-weergave; default licht). De mesh is alleen visualisatie:
+  detectie blijft MediaPipe-blendshapes, los van wat er getekend wordt.
+- Live-HUD max. ~14×/s in plaats van elke camerframe volledig
+  herbouwen; CTk-drempelpaneel ~10×/s i.p.v. elke frame `update()`.
+- Timing-sliders schrijven config vertraagd (niet bij elke tik).
+- Logo-inverteren via numpy i.p.v. pixel-voor-pixel in Python.
+
+Niet gedaan / open
+------------------
+- Geen F11-echte fullscreen (bewust: gemaximaliseerd venster).
+- Drempels zitten niet in hetzelfde toolkit-venster als OpenCV;
+  twee gedockte vensters is de veilige aanpak.
+- De oude CLI/Tk-versies (v1/v2 multi) zijn niet meegenomen.
+- Visuele GUI-check in de browser is niet mogelijk (CustomTkinter).
+
+Live-overlay (Communicator 5 / fullscreen)
+------------------------------------------
+Default:
+- Camera-overlay AAN, klein, rechtsboven, always-on-top.
+- Triggerbalk naast de camera UIT (zet aan om te testen).
+- Mesh licht (lippen + hoofdomtrek). Volledige mesh zoals v1 is
+  een schakelaar; dat verandert de herkenning niet.
+
+Elke trigger heeft een eigen kleur op de overlay (rand/gloed rond
+het gezicht). 1 geel, 2 roze, 3 oranje, daarna groen/blauw/paars/rood.
+Zonder triggerbalk is die kleur genoeg om te zien welke trigger afgaat.
+
+Instellingen staan in het dashboard onder Live-weergave en blijven
+in het actieve profiel bewaard.
+
+Stoppen: Q in de overlay (overlay moet focus hebben), knop Stop live
+in het drempelpaneel, of sluit overlay én drempelpaneel.
+Alleen de overlay sluiten laat live doorlopen (handig als je geen
+camera meer wilt zien).
+
+Communicator 5
+--------------
+Mimiek-toetsen (SendInput) gaan naar het programma vooraan. De overlay
+hoeft niet aangeklikt te zijn. Q/P/A enz. werken alleen als de overlay
+focus heeft.
+
+Voorkeur: Communicator 5 in Vensterweergave (niet exclusive fullscreen).
+Studio en Communicator op hetzelfde administrator-niveau starten.
+De overlay is een klein PiP in een schermhoek en blijft boven
+vensterweergave verversen (eigen layered HWND, geen OpenCV imshow).
+
+Exclusive DirectX-fullscreen kan SendInput en het overlay-beeld
+blokkeren — de live-loop (camera, triggers) loopt dan wél door, maar
+Windows kan de toets negeren of het PiP-beeld niet composieten.
+Workaround: windowed/borderless, of overlay zichtbaar maken met A
+(als de overlay focus heeft) of de knop “Overlay naar voren” in het
+drempelpaneel.
+
+Een groot Communicator-venster (niet exclusive) mag de webcam niet
+stoppen: camera, triggers, SendInput én overlay-beeld lopen door.
+
+Als Communicator in exclusive fullscreen staat, kan het PiP-beeld
+stokken of onzichtbaar zijn. Camera, MediaPipe en SendInput lopen
+door. Het drempelpaneel toont:
+“Live op achtergrond — toetsen gaan naar het programma vooraan”.
+
+Maakt de lichtere mesh uit voor de werking?
+Nee. v1 tekende de volle driehoeks-mesh; v2 tekent lippen + ovaal.
+Beide zijn tekening over het camerabeeld. De toetsactie komt uit
+MediaPipe FaceLandmarker-blendshapes (`blendshape_detectie.py`),
+niet uit die lijnen.
+
+Portable / onedir
+-----------------
+Deze overlay zit in `app_v2/`. Op deze pc: Start MimiControl Studio v2.bat
+in de repo-root. Op een andere pc zonder Python is een nieuwe onedir-build
+nodig (`scripts\build_onedir_v2.bat`); een oude v2-onedir heeft deze
+overlay nog niet.
+
+Wijzigingen 2 oktober 2026
+--------------------------
+Getest door Mark: overlay beweegt boven Communicator 5 en toetsen komen
+aan, ook met Communicator in volledig scherm (mits Studio als beheerder).
+
+- Explorer: knoppen onderin het venster (Opname starten/stoppen, Trigger
+  maken, Opnieuw opnemen, Beweging kiezen, Sluiten). Sneltoetsen
+  (spatie, enter, f, r, q) werken nog. Cursor is een pijl/hand.
+- "Beweging kiezen" (F) toont alle gezichtsbewegingen: aanvinken voegt toe.
+  De opname meet alle bruikbare shapes; het filter bepaalt wat je ziet,
+  wat als favoriet wordt voorgesteld en wat naar de trigger-editor gaat.
+- Trigger-editor: bij een NIEUWE trigger alleen de gekozen bewegingen;
+  bij BEWERKEN alle bewegingen (zodat je er een kunt toevoegen).
+- Opstart (opstart_controle.py): is Studio niet verhoogd, dan vraagt hij om
+  opnieuw te starten als beheerder (UAC). Een tweede Studio wordt geweigerd
+  met een melding (mutex), zodat de camera niet gestolen wordt.
+- Dashboard: statuskaart "Communicator 5" (beheerder ja/nee), uitleg bij
+  timing-sliders, sneltoetsen inklapbaar, duidelijker schakelaarlabels.
+- Snelheid: geen overbodige kopie per frame in detecteer_blendshapes;
+  camera vraagt MJPG 30 fps (valt terug op native als dat niet lukt).
+- Build (scriptsuild_onedir_v2.bat): sluit scipy, PyQt, sounddevice,
+  pandas uit; zip heet nu MimiControl-Studio-v<VERSIE>-onedir.zip
+  (VERSIE bovenin het script, nu 2.2). matplotlib moet blijven.
+- Tests: app_v2	ests	est_blendshape_labels.py (geen pytest nodig:
+  importeer het bestand en roep de test_-functies aan).
+Handleiding en afbeeldingen
+---------------------------
+docs\Handleiding-MimiControl-Studio-v2.docx (en .pdf) is de gebruikershandleiding.
+Afbeeldingen maak je opnieuw met: python docs\maak_screenshots.py
+Handleiding opnieuw bouwen:       node docs\maak_handleiding.js

@@ -23,3 +23,8 @@ debug-*.log
 # Testomgeving (webapp)
 node_modules/
 testomgeving/dist/
+
+# Studio v2: runtime-logs en eigen profielen
+app_v2/crash.log
+app_v2/startup.log
+app_v2/profielen/
