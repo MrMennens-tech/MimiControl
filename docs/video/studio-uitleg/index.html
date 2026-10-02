@@ -1,0 +1,247 @@
+<!doctype html>
+<html lang="nl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1920, height=1080" />
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <style>
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      html, body { width: 1920px; height: 1080px; overflow: hidden; background: #062D36; }
+      #root { position: relative; width: 1920px; height: 1080px; overflow: hidden;
+        background: radial-gradient(1200px 800px at 25% 20%, #0B4551 0%, #062D36 70%);
+        font-family: "Segoe UI", Inter, ui-sans-serif, system-ui, sans-serif; color: #fff; }
+      .scene { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; }
+      .beeld { position: absolute; border-radius: 18px; overflow: hidden;
+        box-shadow: 0 30px 80px rgba(0,0,0,.55); border: 2px solid rgba(255,255,255,.18); background:#fff; }
+      .beeld img { position: absolute; left: 0; top: 0; width: 100%; height: 100%; display: block; }
+      .beeld .tweede { opacity: 0; }
+      .mark { position: absolute; border: 6px solid #FFD400; border-radius: 12px; opacity: 0;
+        box-shadow: 0 0 0 4px rgba(255,212,0,.25), 0 0 40px rgba(255,212,0,.7); }
+      .tekst { position: absolute; top: 50%; transform: translateY(-50%); }
+      .badge { display: inline-block; background: #4DB8BE; color: #062D36; font-weight: 700;
+        font-size: 26px; padding: 8px 22px; border-radius: 999px; margin-bottom: 22px; }
+      h2 { font-size: 62px; line-height: 1.08; font-weight: 700; margin-bottom: 40px; letter-spacing: -0.01em; }
+      ol { list-style: none; }
+      li { display: flex; gap: 20px; align-items: flex-start; font-size: 38px; line-height: 1.28;
+        margin-bottom: 26px; }
+      .num { flex: 0 0 52px; height: 52px; border-radius: 50%; background: #fff; color: #062D36;
+        font-weight: 700; font-size: 30px; display: flex; align-items: center; justify-content: center; margin-top: 2px; }
+      .tx { flex: 1; }
+      .vol { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; }
+      .logo { width: 220px; margin-bottom: 40px; }
+      .groot { font-size: 112px; font-weight: 800; letter-spacing: -0.02em; }
+      .sub { font-size: 46px; color: #4DB8BE; margin-top: 18px; }
+      .rij { display: flex; align-items: center; gap: 40px; margin-top: 60px; }
+      .kaart { width: 440px; height: 360px; border-radius: 24px; background: rgba(255,255,255,.08);
+        border: 2px solid rgba(255,255,255,.2); display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 30px; }
+      .kaart .k1 { font-size: 40px; font-weight: 700; margin-bottom: 14px; }
+      .kaart .k2 { font-size: 34px; color: #BFE7EA; line-height: 1.25; }
+      .pijl { font-size: 90px; color: #4DB8BE; }
+      .toets { font-size: 60px; font-weight: 800; background: #fff; color: #062D36; padding: 14px 44px;
+        border-radius: 18px; border-bottom: 10px solid #9fc9cd; margin-bottom: 14px; }
+      .tips { display: flex; gap: 40px; margin-top: 54px; }
+      .tip { width: 520px; min-height: 360px; border-radius: 24px; background: rgba(255,255,255,.09);
+        border: 2px solid rgba(255,255,255,.2); padding: 36px; text-align: left; }
+      .tip .t1 { font-size: 38px; font-weight: 700; color: #FFD400; margin-bottom: 18px; line-height: 1.2; }
+      .tip .t2 { font-size: 34px; line-height: 1.3; color: #E7F6F7; }
+      h1.kop { font-size: 76px; font-weight: 800; }
+    </style>
+  </head>
+  <body>
+    <div id="root" data-composition-id="main" data-start="0" data-duration="158" data-width="1920" data-height="1080">
+
+      <!-- 0. titel -->
+      <div class="clip scene" id="s0" data-start="0" data-duration="6" data-track-index="1">
+        <div class="vol">
+          <img class="logo" id="s0-logo" src="assets/logo.png" alt="">
+          <div class="groot" id="s0-titel">MimiControl Studio</div>
+          <div class="sub" id="s0-sub">Met je gezicht toetsen indrukken</div>
+        </div>
+      </div>
+
+      <!-- 1. wat is het -->
+      <div class="clip scene" id="s1" data-start="6" data-duration="16" data-track-index="1">
+        <div class="vol">
+          <h1 class="kop" id="s1-kop">Zo werkt het</h1>
+          <div class="rij">
+            <div class="kaart" id="s1-k1"><div class="k1">Jij</div><div class="k2">Studio kijkt via de webcam naar je gezicht</div></div>
+            <div class="pijl" id="s1-p1">&rarr;</div>
+            <div class="kaart" id="s1-k2"><div class="k1">Je beweging</div><div class="k2">bijvoorbeeld: kaak open</div></div>
+            <div class="pijl" id="s1-p2">&rarr;</div>
+            <div class="kaart" id="s1-k3"><div class="toets">Spatie</div><div class="k2">Studio drukt de toets in, bijvoorbeeld in Communicator 5</div></div>
+          </div>
+        </div>
+      </div>
+
+    <div class="clip scene" id="s2" data-start="22" data-duration="20" data-track-index="1">
+      <div class="beeld" id="s2-beeld" style="left:80px;top:208px;width:1080px;height:663px"><img src="assets/01-dashboard.png" alt=""><div class="mark" id="s2-m0" style="left:71.75%;top:10.70%;width:25.50%;height:16.20%"></div></div>
+      <div class="tekst" style="left:1230px;width:620px">
+        <div class="badge" id="s2-badge">Stap 1 van 6</div>
+        <h2 id="s2-titel">Starten</h2>
+        <ol><li id="s2-st0"><span class="num">1</span><span class="tx">Dubbelklik op “Start MimiControl Studio v2.bat”</span></li><li id="s2-st1"><span class="num">2</span><span class="tx">Klik op Ja bij de Windows-melding</span></li><li id="s2-st2"><span class="num">3</span><span class="tx">Controleer: Beheerder: ja</span></li></ol>
+      </div>
+    </div>
+    <div class="clip scene" id="s3" data-start="42" data-duration="18" data-track-index="1">
+      <div class="beeld" id="s3-beeld" style="left:120px;top:150px;width:1000px;height:780px"><img src="assets/02-kies-bewegingen.png" alt=""><div class="mark" id="s3-m0" style="left:8.50%;top:84.90%;width:37.80%;height:4.00%"></div><div class="mark" id="s3-m1" style="left:51.40%;top:94.10%;width:11.90%;height:4.20%"></div></div>
+      <div class="tekst" style="left:1230px;width:620px">
+        <div class="badge" id="s3-badge">Stap 2 van 6</div>
+        <h2 id="s3-titel">Kies je gezichtsbewegingen</h2>
+        <ol><li id="s3-st0"><span class="num">1</span><span class="tx">Klik op “Mimiek verkennen”</span></li><li id="s3-st1"><span class="num">2</span><span class="tx">Vink aan wat je wilt gebruiken</span></li><li id="s3-st2"><span class="num">3</span><span class="tx">Snelle keuzes: bolle mond, tong uitsteken</span></li><li id="s3-st3"><span class="num">4</span><span class="tx">Klik op Toepassen</span></li></ol>
+      </div>
+    </div>
+    <div class="clip scene" id="s4" data-start="60" data-duration="20" data-track-index="1">
+      <div class="beeld" id="s4-beeld" style="left:80px;top:324px;width:1080px;height:432px"><img src="assets/03-verkennen.png" alt=""><div class="mark" id="s4-m0" style="left:0.00%;top:85.00%;width:25.00%;height:15.00%"></div></div>
+      <div class="tekst" style="left:1230px;width:620px">
+        <div class="badge" id="s4-badge">Stap 3 van 6</div>
+        <h2 id="s4-titel">Neem je beweging op</h2>
+        <ol><li id="s4-st0"><span class="num">1</span><span class="tx">Klik op Opname starten</span></li><li id="s4-st1"><span class="num">2</span><span class="tx">Maak je beweging een paar keer</span></li><li id="s4-st2"><span class="num">3</span><span class="tx">Klik op Opname stoppen</span></li><li id="s4-st3"><span class="num">4</span><span class="tx">Klik op Trigger maken</span></li></ol>
+      </div>
+    </div>
+    <div class="clip scene" id="s5" data-start="80" data-duration="20" data-track-index="1">
+      <div class="beeld" id="s5-beeld" style="left:163px;top:150px;width:913px;height:780px"><img src="assets/05-trigger-editor.png" alt=""><div class="mark" id="s5-m0" style="left:2.50%;top:10.60%;width:40.50%;height:8.90%"></div><div class="mark" id="s5-m1" style="left:69.00%;top:38.80%;width:18.50%;height:16.10%"></div><div class="mark" id="s5-m2" style="left:69.40%;top:92.70%;width:13.40%;height:5.30%"></div></div>
+      <div class="tekst" style="left:1230px;width:620px">
+        <div class="badge" id="s5-badge">Stap 4 van 6</div>
+        <h2 id="s5-titel">Toets en drempel instellen</h2>
+        <ol><li id="s5-st0"><span class="num">1</span><span class="tx">Geef de trigger een naam</span></li><li id="s5-st1"><span class="num">2</span><span class="tx">Kies de toets die Studio indrukt</span></li><li id="s5-st2"><span class="num">3</span><span class="tx">Zet de drempel iets onder je gemeten waarde</span></li><li id="s5-st3"><span class="num">4</span><span class="tx">Klik op Opslaan</span></li></ol>
+      </div>
+    </div>
+    <div class="clip scene" id="s6" data-start="100" data-duration="22" data-track-index="1">
+      <div class="beeld" id="s6-beeld" style="left:80px;top:236px;width:1080px;height:607px"><img src="assets/06-live-camerabeeld.png" alt=""><img class="tweede" id="s6-beeld2" src="assets/07-live-toets-verstuurd.png" alt=""></div>
+      <div class="tekst" style="left:1230px;width:620px">
+        <div class="badge" id="s6-badge">Stap 5 van 6</div>
+        <h2 id="s6-titel">Live gebruiken</h2>
+        <ol><li id="s6-st0"><span class="num">1</span><span class="tx">Zet Communicator 5 op Vensterweergave</span></li><li id="s6-st1"><span class="num">2</span><span class="tx">Klik op Communicator 5: dat is het actieve venster</span></li><li id="s6-st2"><span class="num">3</span><span class="tx">Start Live en maak je beweging</span></li><li id="s6-st3"><span class="num">4</span><span class="tx">Het label toont de verstuurde toets</span></li></ol>
+      </div>
+    </div>
+    <div class="clip scene" id="s7" data-start="122" data-duration="16" data-track-index="1">
+      <div class="beeld" id="s7-beeld" style="left:80px;top:236px;width:1080px;height:607px"><img src="assets/06-live-camerabeeld.png" alt=""><img class="tweede" id="s7-beeld2" src="assets/08-live-stoppen.png" alt=""><div class="mark" id="s7-m0" style="left:93.00%;top:0.00%;width:7.00%;height:13.00%"></div></div>
+      <div class="tekst" style="left:1230px;width:620px">
+        <div class="badge" id="s7-badge">Stap 6 van 6</div>
+        <h2 id="s7-titel">Stoppen</h2>
+        <ol><li id="s7-st0"><span class="num">1</span><span class="tx">Klik op de X rechtsboven</span></li><li id="s7-st1"><span class="num">2</span><span class="tx">Klik nogmaals om te stoppen</span></li><li id="s7-st2"><span class="num">3</span><span class="tx">Of gebruik Stop live of de toets Q</span></li></ol>
+      </div>
+    </div>
+
+      <!-- 8. werkt het niet -->
+      <div class="clip scene" id="s8" data-start="138" data-duration="14" data-track-index="1">
+        <div class="vol">
+          <h1 class="kop" id="s8-kop">Werkt het niet?</h1>
+          <div class="tips">
+            <div class="tip" id="s8-t1"><div class="t1">De toets komt niet aan</div><div class="t2">Start Studio opnieuw en klik Ja bij de Windows-melding. Controleer: Beheerder: ja.</div></div>
+            <div class="tip" id="s8-t2"><div class="t1">De camera werkt niet</div><div class="t2">Sluit andere camera-apps en een oude Studio. Start Studio daarna opnieuw.</div></div>
+            <div class="tip" id="s8-t3"><div class="t1">Het beeld staat stil</div><div class="t2">Zet Communicator 5 op Vensterweergave in plaats van volledig scherm.</div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 9. einde -->
+      <div class="clip scene" id="s9" data-start="152" data-duration="6" data-track-index="1">
+        <div class="vol">
+          <img class="logo" id="s9-logo" src="assets/logo.png" alt="">
+          <div class="groot" id="s9-t1" style="font-size:80px">Meer uitleg in de handleiding</div>
+          <div class="sub" id="s9-t2">Handleiding-MimiControl-Studio-v2.pdf</div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      window.__timelines = window.__timelines || {};
+      const tl = gsap.timeline({ paused: true });
+
+      // 0 titel
+      tl.fromTo("#s0-logo", {opacity:0, y:-20}, {opacity:1, y:0, duration:0.7}, 0.2);
+      tl.fromTo("#s0-titel", {opacity:0, y:30}, {opacity:1, y:0, duration:0.8, ease:"power2.out"}, 0.7);
+      tl.fromTo("#s0-sub", {opacity:0, y:20}, {opacity:1, y:0, duration:0.7}, 1.5);
+      tl.to("#s0", {opacity:0, duration:0.5}, 5.5);
+
+      // 1 concept
+      tl.fromTo("#s1-kop", {opacity:0, y:-20}, {opacity:1, y:0, duration:0.6}, 6.3);
+      tl.fromTo("#s1-k1", {opacity:0, y:40}, {opacity:1, y:0, duration:0.7, ease:"power2.out"}, 7.5);
+      tl.fromTo("#s1-p1", {opacity:0}, {opacity:1, duration:0.4}, 9.2);
+      tl.fromTo("#s1-k2", {opacity:0, y:40}, {opacity:1, y:0, duration:0.7, ease:"power2.out"}, 10);
+      tl.fromTo("#s1-p2", {opacity:0}, {opacity:1, duration:0.4}, 12);
+      tl.fromTo("#s1-k3", {opacity:0, y:40}, {opacity:1, y:0, duration:0.7, ease:"power2.out"}, 12.8);
+      tl.to("#s1", {opacity:0, duration:0.5}, 21.5);
+
+      tl.fromTo("#s2-beeld", {opacity:0, x:-50}, {opacity:1, x:0, duration:0.7, ease:"power2.out"}, 22+0.2);
+      tl.fromTo("#s2-badge", {opacity:0, y:20}, {opacity:1, y:0, duration:0.5}, 22+0.5);
+      tl.fromTo("#s2-titel", {opacity:0, y:24}, {opacity:1, y:0, duration:0.6, ease:"power2.out"}, 22+0.7);
+      tl.fromTo("#s2-st0", {opacity:0, x:40}, {opacity:1, x:0, duration:0.5, ease:"power2.out"}, 23.80);
+      tl.fromTo("#s2-st1", {opacity:0, x:40}, {opacity:1, x:0, duration:0.5, ease:"power2.out"}, 28.48);
+      tl.fromTo("#s2-st2", {opacity:0, x:40}, {opacity:1, x:0, duration:0.5, ease:"power2.out"}, 33.15);
+      tl.fromTo("#s2-m0", {opacity:0, scale:1.08}, {opacity:1, scale:1, duration:0.4, ease:"back.out(2)"}, 31.5);
+      tl.to("#s2-m0", {opacity:0, duration:0.35}, 41);
+      tl.to("#s2", {opacity:0, duration:0.5}, 41.5);
+      tl.fromTo("#s3-beeld", {opacity:0, x:-50}, {opacity:1, x:0, duration:0.7, ease:"power2.out"}, 42+0.2);
+      tl.fromTo("#s3-badge", {opacity:0, y:20}, {opacity:1, y:0, duration:0.5}, 42+0.5);
+      tl.fromTo("#s3-titel", {opacity:0, y:24}, {opacity:1, y:0, duration:0.6, ease:"power2.out"}, 42+0.7);
+      tl.fromTo("#s3-st0", {opacity:0, x:40}, {opacity:1, x:0, duration:0.5, ease:"power2.out"}, 43.80);
+      tl.fromTo("#s3-st1", {opacity:0, x:40}, {opacity:1, x:0, duration:0.5, ease:"power2.out"}, 46.88);
+      tl.fromTo("#s3-st2", {opacity:0, x:40}, {opacity:1, x:0, duration:0.5, ease:"power2.out"}, 49.96);
+      tl.fromTo("#s3-st3", {opacity:0, x:40}, {opacity:1, x:0, duration:0.5, ease:"power2.out"}, 53.04);
+      tl.fromTo("#s3-m0", {opacity:0, scale:1.08}, {opacity:1, scale:1, duration:0.4, ease:"back.out(2)"}, 49);
+      tl.to("#s3-m0", {opacity:0, duration:0.35}, 54);
+      tl.fromTo("#s3-m1", {opacity:0, scale:1.08}, {opacity:1, scale:1, duration:0.4, ease:"back.out(2)"}, 54.5);
+      tl.to("#s3-m1", {opacity:0, duration:0.35}, 59.5);
+      tl.to("#s3", {opacity:0, duration:0.5}, 59.5);
+      tl.fromTo("#s4-beeld", {opacity:0, x:-50}, {opacity:1, x:0, duration:0.7, ease:"power2.out"}, 60+0.2);
+      tl.fromTo("#s4-badge", {opacity:0, y:20}, {opacity:1, y:0, duration:0.5}, 60+0.5);
+      tl.fromTo("#s4-titel", {opacity:0, y:24}, {opacity:1, y:0, duration:0.6, ease:"power2.out"}, 60+0.7);
+      tl.fromTo("#s4-st0", {opacity:0, x:40}, {opacity:1, x:0, duration:0.5, ease:"power2.out"}, 61.80);
+      tl.fromTo("#s4-st1", {opacity:0, x:40}, {opacity:1, x:0, duration:0.5, ease:"power2.out"}, 65.31);
+      tl.fromTo("#s4-st2", {opacity:0, x:40}, {opacity:1, x:0, duration:0.5, ease:"power2.out"}, 68.81);
+      tl.fromTo("#s4-st3", {opacity:0, x:40}, {opacity:1, x:0, duration:0.5, ease:"power2.out"}, 72.32);
+      tl.fromTo("#s4-m0", {opacity:0, scale:1.08}, {opacity:1, scale:1, duration:0.4, ease:"back.out(2)"}, 74);
+      tl.to("#s4-m0", {opacity:0, duration:0.35}, 79);
+      tl.to("#s4", {opacity:0, duration:0.5}, 79.5);
+      tl.fromTo("#s5-beeld", {opacity:0, x:-50}, {opacity:1, x:0, duration:0.7, ease:"power2.out"}, 80+0.2);
+      tl.fromTo("#s5-badge", {opacity:0, y:20}, {opacity:1, y:0, duration:0.5}, 80+0.5);
+      tl.fromTo("#s5-titel", {opacity:0, y:24}, {opacity:1, y:0, duration:0.6, ease:"power2.out"}, 80+0.7);
+      tl.fromTo("#s5-st0", {opacity:0, x:40}, {opacity:1, x:0, duration:0.5, ease:"power2.out"}, 81.80);
+      tl.fromTo("#s5-st1", {opacity:0, x:40}, {opacity:1, x:0, duration:0.5, ease:"power2.out"}, 85.31);
+      tl.fromTo("#s5-st2", {opacity:0, x:40}, {opacity:1, x:0, duration:0.5, ease:"power2.out"}, 88.81);
+      tl.fromTo("#s5-st3", {opacity:0, x:40}, {opacity:1, x:0, duration:0.5, ease:"power2.out"}, 92.32);
+      tl.fromTo("#s5-m0", {opacity:0, scale:1.08}, {opacity:1, scale:1, duration:0.4, ease:"back.out(2)"}, 85);
+      tl.to("#s5-m0", {opacity:0, duration:0.35}, 89.5);
+      tl.fromTo("#s5-m1", {opacity:0, scale:1.08}, {opacity:1, scale:1, duration:0.4, ease:"back.out(2)"}, 90);
+      tl.to("#s5-m1", {opacity:0, duration:0.35}, 95.5);
+      tl.fromTo("#s5-m2", {opacity:0, scale:1.08}, {opacity:1, scale:1, duration:0.4, ease:"back.out(2)"}, 96);
+      tl.to("#s5-m2", {opacity:0, duration:0.35}, 99.5);
+      tl.to("#s5", {opacity:0, duration:0.5}, 99.5);
+      tl.fromTo("#s6-beeld", {opacity:0, x:-50}, {opacity:1, x:0, duration:0.7, ease:"power2.out"}, 100+0.2);
+      tl.fromTo("#s6-badge", {opacity:0, y:20}, {opacity:1, y:0, duration:0.5}, 100+0.5);
+      tl.fromTo("#s6-titel", {opacity:0, y:24}, {opacity:1, y:0, duration:0.6, ease:"power2.out"}, 100+0.7);
+      tl.fromTo("#s6-st0", {opacity:0, x:40}, {opacity:1, x:0, duration:0.5, ease:"power2.out"}, 101.80);
+      tl.fromTo("#s6-st1", {opacity:0, x:40}, {opacity:1, x:0, duration:0.5, ease:"power2.out"}, 105.73);
+      tl.fromTo("#s6-st2", {opacity:0, x:40}, {opacity:1, x:0, duration:0.5, ease:"power2.out"}, 109.66);
+      tl.fromTo("#s6-st3", {opacity:0, x:40}, {opacity:1, x:0, duration:0.5, ease:"power2.out"}, 113.59);
+      tl.fromTo("#s6-beeld2", {opacity:0}, {opacity:1, duration:0.6}, 114);
+      tl.to("#s6", {opacity:0, duration:0.5}, 121.5);
+      tl.fromTo("#s7-beeld", {opacity:0, x:-50}, {opacity:1, x:0, duration:0.7, ease:"power2.out"}, 122+0.2);
+      tl.fromTo("#s7-badge", {opacity:0, y:20}, {opacity:1, y:0, duration:0.5}, 122+0.5);
+      tl.fromTo("#s7-titel", {opacity:0, y:24}, {opacity:1, y:0, duration:0.6, ease:"power2.out"}, 122+0.7);
+      tl.fromTo("#s7-st0", {opacity:0, x:40}, {opacity:1, x:0, duration:0.5, ease:"power2.out"}, 123.80);
+      tl.fromTo("#s7-st1", {opacity:0, x:40}, {opacity:1, x:0, duration:0.5, ease:"power2.out"}, 127.34);
+      tl.fromTo("#s7-st2", {opacity:0, x:40}, {opacity:1, x:0, duration:0.5, ease:"power2.out"}, 130.88);
+      tl.fromTo("#s7-beeld2", {opacity:0}, {opacity:1, duration:0.6}, 129);
+      tl.fromTo("#s7-m0", {opacity:0, scale:1.08}, {opacity:1, scale:1, duration:0.4, ease:"back.out(2)"}, 123.5);
+      tl.to("#s7-m0", {opacity:0, duration:0.35}, 128.5);
+      tl.to("#s7", {opacity:0, duration:0.5}, 137.5);
+
+      // 8 tips
+      tl.fromTo("#s8-kop", {opacity:0, y:-20}, {opacity:1, y:0, duration:0.6}, 138.3);
+      tl.fromTo("#s8-t1", {opacity:0, y:40}, {opacity:1, y:0, duration:0.7}, 139.5);
+      tl.fromTo("#s8-t2", {opacity:0, y:40}, {opacity:1, y:0, duration:0.7}, 142.5);
+      tl.fromTo("#s8-t3", {opacity:0, y:40}, {opacity:1, y:0, duration:0.7}, 145.5);
+      tl.to("#s8", {opacity:0, duration:0.5}, 151.5);
+
+      // 9 einde
+      tl.fromTo("#s9-logo", {opacity:0, y:-20}, {opacity:1, y:0, duration:0.7}, 152.3);
+      tl.fromTo("#s9-t1", {opacity:0, y:30}, {opacity:1, y:0, duration:0.8}, 152.9);
+      tl.fromTo("#s9-t2", {opacity:0, y:20}, {opacity:1, y:0, duration:0.7}, 153.8);
+
+      window.__timelines["main"] = tl;
+      tl.seek(0);
+    </script>
+  </body>
+</html>
